@@ -1,11 +1,29 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
+import { useEffect } from 'react'
 import './App.css'
+import { getHealth } from './services/api'
+import { getTestMessage } from './services/api';
 
 function App() {
-  const [count, setCount] = useState(0)
+
+  useEffect(() => {
+    getHealth()
+      .then((data) => {
+        console.log("API Response is aaeee:", data);
+      })
+      .catch((err) => {
+        console.error("API erroria aee:", err)
+      })
+  }, []);
+
+  useEffect(() => {
+    getTestMessage()
+      .then((data) => {
+        console.log("API Response is testistvis:", data);
+      })
+      .catch((err) => {
+        console.error("API erroria aee:", err)
+      })
+  }, []);
 
   return (
     <>

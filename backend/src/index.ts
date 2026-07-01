@@ -11,7 +11,13 @@ app.use(express.json())
 
 app.get("/", (req, res) => {
     res.json({
-        message: "API is working",
+        message: "API is working giorA",
+    });
+});
+
+app.get("/testUrl", (req, res) => {
+    res.json({
+        message: "Testi Mushavobs da gvixarian",
     });
 });
 
