@@ -1,9 +1,14 @@
 import { useEffect } from 'react'
 import './App.css'
 import { getHealth, getRoomData, getTestMessage } from './services/api'
+import ThemeToggle from './components/ThemeToggle';
+import LanguageToggle from './components/LanguageToggle';
+import { useTranslation } from 'react-i18next';
 
 
 function App() {
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     getHealth()
@@ -37,7 +42,10 @@ function App() {
 
   return (
     <>
-      <h1 className="text-red-600">This is Heading</h1>
+      <ThemeToggle />
+      <LanguageToggle />
+      <h1 className="text-blue-600 dark:text-red-600">This is Heading</h1>
+      <p>{t('test.testWord')}</p>
     </>
   )
 }
