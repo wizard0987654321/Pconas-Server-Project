@@ -19,3 +19,13 @@ export async function getTestMessage() {
 
   return response.json();
 }
+
+export async function getRoomData() {
+    const response = await fetch(`${API_URL}/rooms`);
+
+    if (!response.ok) {
+        throw new Error("Failed Database Test Query");
+    }
+
+    return response.json();
+}

@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import './App.css'
-import { getHealth } from './services/api'
-import { getTestMessage } from './services/api';
+import { getHealth, getRoomData, getTestMessage } from './services/api'
+
 
 function App() {
 
@@ -19,6 +19,16 @@ function App() {
     getTestMessage()
       .then((data) => {
         console.log("API Response is testistvis:", data);
+      })
+      .catch((err) => {
+        console.error("API erroria aee:", err)
+      })
+  }, []);
+
+  useEffect(() => {
+    getRoomData()
+      .then((data) => {
+        console.log("API Response is sqlistvis:", data);
       })
       .catch((err) => {
         console.error("API erroria aee:", err)
