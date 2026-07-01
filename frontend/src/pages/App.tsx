@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
-import './App.css'
-import { getHealth, getRoomData, getTestMessage } from './services/api'
-import ThemeToggle from './components/ThemeToggle';
-import LanguageToggle from './components/LanguageToggle';
+import '../App.css'
+import { getHealth, getRoomData, getTestMessage } from '../services/api'
+import ThemeToggle from '../components/ThemeToggle';
+import LanguageToggle from '../components/LanguageToggle';
 import { useTranslation } from 'react-i18next';
 
 

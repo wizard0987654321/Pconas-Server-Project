@@ -1,5 +1,9 @@
 {
   "test": {
-    "testWord": "TestWort"
+    "testWord": "TestWort",
+    "secondWord": "Apfel"
+  },
+  "error": {
+    "errorMessage": "Das ist Error"
   }
 }
