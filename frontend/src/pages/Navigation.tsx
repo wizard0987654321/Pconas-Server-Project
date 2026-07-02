@@ -1,5 +1,6 @@
 import { Outlet, NavLink } from "react-router-dom";
 import NavItem from "../components/NavItem";
+import NavItemSeparation from "../components/NavItemSeparation";
 import ThemeToggle from "../components/ThemeToggle";
 import LanguageToggle from "../components/LanguageToggle";
 
@@ -30,8 +31,17 @@ function Navigation() {
                 "
                 >
                     <nav className="flex flex-col justify-between items-center w-full h-full">
-                        <NavItem to="/" label="test.testWord" />
-                        <NavItem to="rooms" label="test.secondWord" />
+                        <NavItem to="/" label="nav.home" />
+                        <NavItemSeparation />
+                        <NavItem to="rooms" label="nav.rooms" />
+                        <NavItemSeparation />
+                        <NavItem to="racks" label="nav.racks" />
+                        <NavItemSeparation />
+                        <NavItem to="devices" label="nav.devices" />
+                        <NavItemSeparation />
+                        <NavItem to="vms" label="nav.vms" />
+                        <NavItemSeparation />
+                        <NavItem to="services" label="nav.services" />
                     </nav>
                 </div>
                 <Outlet />

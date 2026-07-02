@@ -3,6 +3,14 @@
     "testWord": "TestWort",
     "secondWord": "Apfel"
   },
+  "nav": {
+    "home": "Startseite",
+    "rooms": "Räume",
+    "racks": "Racks",
+    "devices": "Geräte",
+    "vms": "VMs",
+    "services": "Dienste"
+  },
   "error": {
     "errorMessage": "Das ist Error"
   }

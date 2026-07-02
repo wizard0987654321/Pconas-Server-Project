@@ -2,6 +2,11 @@ import App from "./pages/App";
 import ErrorPage from "./pages/ErrorPage";
 import TestPage from "./pages/TestPage";
 import Navigation from "./pages/Navigation";
+import DevicesPage from "./pages/DevicesPage";
+import RoomsPage from "./pages/RoomsPage";
+import RacksPage from "./pages/RacksPage";
+import VmsPage from "./pages/VmsPage";
+import ServicesPage from "./pages/ServicesPage";
 
 const routes = [
     {
@@ -10,7 +15,11 @@ const routes = [
         errorElement: <ErrorPage />,
         children: [
             { index: true, element: <App /> },
-            { path: 'rooms', element: <TestPage />},
+            { path: 'rooms', element: <RoomsPage />},
+            { path: 'racks', element: <RacksPage />},
+            { path: 'devices', element: <DevicesPage />},
+            { path: 'vms', element: <VmsPage />},
+            { path: 'services', element: <ServicesPage />}
         ],
     },
 ]

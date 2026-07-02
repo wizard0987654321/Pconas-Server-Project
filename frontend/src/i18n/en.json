@@ -3,6 +3,14 @@
     "testWord": "testWord",
     "secondWord": "apple"
   },
+  "nav": {
+    "home": "Home",
+    "rooms": "Rooms",
+    "racks": "Racks",
+    "devices": "Devices",
+    "vms": "VMs",
+    "services": "Services"
+  },
   "error": {
     "errorMessage": "This is error"
   }
