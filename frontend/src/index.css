@@ -1,3 +1,14 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Source+Sans+3:wght@200;300;400;500;600;700;800;900&display=swap');
+@import 'tailwindcss';
+/*font-mono in tailwind classes*/
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --breakpoint-xs: 30rem;
+  --breakpoint-s: 40rem;
+  --breakpoint-m: 48rem;
+  --breakpoint-l: 64rem;
+  --breakpoint-xl: 80rem;
+  --breakpoint-2xl: 100rem;
+}

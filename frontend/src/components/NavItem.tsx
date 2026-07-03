@@ -3,19 +3,21 @@ import { useTranslation } from "react-i18next";
 
 type NavItemProps = {
     to: string,
-    label: string
+    label: string,
+    onClick?: () => void
 }
 
 function NavItem (
-    { to, label }: NavItemProps
+    { to, label, onClick }: NavItemProps
 ) {
     const { t } = useTranslation();
 
     return (
         <NavLink
             to={to}
+            onClick={onClick}
             className={({ isActive }) =>
-                `py-2 text-sm md:text-lg transition-colors ${
+                `py-6 font-mono text-sm m:text-lg transition-colors ${
                     isActive ? "font-bold text-[#6ADBAF]" : "text-black"
                 }`
             }

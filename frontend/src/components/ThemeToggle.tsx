@@ -5,7 +5,7 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="p-2 rounded-md bg-gray-100 dark:bg-gray-800 cursor-pointer"
+      className="py-2.5 px-2 rounded-md bg-gray-100 dark:bg-gray-800 cursor-pointer"
       aria-label="Toggle theme"
     >
       {theme === 'dark' ? '🌙' : '☀️'}
