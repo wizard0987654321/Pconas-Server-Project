@@ -17,7 +17,8 @@ function Header() {
                 <span className="hidden m:inline font-mono text-3xl font-bold text-black-700 dark:text-gray-100">
                     Trainer
                 </span>
-                <div className="flex flex-col gap-4 m-2 items-center m:flex-row">
+                <div className="flex scale-75 flex-col gap-4 m-2 items-center 
+                                m:flex-row xs:scale-100">
                     <ThemeToggle />
                     <LanguageToggle />
                 </div>

@@ -12,17 +12,18 @@ function Navigation() {
             <Header />
 
             {/* Mobile burger button */}
-            <div className="sm:hidden p-4">
+            {!isOpen && (<div className="sm:hidden p-4">
                 <button
                     onClick={() => setIsOpen(!isOpen)}
                     className="text-3xl text-black dark:text-white"
                 >
                     ☰
                 </button>
-            </div>
+            </div>)
+            }
 
             {/* Mobile menu */}
-            {isOpen && <MobileSidebar 
+            {isOpen && <MobileSidebar
                 open={isOpen}
                 onClose={() => setIsOpen(false)} />
             }
