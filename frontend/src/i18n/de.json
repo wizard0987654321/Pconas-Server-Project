@@ -3,6 +3,12 @@
     "testWord": "TestWort",
     "secondWord": "Apfel"
   },
+  "pages": {
+    "home": {
+      "helloText": "Willkommen in deinem Pconas Trainee Portal",
+      "button": "Rechenzentrum entdecken"
+    }
+  },
   "nav": {
     "home": "Startseite",
     "rooms": "Räume",

@@ -3,6 +3,12 @@
     "testWord": "testWord",
     "secondWord": "apple"
   },
+  "pages": {
+    "home": {
+      "helloText": "Welcome to your Pconas Trainee Portal",
+      "button": "Discover Server Center"
+    }
+  },
   "nav": {
     "home": "Home",
     "rooms": "Rooms",
