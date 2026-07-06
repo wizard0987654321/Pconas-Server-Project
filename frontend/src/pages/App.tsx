@@ -2,8 +2,10 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import "../App.css";
 import { getHealth, getRoomData, getTestMessage } from "../services/api";
+import { useNavigate } from "react-router-dom";
 
 function App() {
+  const navigate = useNavigate();
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -43,7 +45,7 @@ function App() {
           {t("pages.home.helloText")}
         </h1>
       </div>
-      <button className="w-[60%] xs:w-[50%] s:w-[40%] m:w-[30%] l:w-[20%] py-2 s:py-3 l:py-4 text-white font-mono font-bold text-base s:text-lg m:text-xl m-6 rounded-[16px] bg-gradient-to-r from-[#6ADBAF] via-[#6ADBAF] to-[#3FBC8B] hover:opacity-90 transition-all duration-200">
+      <button onClick={() => navigate("/rooms")} className="animate-gradient-x w-[60%] xs:w-[50%] s:w-[40%] m:w-[30%] l:w-[20%] py-2 s:py-3 l:py-4 text-white font-mono font-bold text-base s:text-lg m:text-xl m-6 rounded-[16px] bg-gradient-to-r from-[#3FBC8B] via-[#6ADBAF] to-[#6ADBAF] hover:opacity-90 hover:cursor-pointer hover:scale-105 hover:shadow-lg transition-all duration-200">
         {t("pages.home.button")}
       </button>
     </div>

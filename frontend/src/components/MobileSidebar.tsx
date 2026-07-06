@@ -1,4 +1,4 @@
-import NavList from "./SidebarData";
+import NavList from "./NavList";
 
 type Props = {
     open: boolean;
