@@ -4,7 +4,7 @@ import "../App.css";
 import { getHealth, getRoomData, getTestMessage } from "../services/api";
 import { useNavigate } from "react-router-dom";
 
-function App() {
+function Homepage() {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -52,4 +52,4 @@ function App() {
   );
 }
 
-export default App;
+export default Homepage;

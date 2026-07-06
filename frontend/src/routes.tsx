@@ -1,4 +1,4 @@
-import App from "./pages/App";
+import Homepage from "./pages/Homepage";
 import ErrorPage from "./pages/ErrorPage";
 import TestPage from "./pages/TestPage";
 import Navigation from "./pages/Navigation";
@@ -14,7 +14,7 @@ const routes = [
         element: <Navigation />,
         errorElement: <ErrorPage />,
         children: [
-            { index: true, element: <App /> },
+            { index: true, element: <Homepage /> },
             { path: 'rooms', element: <RoomsPage />},
             { path: 'racks', element: <RacksPage />},
             { path: 'devices', element: <DevicesPage />},
