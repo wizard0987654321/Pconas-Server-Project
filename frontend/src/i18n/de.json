@@ -7,6 +7,9 @@
     "home": {
       "helloText": "Willkommen in deinem Pconas Trainee Portal",
       "button": "Rechenzentrum entdecken"
+    },
+    "rooms": {
+      "headingText": "Serverräume"
     }
   },
   "nav": {

@@ -1,8 +1,14 @@
+import PageHeading from "../components/PageHeading";
+import ServerRoom from "../components/ServerRoom";
+
 function RoomsPage() {
     return (
-        <div>
-            <h1>This is Rooms Page</h1>
-        </div>
+        <>
+            <div className="flex flex-col items-center p-4">
+                <PageHeading heading="pages.rooms.headingText" />
+                <ServerRoom />
+            </div>
+        </>
     )
 }
 
