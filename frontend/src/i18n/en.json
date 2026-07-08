@@ -10,7 +10,8 @@
     },
     "rooms": {
       "headingText": "Server Rooms",
-      "button": "View Racks"
+      "button": "View Racks",
+      "cardHeading": "Room"
     }
   },
   "nav": {

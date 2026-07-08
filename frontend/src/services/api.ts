@@ -30,3 +30,13 @@ export async function getRoomData() {
     return response.json();
 }
 
+export async function getRackData() {
+    const response = await fetch(`${API_URL}/racks`);
+
+    if (!response.ok) {
+        throw new Error("Failed Database Test Query");
+    }
+
+    return response.json();
+}
+

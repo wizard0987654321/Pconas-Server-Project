@@ -16,6 +16,11 @@ app.get("/rooms", async (req, res) => {
   res.json(result.recordset);
 });
 
+app.get("/racks", async (req, res) => {
+    const result = await sql.query("SELECT * FROM Rack");
+    res.json(result.recordset);
+});
+
 app.get("/", (req, res) => {
     res.json({
         message: "API is working giorA",
