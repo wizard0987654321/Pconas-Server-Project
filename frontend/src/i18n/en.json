@@ -9,7 +9,8 @@
       "button": "Discover Server Center"
     },
     "rooms": {
-      "headingText": "Server Rooms"
+      "headingText": "Server Rooms",
+      "button": "View Racks"
     }
   },
   "nav": {

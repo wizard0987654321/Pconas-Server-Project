@@ -9,7 +9,8 @@
       "button": "Rechenzentrum entdecken"
     },
     "rooms": {
-      "headingText": "Serverräume"
+      "headingText": "Räume",
+      "button": "zu den Racks"
     }
   },
   "nav": {

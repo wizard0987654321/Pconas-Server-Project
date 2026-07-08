@@ -4,6 +4,7 @@ import "../App.css";
 import { getHealth, getRoomData, getTestMessage } from "../services/api";
 import { useNavigate } from "react-router-dom";
 import PageHeading from "../components/PageHeading";
+import PrimaryButton from "../components/PrimaryButton";
 
 function Homepage() {
   const navigate = useNavigate();
@@ -42,9 +43,7 @@ function Homepage() {
   return (
     <div className="p-4 flex flex-col items-center">
       <PageHeading heading="pages.home.helloText"/>
-      <button onClick={() => navigate("/rooms")} className="animate-gradient-x w-[60%] xs:w-[50%] s:w-[40%] m:w-[30%] l:w-[20%] py-2 s:py-3 l:py-4 text-white font-mono font-bold text-base s:text-lg m:text-xl m-6 rounded-[16px] bg-gradient-to-r from-[#3FBC8B] via-[#6ADBAF] to-[#6ADBAF] hover:opacity-90 hover:cursor-pointer hover:scale-105 hover:shadow-lg transition-all duration-200">
-        {t("pages.home.button")}
-      </button>
+      <PrimaryButton label={t("pages.home.button")} onClick={() => navigate("/rooms")} />
     </div>
   );
 }
