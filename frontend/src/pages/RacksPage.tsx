@@ -1,20 +1,12 @@
-import { useEffect, useRef } from "react";
-import { gsap } from "gsap";
+import ServerRacks from "../components/PageContents/ServerRacks";
+import PageHeading from "../components/PageHeading";
 
 function RacksPage() {
-    const titleRef = useRef<HTMLHeadingElement>(null);
-
-    useEffect(() => {
-        gsap.to(titleRef.current, {
-        x: 300,
-        duration: 2,
-        ease: "power1.inOut",
-    });
-    }, []);
-
+    
     return (
-        <div>
-            <h1 ref={titleRef}>This is Racks Page</h1>
+        <div className="flex flex-row justify-center flex-wrap items-center p-4 w-full">
+                <PageHeading heading="Racks" />
+                <ServerRacks />
         </div>
     );
 }
