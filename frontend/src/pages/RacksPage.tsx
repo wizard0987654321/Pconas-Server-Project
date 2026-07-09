@@ -1,4 +1,4 @@
-import ServerRacks from "../components/PageContents/ServerRacks";
+import ServerRacks from "../components/ServerRacks";
 import PageHeading from "../components/PageHeading";
 
 function RacksPage() {

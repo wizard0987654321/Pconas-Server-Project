@@ -1,6 +1,6 @@
 import { useState } from "react";
 import PageHeading from "../components/PageHeading";
-import ServerRoom from "../components/PageContents/ServerRoom";
+import ServerRoom from "../components/ServerRoom";
 import ServerRoomList from "../components/ServerRoomList";
 
 function RoomsPage() {
