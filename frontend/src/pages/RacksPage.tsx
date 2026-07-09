@@ -4,7 +4,7 @@ import PageHeading from "../components/PageHeading";
 function RacksPage() {
     
     return (
-        <div className="flex flex-row justify-center flex-wrap items-center p-4 w-full">
+        <div className="flex flex-col justify-center flex-wrap items-center p-4 w-full">
                 <PageHeading heading="Racks" />
                 <ServerRacks />
         </div>
