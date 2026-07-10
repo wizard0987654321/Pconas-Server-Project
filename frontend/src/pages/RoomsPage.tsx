@@ -2,9 +2,11 @@ import { useState } from "react";
 import PageHeading from "../components/PageHeading";
 import ServerRoom from "../components/ServerRoom";
 import ServerRoomList from "../components/ServerRoomList";
+import listViewIcon from "../assets/listView.svg";
+import roomViewIcon from "../assets/roomView.svg";
 
 function RoomsPage() {
-    const [listView, setListView] = useState(false);
+    const [isListView, setIsListView] = useState(false);
 
     return (
         <>
@@ -13,14 +15,18 @@ function RoomsPage() {
 
                 <div className="w-full flex justify-end m-4">
                     <button
-                        onClick={() => setListView(!listView)}
-                        className="px-4 py-2 rounded bg-[#6ADBAF]"
+                        onClick={() => setIsListView(!isListView)}
+                        className="p-2 rounded border border-2 border-[#6ADBAF]"
                     >
-                        {listView ? "LW" : "VW"}
+                        <img
+                            src={isListView ? roomViewIcon : listViewIcon}
+                            alt={isListView ? "Room view" : "List view"}
+                            className="size-5 m:size-10 l:size-12"
+                        />
                     </button>
                 </div>
 
-                {listView ? <ServerRoomList /> : <ServerRoom />}
+                {isListView ? <ServerRoomList /> : <ServerRoom />}
             </div>
         </>
     );

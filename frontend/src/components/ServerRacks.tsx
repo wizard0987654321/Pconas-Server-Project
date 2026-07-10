@@ -1,49 +1,26 @@
 import DataList from "./DataList";
+import { useEffect, useState } from "react";
+import { getRackData } from "../services/api";
+import type { Rack } from "../types";
 
 function ServerRacks() {
 
-    const rows = [
-        {
-            title: "erti ori sami",
-            age: 28,
-            profession: "sport",
-        },
-        {
-            title: "otxi xuti ekvsi",
-            age: 34,
-            profession: "designer",
-        },
-        {
-            title: "shvidi rva",
-            age: 41,
-            profession: "teacher",
-        },
-    ];
+const [racksData, setRacksData] = useState<Rack[]>([]);
 
-    const giorguna = [
-        {
-            tashi: "erti ori sami rva cxra ati tashi bicho giorgunaaaaaa",
-            jig: 28,
-            giorguna: "sport",
-            argoushva: "ebochuna",
-            daukvirdi: "magasao",
-            magikidis: "kabasao"
-        },
-        {
-            tashi: "otxi xuti ekvsi",
-            jig: 34,
-            giorguna: "designer",
-        },
-        {
-            title: "shvidi rva",
-            jig: 41,
-            profession: "teacher",
-        },
-    ];
+    useEffect(() => {
+            getRackData()
+                .then((data) => {
+                    console.log("API Response is sqlistvis rackdata:", data);
+                    setRacksData(data);
+                })
+                .catch((err) => {
+                    console.error("API error", err);
+                });
+        }, []);
 
     return (
         <>
-            <DataList data={giorguna} />
+            <DataList data={racksData} />
         </>
     )
 }

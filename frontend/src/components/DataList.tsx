@@ -28,13 +28,14 @@ function DataList({ data }: DataListProps) {
 
 
             <div className="space-y-3 l:space-y-0">
-                {data.map((row, index) => (
+                {data
+                .map((row, index) => (
                     <div key={index}>
 
                         {/* Mobile */}
                         <div className="l:hidden rounded-lg text-sm m:text-xl border-3 border-[#6ADBAF] p-4 space-y-2 bg-white">
                             {Object.entries(row).map(([key, value]) => (
-                                <div className="flex items-start">
+                                <div key={key} className="flex items-start">
                                     <span className="p-2 font-bold text-[#6ADBAF] shrink-0">
                                         {key}
                                     </span>
