@@ -20,7 +20,7 @@
     "racks": "Racks",
     "devices": "Geräte",
     "vms": "VMs",
-    "services": "Dienste"
+    "services": "Leistungen"
   },
   "error": {
     "errorMessage": "Das ist Error"

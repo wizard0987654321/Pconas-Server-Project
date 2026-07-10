@@ -22,10 +22,12 @@ function ServerRacks() {
 
     const giorguna = [
         {
-            tashi: "erti ori sami",
+            tashi: "erti ori sami rva cxra ati tashi bicho giorgunaaaaaa",
             jig: 28,
             giorguna: "sport",
-            argoushva: "ebochuna"
+            argoushva: "ebochuna",
+            daukvirdi: "magasao",
+            magikidis: "kabasao"
         },
         {
             tashi: "otxi xuti ekvsi",
