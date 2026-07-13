@@ -21,6 +21,21 @@ app.get("/racks", async (req, res) => {
     res.json(result.recordset);
 });
 
+app.get("/devices", async (req, res) => {
+    const result = await sql.query("SELECT * FROM Device");
+    res.json(result.recordset);
+});
+
+app.get("/vms", async (req, res) => {
+    const result = await sql.query("SELECT * FROM VM");
+    res.json(result.recordset);
+});
+
+app.get("/services", async (req, res) => {
+    const result = await sql.query("SELECT * FROM Service");
+    res.json(result.recordset);
+});
+
 app.get("/", (req, res) => {
     res.json({
         message: "API is working giorA",

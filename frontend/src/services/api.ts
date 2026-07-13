@@ -40,3 +40,32 @@ export async function getRackData() {
     return response.json();
 }
 
+export async function getDevicesData() {
+    const response = await fetch(`${API_URL}/devices`);
+
+    if (!response.ok) {
+        throw new Error("Failed Database Test Query");
+    }
+
+    return response.json();
+}
+
+export async function getVmsData() {
+    const response = await fetch(`${API_URL}/vms`);
+
+    if (!response.ok) {
+        throw new Error("Failed Database Test Query");
+    }
+
+    return response.json();
+}
+
+export async function getServicesData() {
+    const response = await fetch(`${API_URL}/services`);
+
+    if (!response.ok) {
+        throw new Error("Failed Database Test Query");
+    }
+
+    return response.json();
+}

@@ -21,7 +21,7 @@ function RoomsPage() {
                         <img
                             src={isListView ? roomViewIcon : listViewIcon}
                             alt={isListView ? "Room view" : "List view"}
-                            className="size-5 m:size-10 l:size-12"
+                            className="size-5 m:size-10 l:size-12 cursor-pointer"
                         />
                     </button>
                 </div>

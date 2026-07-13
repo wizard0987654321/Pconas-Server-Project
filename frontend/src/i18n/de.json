@@ -12,6 +12,15 @@
       "headingText": "Räume",
       "button": "zu den Racks",
       "cardHeading": "Raum"
+    },
+    "devices": {
+      "headingText": "Geräte"
+    },
+    "vms": {
+      "headingText": "virtuelle Maschinen"
+    },
+    "services": {
+      "headingText": "Leistungen"
     }
   },
   "nav": {

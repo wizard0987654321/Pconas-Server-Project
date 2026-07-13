@@ -12,6 +12,15 @@
       "headingText": "Server Rooms",
       "button": "View Racks",
       "cardHeading": "Room"
+    },
+    "devices": {
+      "headingText": "Devices"
+    },
+    "vms": {
+      "headingText": "Virtual Machines"
+    },
+    "services": {
+      "headingText": "Services"
     }
   },
   "nav": {

@@ -1,7 +1,11 @@
+import PageHeading from "../components/PageHeading";
+import ServerServices from "../components/ServerServices";
+
 function ServicesPage() {
     return (
         <div>
-            <h1>This is Services Page</h1>
+            <PageHeading heading="pages.services.headingText" />
+            <ServerServices />
         </div>
     )
 }

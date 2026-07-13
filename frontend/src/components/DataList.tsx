@@ -35,7 +35,7 @@ function DataList({ data }: DataListProps) {
                         {/* Mobile */}
                         <div className="l:hidden rounded-lg text-sm m:text-xl border-3 border-[#6ADBAF] p-4 space-y-2 bg-white">
                             {Object.entries(row).map(([key, value]) => (
-                                <div key={key} className="flex items-start">
+                                <div key={key} className="flex items-center">
                                     <span className="p-2 font-bold text-[#6ADBAF] shrink-0">
                                         {key}
                                     </span>

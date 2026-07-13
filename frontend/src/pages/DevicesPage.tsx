@@ -1,7 +1,11 @@
+import PageHeading from "../components/PageHeading";
+import ServerDevices from "../components/ServerDevices";
+
 function DevicesPage() {
     return (
         <div>
-            <h1>This is Devices Page</h1>
+            <PageHeading heading="pages.devices.headingText" />
+            <ServerDevices />
         </div>
     )
 }

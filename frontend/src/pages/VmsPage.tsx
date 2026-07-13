@@ -1,7 +1,11 @@
+import PageHeading from "../components/PageHeading";
+import ServerVms from "../components/ServerVms";
+
 function VmsPage() {
     return (
         <div>
-            <h1>This is VMs Page</h1>
+            <PageHeading heading="pages.vms.headingText" />
+            <ServerVms />
         </div>
     )
 }
