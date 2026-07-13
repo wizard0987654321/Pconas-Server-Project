@@ -2,6 +2,7 @@ import DataList from "./DataList";
 import { useEffect, useState, useMemo } from "react";
 import { getRoomData } from "../services/api";
 import type { Room } from "../types";
+import { transformData } from "../helpers/transformData";
 
 function ServerRoomList() {
 
@@ -10,7 +11,6 @@ function ServerRoomList() {
     useEffect(() => {
         getRoomData()
             .then((data) => {
-                console.log("API Response is sqlistvis rackdata:", data);
                 setRoomsData(data);
             })
             .catch((err) => {
@@ -18,13 +18,16 @@ function ServerRoomList() {
             });
     }, []);
 
-
     const displayData = useMemo(
         () =>
-            roomsData.map(({ HeightCm, ...rest }) => ({
-                ...rest,
-                "Height (CM)": HeightCm
-            })),
+            transformData(roomsData, {
+                omit: ["ID"],
+                rename: {
+                    Area: "pages.rooms.data.area",
+                    Capacity: "pages.rooms.data.capacity",
+                    HeightCm: "pages.rooms.data.height (cm)",
+                },
+            }),
         [roomsData]
     );
 
@@ -32,7 +35,7 @@ function ServerRoomList() {
         <>
             <DataList data={displayData} />
         </>
-    )
+    );
 }
 
 export default ServerRoomList;

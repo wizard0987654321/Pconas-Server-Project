@@ -8,7 +8,8 @@ export type Room = {
 export type Rack = {
     ID: number,
     RoomID: number,
-    Size: number;
+    UnitsSize: number,
+    HeightCm: number
 };
 
 export type Device = {

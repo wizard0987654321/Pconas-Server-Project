@@ -11,16 +11,55 @@
     "rooms": {
       "headingText": "Server Rooms",
       "button": "View Racks",
-      "cardHeading": "Room"
+      "cardHeading": "Room",
+      "data": {
+        "#": "#",
+        "area": "area",
+        "capacity": "Capacity",
+        "name": "name",
+        "height (cm)": "height (cm)"
+      }
+    },
+    "racks": {
+      "headingText": "Racks",
+      "data": {
+        "#": "#",
+        "room": "room",
+        "name": "name",
+        "size (u)": "size (u)",
+        "height (cm)": "height (cm)"
+      }
     },
     "devices": {
-      "headingText": "Devices"
+      "headingText": "Devices",
+      "data": {
+        "#": "#",
+        "type": "type",
+        "rack": "rack",
+        "name": "name",
+        "internal id": "internal id",
+        "from": "from",
+        "to": "to",
+        "electricity": "electricity",
+        "tor connected": "tor connected"
+      }
     },
     "vms": {
-      "headingText": "Virtual Machines"
+      "headingText": "Virtual Machines",
+      "data": {
+        "#": "#",
+        "service": "service",
+        "device": "device",
+        "name": "name"
+      }
     },
     "services": {
-      "headingText": "Services"
+      "headingText": "Services",
+      "data": {
+        "#": "#",
+        "customer": "customer",
+        "name": "name"
+      }
     }
   },
   "nav": {

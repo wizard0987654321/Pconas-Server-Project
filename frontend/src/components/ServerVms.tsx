@@ -1,28 +1,40 @@
 import DataList from "./DataList";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { getVmsData } from "../services/api";
 import type { VM } from "../types";
+import { transformData } from "../helpers/transformData";
 
 function ServerVms() {
 
-const [vmsData, setVmsData] = useState<VM[]>([]);
+    const [vmsData, setVmsData] = useState<VM[]>([]);
 
     useEffect(() => {
-            getVmsData()
-                .then((data) => {
-                    console.log("API Response is sqlistvis Devicedata:", data);
-                    setVmsData(data);
-                })
-                .catch((err) => {
-                    console.error("API error", err);
-                });
-        }, []);
+        getVmsData()
+            .then((data) => {
+                setVmsData(data);
+            })
+            .catch((err) => {
+                console.error("API error", err);
+            });
+    }, []);
+
+    const displayData = useMemo(
+        () =>
+            transformData(vmsData, {
+                omit: ["ID"],
+                rename: {
+                    ServiceID: "pages.vms.data.service",
+                    DeviceID: "pages.vms.data.device",
+                },
+            }),
+        [vmsData]
+    );
 
     return (
         <>
-            <DataList data={vmsData} />
+            <DataList data={displayData} />
         </>
-    )
+    );
 }
 
 export default ServerVms;

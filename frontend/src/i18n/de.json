@@ -11,16 +11,55 @@
     "rooms": {
       "headingText": "Räume",
       "button": "zu den Racks",
-      "cardHeading": "Raum"
+      "cardHeading": "Raum",
+      "data": {
+        "#": "#",
+        "name": "Name",
+        "area": "Fläche",
+        "capacity": "Kapazität",
+        "height (cm)": "Höhe (cm)"
+      }
+    },
+    "racks": {
+      "headingText": "Racks",
+      "data": {
+        "#": "#",
+        "room": "Raum",
+        "name": "Name",
+        "size (u)": "Größe (U)",
+        "height (cm)": "Höhe (cm)"
+      }
     },
     "devices": {
-      "headingText": "Geräte"
+      "headingText": "Geräte",
+      "data": {
+        "#": "#",
+        "type": "Typ",
+        "rack": "Rack",
+        "name": "Name",
+        "internal id": "Interne ID",
+        "from": "Von",
+        "to": "Bis",
+        "electricity": "Strom",
+        "tor connected": "TOR verbunden"
+      }
     },
     "vms": {
-      "headingText": "virtuelle Maschinen"
+      "headingText": "virtuelle Maschinen",
+      "data": {
+        "#": "#",
+        "service": "Service",
+        "device": "Gerät",
+        "name": "Name"
+      }
     },
     "services": {
-      "headingText": "Leistungen"
+      "headingText": "Leistungen",
+      "data": {
+        "#": "#",
+        "customer": "Kunde",
+        "name": "Name"
+      }
     }
   },
   "nav": {
