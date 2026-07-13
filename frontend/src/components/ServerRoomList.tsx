@@ -1,26 +1,36 @@
 import DataList from "./DataList";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { getRoomData } from "../services/api";
-import type { Rack } from "../types";
+import type { Room } from "../types";
 
 function ServerRoomList() {
 
-const [racksData, setRacksData] = useState<Rack[]>([]);
+    const [roomsData, setRoomsData] = useState<Room[]>([]);
 
     useEffect(() => {
-            getRoomData()
-                .then((data) => {
-                    console.log("API Response is sqlistvis rackdata:", data);
-                    setRacksData(data);
-                })
-                .catch((err) => {
-                    console.error("API error", err);
-                });
-        }, []);
+        getRoomData()
+            .then((data) => {
+                console.log("API Response is sqlistvis rackdata:", data);
+                setRoomsData(data);
+            })
+            .catch((err) => {
+                console.error("API error", err);
+            });
+    }, []);
+
+
+    const displayData = useMemo(
+        () =>
+            roomsData.map(({ HeightCm, ...rest }) => ({
+                ...rest,
+                "Height (CM)": HeightCm
+            })),
+        [roomsData]
+    );
 
     return (
         <>
-            <DataList data={racksData} />
+            <DataList data={displayData} />
         </>
     )
 }
