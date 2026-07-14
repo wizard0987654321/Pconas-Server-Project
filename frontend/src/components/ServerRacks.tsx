@@ -33,7 +33,6 @@ function ServerRacks({ roomId }: ServerRacksProps) {
     const displayData = useMemo(
         () =>
             transformData(filteredData, {
-                omit: ["ID"],
                 rename: {
                     RoomID: "pages.racks.data.room",
                     UnitsSize: "pages.racks.data.size (u)",
@@ -45,7 +44,8 @@ function ServerRacks({ roomId }: ServerRacksProps) {
 
     return (
         <>
-            <DataList data={displayData} />
+            {roomId && (<h1 className="font-mono font-bold text-xl m:text-2xl l:text-3xl xl:text-4xl">Room {roomId}</h1>)}
+            <DataList data={displayData} detailPath="/racks" detailLabel={"to the rack detailed view"} />
         </>
     );
 }

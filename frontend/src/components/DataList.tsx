@@ -1,19 +1,29 @@
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import PrimaryButton from "./buttons/PrimaryButton";
 
 type DataListProps = {
     data: Record<string, any>[];
+    detailPath?: string;
+    detailLabel?: string;
+    idField?: string; // defaults to "ID"
 };
 
-function DataList({ data }: DataListProps) {
+function DataList({ data, detailPath, detailLabel, idField = "ID" }: DataListProps) {
     const { t } = useTranslation();
+    const navigate = useNavigate();
 
     if (!data.length) return null;
 
-    const columns = Object.keys(data[0]);
+    const columns = Object.keys(data[0]).filter((key) => key !== idField);
+    const columnCount = columns.length + (detailPath ? 1 : 0);
 
-    // To make List grid dynamic
     const gridStyle = {
-        gridTemplateColumns: `repeat(${columns.length}, minmax(0, 1fr))`,
+        gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))`,
+    };
+
+    const handleViewDetails = (row: Record<string, any>) => {
+        navigate(`${detailPath}/${row[idField]}`);
     };
 
     return (
@@ -29,8 +39,8 @@ function DataList({ data }: DataListProps) {
                         {column === "#" ? "#" : t(column)}
                     </span>
                 ))}
+                {detailPath && <span className="px-3" />}
             </div>
-
 
             <div className="space-y-3 xl:space-y-0">
                 {data.map((row, index) => (
@@ -38,23 +48,29 @@ function DataList({ data }: DataListProps) {
 
                         {/* Mobile */}
                         <div className="xl:hidden rounded-lg text-sm m:text-xl border-3 border-[#6ADBAF] p-4 space-y-2 bg-white">
-                            {Object.entries(row).map(([key, value]) => (
+                            {columns.map((key) => (
                                 <div key={key} className="flex items-center">
                                     <span className="p-2 font-bold text-[#6ADBAF] shrink-0">
                                         {key === "#" ? "#" : t(key)}
                                     </span>
 
                                     <span className="ml-auto text-right break-words">
-                                        {value}
+                                        {row[key]}
                                     </span>
                                 </div>
                             ))}
-                        </div>
 
+                            {detailPath && (
+                                <PrimaryButton
+                                    label={detailLabel ?? t("common.viewDetails")}
+                                    onClick={() => handleViewDetails(row)}
+                                />
+                            )}
+                        </div>
 
                         {/* Desktop */}
                         <div
-                            className="hidden xl:grid py-5 m:text-lg border-b-2 border-[#6ADBAF]"
+                            className="hidden xl:grid py-5 m:text-lg border-b-2 border-[#6ADBAF] items-center"
                             style={gridStyle}
                         >
                             {columns.map((column) => (
@@ -62,6 +78,16 @@ function DataList({ data }: DataListProps) {
                                     {row[column]}
                                 </span>
                             ))}
+
+                            {detailPath && (
+                                <span className="p-1">
+                                    <PrimaryButton
+                                        label={detailLabel ?? t("common.viewDetails")}
+                                        onClick={() => handleViewDetails(row)}
+                                        margin={"my-0"}
+                                    />
+                                </span>
+                            )}
                         </div>
 
                     </div>

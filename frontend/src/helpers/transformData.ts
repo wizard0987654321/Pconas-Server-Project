@@ -17,7 +17,6 @@ export function transformData<T extends Record<string, any>>(
 
         Object.entries(item).forEach(([key, value]) => {
             if (omit.includes(key as keyof T)) return;
-
             const newKey = rename[key as keyof T] ?? key;
             result[newKey] = value;
         });

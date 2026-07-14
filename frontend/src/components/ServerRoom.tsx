@@ -83,7 +83,7 @@ function ServerRoom() {
                             ))}
                             {renderFreePlaces(room)}
                         </div>
-                        <PrimaryButton label={t("pages.rooms.button")} onClick={() => navigate(`/racks/${room.ID}`)} />
+                        <PrimaryButton label={t("pages.rooms.button")} onClick={() => navigate(`/rooms/${room.ID}/racks`)} />
                     </div>
                 </div>
             ))}
