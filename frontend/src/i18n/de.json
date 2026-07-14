@@ -41,7 +41,7 @@
         "from": "Von",
         "to": "Bis",
         "electricity": "Strom",
-        "tor connected": "TOR verbunden"
+        "tor connected": "TOR"
       }
     },
     "vms": {

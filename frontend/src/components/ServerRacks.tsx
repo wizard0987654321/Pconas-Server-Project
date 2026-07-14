@@ -4,7 +4,11 @@ import { getRackData } from "../services/api";
 import type { Rack } from "../types";
 import { transformData } from "../helpers/transformData";
 
-function ServerRacks() {
+type ServerRacksProps = {
+    roomId?: string;
+};
+
+function ServerRacks({ roomId }: ServerRacksProps) {
 
     const [racksData, setRacksData] = useState<Rack[]>([]);
 
@@ -18,9 +22,17 @@ function ServerRacks() {
             });
     }, []);
 
+    const filteredData = useMemo(
+        () =>
+            roomId
+                ? racksData.filter((rack) => String(rack.RoomID) === roomId)
+                : racksData,
+        [racksData, roomId]
+    );
+
     const displayData = useMemo(
         () =>
-            transformData(racksData, {
+            transformData(filteredData, {
                 omit: ["ID"],
                 rename: {
                     RoomID: "pages.racks.data.room",
@@ -28,7 +40,7 @@ function ServerRacks() {
                     HeightCm: "pages.racks.data.height (cm)",
                 },
             }),
-        [racksData]
+        [filteredData]
     );
 
     return (

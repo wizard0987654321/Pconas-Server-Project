@@ -1,6 +1,6 @@
 import serverIcon from "../assets/ServerIcon.svg"
 import buttonIcon from "../assets/AddButton.svg"
-import PrimaryButton from "./PrimaryButton";
+import PrimaryButton from "./buttons/PrimaryButton";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { getRoomData, getRackData } from "../services/api";
@@ -42,14 +42,14 @@ function ServerRoom() {
     };
 
 
-    // Free places button helper function
+    //Free places button helper function
     const renderFreePlaces = (room: Room) => {
-        // Count racks in this room
+        //Count racks in this room
         const occupied = racksData.filter(
             (rack) => rack.RoomID === room.ID
         ).length;
 
-        // Calculate free slots
+        //Calculate free slots
         const free = room.Capacity - occupied;
 
         const addButtonElements = [];
@@ -83,7 +83,7 @@ function ServerRoom() {
                             ))}
                             {renderFreePlaces(room)}
                         </div>
-                        <PrimaryButton label={t("pages.rooms.button")} onClick={() => navigate("/racks")} />
+                        <PrimaryButton label={t("pages.rooms.button")} onClick={() => navigate(`/racks/${room.ID}`)} />
                     </div>
                 </div>
             ))}

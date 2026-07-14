@@ -4,7 +4,7 @@ import "../App.css";
 import { getHealth, getRoomData, getTestMessage } from "../services/api";
 import { useNavigate } from "react-router-dom";
 import PageHeading from "../components/PageHeading";
-import PrimaryButton from "../components/PrimaryButton";
+import PrimaryButton from "../components/buttons/PrimaryButton";
 
 function Homepage() {
   const navigate = useNavigate();

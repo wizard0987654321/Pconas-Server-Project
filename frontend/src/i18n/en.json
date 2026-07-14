@@ -40,8 +40,8 @@
         "internal id": "internal id",
         "from": "from",
         "to": "to",
-        "electricity": "electricity",
-        "tor connected": "tor connected"
+        "electricity": "power",
+        "tor connected": "tor"
       }
     },
     "vms": {

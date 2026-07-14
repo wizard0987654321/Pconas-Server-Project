@@ -17,6 +17,7 @@ const routes = [
             { index: true, element: <Homepage /> },
             { path: 'rooms', element: <RoomsPage />},
             { path: 'racks', element: <RacksPage />},
+            { path: 'racks/:roomId', element: <RacksPage />},
             { path: 'devices', element: <DevicesPage />},
             { path: 'vms', element: <VmsPage />},
             { path: 'services', element: <ServicesPage />}

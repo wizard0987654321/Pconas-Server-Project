@@ -2,6 +2,7 @@ import ThemeToggle from "./ThemeToggle"
 import LanguageToggle from "./LanguageToggle"
 import logo from "../assets/pconasLogo.png"
 import { Link } from "react-router-dom"
+import SecondaryButton from "./buttons/SecondaryButton"
 
 function Header() {
     return (
