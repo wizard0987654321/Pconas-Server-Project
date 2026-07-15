@@ -21,18 +21,21 @@ export type Device = {
     PositionTo: number,
     ElectricityConnected: boolean,
     TORConnected: boolean
+    Manufacturer: string,
+    Usage: string
 }
 
 export type VM = {
     ID: number,
     ServiceID: number,
     DeviceID: number,
-    Name: string;
+    Name: string,
+    ServiceName: string
 }
 
 export type Service = {
     ID: number,
-    CustomerID: number,
+    Customer: string,
     Name: string;
 }
 

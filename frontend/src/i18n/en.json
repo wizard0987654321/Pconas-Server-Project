@@ -15,7 +15,7 @@
       "data": {
         "#": "#",
         "area": "area",
-        "capacity": "Capacity",
+        "capacity": "capacity",
         "name": "name",
         "height (cm)": "height (cm)"
       }
@@ -56,8 +56,8 @@
       "headingText": "Virtual Machines",
       "data": {
         "#": "#",
-        "service": "service",
-        "device": "device",
+        "service": "service name",
+        "device": "host device",
         "name": "name"
       }
     },
@@ -72,7 +72,7 @@
     "customers": {
       "headingText": "Customers",
       "data": {
-        "number": "Phone Number"
+        "number": "phone number"
       }
     }
   },

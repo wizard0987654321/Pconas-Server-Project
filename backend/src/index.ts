@@ -27,17 +27,17 @@ app.get("/deviceTypes", async (req, res) => {
 });
 
 app.get("/devices", async (req, res) => {
-    const result = await sql.query("SELECT * FROM Device");
+    const result = await sql.query("SELECT * FROM Device d JOIN DeviceType dt ON d.TypeID=dt.ID");
     res.json(result.recordset);
 });
 
 app.get("/vms", async (req, res) => {
-    const result = await sql.query("SELECT * FROM VM");
+    const result = await sql.query("SELECT v.ID, v.DeviceID, v.ServiceID, v.Name, s.Name AS ServiceName FROM VM v JOIN Service s ON v.ServiceID=s.ID");
     res.json(result.recordset);
 });
 
 app.get("/services", async (req, res) => {
-    const result = await sql.query("SELECT * FROM Service");
+    const result = await sql.query("SELECT s.ID, s.Name, c.Name AS Customer FROM Service s JOIN Customer c ON s.CustomerID=c.ID");
     res.json(result.recordset);
 });
 

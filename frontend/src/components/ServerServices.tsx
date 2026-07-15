@@ -23,7 +23,8 @@ function ServerServices() {
             transformData(servicesData, {
                 omit: ["ID"],
                 rename: {
-                    CustomerID: "pages.services.data.customer",
+                    Name: "pages.services.data.name",
+                    Customer: "pages.services.data.customer"
                 },
             }),
         [servicesData]

@@ -21,9 +21,9 @@ function ServerVms() {
     const displayData = useMemo(
         () =>
             transformData(vmsData, {
-                omit: ["ID"],
+                omit: ["ID", "ServiceID"],
                 rename: {
-                    ServiceID: "pages.vms.data.service",
+                    ServiceName: "pages.vms.data.service",
                     DeviceID: "pages.vms.data.device",
                 },
             }),

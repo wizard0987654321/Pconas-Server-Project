@@ -56,13 +56,13 @@
       "headingText": "virtuelle Maschinen",
       "data": {
         "#": "#",
-        "service": "Service",
-        "device": "Gerät",
+        "service": "Service Name",
+        "device": "Host Gerät",
         "name": "Name"
       }
     },
     "services": {
-      "headingText": "Leistungen",
+      "headingText": "Services",
       "data": {
         "#": "#",
         "customer": "Kunde",
