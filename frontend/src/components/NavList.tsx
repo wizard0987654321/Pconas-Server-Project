@@ -14,11 +14,15 @@ function NavList({ onItemClick }: Props) {
             <NavItemSeparation />
             <NavItem to="racks" label="nav.racks" onClick={onItemClick}/>
             <NavItemSeparation />
+            <NavItem to="deviceTypes" label="nav.deviceTypes" onClick={onItemClick}/>
+            <NavItemSeparation />
             <NavItem to="devices" label="nav.devices" onClick={onItemClick}/>
             <NavItemSeparation />
             <NavItem to="vms" label="nav.vms" onClick={onItemClick}/>
             <NavItemSeparation />
             <NavItem to="services" label="nav.services" onClick={onItemClick}/>
+            <NavItemSeparation />
+            <NavItem to="customers" label="nav.customers" onClick={onItemClick}/>
         </>
     );
 }

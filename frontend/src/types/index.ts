@@ -35,3 +35,16 @@ export type Service = {
     CustomerID: number,
     Name: string;
 }
+
+export type Customer = {
+    ID: number,
+    Name: string,
+    PhoneNumber: string
+}
+
+export type DeviceType = {
+    ID: number,
+    TypeName: string,
+    Manufacturer: string,
+    Usage: string
+}

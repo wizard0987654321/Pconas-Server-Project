@@ -21,6 +21,11 @@ app.get("/racks", async (req, res) => {
     res.json(result.recordset);
 });
 
+app.get("/deviceTypes", async (req, res) => {
+    const result = await sql.query("SELECT * FROM DeviceType");
+    res.json(result.recordset);
+});
+
 app.get("/devices", async (req, res) => {
     const result = await sql.query("SELECT * FROM Device");
     res.json(result.recordset);
@@ -33,6 +38,11 @@ app.get("/vms", async (req, res) => {
 
 app.get("/services", async (req, res) => {
     const result = await sql.query("SELECT * FROM Service");
+    res.json(result.recordset);
+});
+
+app.get("/customers", async (req, res) => {
+    const result = await sql.query("SELECT * FROM Customer");
     res.json(result.recordset);
 });
 

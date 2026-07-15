@@ -10,7 +10,6 @@ function DesktopSidebar() {
                         border-4 border-[#6ADBAF] dark:border-[#3f8c6f]
                         h-[80vh]
                         xl:h-[60vh]
-                        2xl:h-[50vh]
                         w-[20vw]
                         rounded-r-[0.75rem] rounded-l-none
                         xs:scale-100

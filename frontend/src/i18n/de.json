@@ -30,6 +30,14 @@
         "height (cm)": "Höhe (cm)"
       }
     },
+    "deviceTypes": {
+      "headingText": "Gerätetypen",
+      "data": {
+        "typeName": "Name",
+        "manufacturer": "Hersteller",
+        "usage": "Nutzung"
+      }
+    },
     "devices": {
       "headingText": "Geräte",
       "data": {
@@ -60,15 +68,23 @@
         "customer": "Kunde",
         "name": "Name"
       }
+    },
+    "customers": {
+      "headingText": "Kunden",
+      "data": {
+        "number": "Telefonnummer"
+      }
     }
   },
   "nav": {
     "home": "Startseite",
     "rooms": "Räume",
     "racks": "Racks",
+    "deviceTypes": "Gerätetypen",
     "devices": "Geräte",
     "vms": "VMs",
-    "services": "Leistungen"
+    "services": "Leistungen",
+    "customers": "Kunden"
   },
   "error": {
     "errorMessage": "Das ist Error"

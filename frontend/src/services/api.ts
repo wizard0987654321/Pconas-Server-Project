@@ -69,3 +69,23 @@ export async function getServicesData() {
 
     return response.json();
 }
+
+export async function getCustomersData() {
+    const response = await fetch(`${API_URL}/customers`);
+
+    if (!response.ok) {
+        throw new Error("Failed Database Test Query");
+    }
+
+    return response.json();
+}
+
+export async function getDeviceTypesData() {
+    const response = await fetch(`${API_URL}/deviceTypes`);
+
+    if (!response.ok) {
+        throw new Error("Failed Database Test Query");
+    }
+
+    return response.json();
+}
