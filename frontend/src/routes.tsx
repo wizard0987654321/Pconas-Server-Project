@@ -1,6 +1,6 @@
 import Homepage from "./pages/Homepage";
 import ErrorPage from "./pages/ErrorPage";
-import Navigation from "./pages/Navigation";
+import Navigation from "./components/navComponents/Navigation";
 import DevicesPage from "./pages/DevicesPage";
 import RoomsPage from "./pages/RoomsPage";
 import RacksPage from "./pages/RacksPage";

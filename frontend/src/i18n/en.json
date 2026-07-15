@@ -28,7 +28,8 @@
         "name": "name",
         "size (u)": "size (u)",
         "height (cm)": "height (cm)"
-      }
+      },
+      "button": "to the rack detailed view"
     },
     "deviceTypes": {
       "headingText": "Device Types",

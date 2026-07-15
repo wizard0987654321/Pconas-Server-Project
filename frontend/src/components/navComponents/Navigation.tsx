@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
-import Header from "../components/Header";
-import DesktopSidebar from "../components/DesktopSidebar";
-import MobileSidebar from "../components/MobileSidebar";
+import Header from "../Header";
+import DesktopSidebar from "../sidebars/DesktopSidebar";
+import MobileSidebar from "../sidebars/MobileSidebar";
 
 function Navigation() {
     const [isOpen, setIsOpen] = useState(false);

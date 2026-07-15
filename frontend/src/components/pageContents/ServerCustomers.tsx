@@ -1,8 +1,8 @@
-import DataList from "./DataList";
+import DataList from "../DataList";
 import { useEffect, useState, useMemo } from "react";
-import { getCustomersData } from "../services/api";
-import type { Customer } from "../types";
-import { transformData } from "../helpers/transformData";
+import { getCustomersData } from "../../services/api";
+import type { Customer } from "../../types";
+import { transformData } from "../../helpers/transformData";
 
 function ServerCustomers() {
 

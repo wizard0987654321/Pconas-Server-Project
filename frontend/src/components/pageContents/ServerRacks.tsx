@@ -1,8 +1,8 @@
-import DataList from "./DataList";
+import DataList from "../DataList";
 import { useEffect, useState, useMemo } from "react";
-import { getRackData } from "../services/api";
-import type { Rack } from "../types";
-import { transformData } from "../helpers/transformData";
+import { getRackData } from "../../services/api";
+import type { Rack } from "../../types";
+import { transformData } from "../../helpers/transformData";
 
 type ServerRacksProps = {
     roomId?: string;
@@ -45,7 +45,7 @@ function ServerRacks({ roomId }: ServerRacksProps) {
     return (
         <>
             {roomId && (<h1 className="font-mono font-bold text-xl m:text-2xl l:text-3xl xl:text-4xl">Room {roomId}</h1>)}
-            <DataList data={displayData} detailPath="/racks" detailLabel={"to the rack detailed view"} />
+            <DataList data={displayData} detailPath="/racks" detailLabel={"pages.racks.button"} />
         </>
     );
 }

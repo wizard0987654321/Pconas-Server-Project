@@ -1,5 +1,5 @@
 import PageHeading from "../components/PageHeading";
-import ServerVms from "../components/ServerVms";
+import ServerVms from "../components/pageContents/ServerVms";
 
 function VmsPage() {
     return (

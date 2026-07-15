@@ -1,8 +1,8 @@
-import DataList from "./DataList";
+import DataList from "../DataList";
 import { useEffect, useState, useMemo } from "react";
-import { getDeviceTypesData } from "../services/api";
-import type { DeviceType } from "../types";
-import { transformData } from "../helpers/transformData";
+import { getDeviceTypesData } from "../../services/api";
+import type { DeviceType } from "../../types";
+import { transformData } from "../../helpers/transformData";
 
 function ServerDeviceTypes() {
 

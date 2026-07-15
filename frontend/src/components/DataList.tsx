@@ -62,7 +62,7 @@ function DataList({ data, detailPath, detailLabel, idField = "ID" }: DataListPro
 
                             {detailPath && (
                                 <PrimaryButton
-                                    label={detailLabel ?? t("common.viewDetails")}
+                                    label={detailLabel ? t(detailLabel) : t("common.viewDetails")}
                                     onClick={() => handleViewDetails(row)}
                                 />
                             )}
@@ -82,9 +82,9 @@ function DataList({ data, detailPath, detailLabel, idField = "ID" }: DataListPro
                             {detailPath && (
                                 <span className="p-1">
                                     <PrimaryButton
-                                        label={detailLabel ?? t("common.viewDetails")}
+                                        label={detailLabel ? t(detailLabel) : t("common.viewDetails")}
                                         onClick={() => handleViewDetails(row)}
-                                        margin={"my-0"}
+                                        margin="my-0"
                                     />
                                 </span>
                             )}

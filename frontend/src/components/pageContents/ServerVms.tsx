@@ -1,8 +1,8 @@
-import DataList from "./DataList";
+import DataList from "../DataList";
 import { useEffect, useState, useMemo } from "react";
-import { getVmsData } from "../services/api";
-import type { VM } from "../types";
-import { transformData } from "../helpers/transformData";
+import { getVmsData } from "../../services/api";
+import type { VM } from "../../types";
+import { transformData } from "../../helpers/transformData";
 
 function ServerVms() {
 

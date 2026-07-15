@@ -1,4 +1,4 @@
-import NavList from "./NavList";
+import NavList from "../navComponents/NavList";
 
 function DesktopSidebar() {
     return (

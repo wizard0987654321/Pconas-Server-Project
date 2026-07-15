@@ -1,4 +1,4 @@
-import ServerRacks from "../components/ServerRacks";
+import ServerRacks from "../components/pageContents/ServerRacks";
 import PageHeading from "../components/PageHeading";
 import { useParams } from "react-router-dom";
 

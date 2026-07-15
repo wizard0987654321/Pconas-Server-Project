@@ -1,5 +1,5 @@
-import ThemeToggle from "./ThemeToggle"
-import LanguageToggle from "./LanguageToggle"
+import ThemeToggle from "./toggleButtons/ThemeToggle"
+import LanguageToggle from "./toggleButtons/LanguageToggle"
 import logo from "../assets/pconasLogo.png"
 import { Link } from "react-router-dom"
 

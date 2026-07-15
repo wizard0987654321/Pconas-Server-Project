@@ -1,5 +1,5 @@
 import PageHeading from "../components/PageHeading";
-import ServerDeviceTypes from "../components/ServerDeviceTypes";
+import ServerDeviceTypes from "../components/pageContents/ServerDeviceTypes";
 
 
 function DeviceTypesPage() {

@@ -1,8 +1,8 @@
-import DataList from "./DataList";
+import DataList from "../DataList";
 import { useEffect, useState, useMemo } from "react";
-import { getRoomData } from "../services/api";
-import type { Room } from "../types";
-import { transformData } from "../helpers/transformData";
+import { getRoomData } from "../../services/api";
+import type { Room } from "../../types";
+import { transformData } from "../../helpers/transformData";
 
 function ServerRoomList() {
 

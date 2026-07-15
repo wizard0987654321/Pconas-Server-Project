@@ -1,5 +1,5 @@
 import PageHeading from "../components/PageHeading";
-import ServerServices from "../components/ServerServices";
+import ServerServices from "../components/pageContents/ServerServices";
 
 function ServicesPage() {
     return (

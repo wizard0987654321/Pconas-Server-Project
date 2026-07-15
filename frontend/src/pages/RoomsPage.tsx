@@ -1,7 +1,7 @@
 import { useState } from "react";
 import PageHeading from "../components/PageHeading";
-import ServerRoom from "../components/ServerRoom";
-import ServerRoomList from "../components/ServerRoomList";
+import ServerRoom from "../components/pageContents/ServerRoom";
+import ServerRoomList from "../components/pageContents/ServerRoomList";
 import listViewIcon from "../assets/listView.svg";
 import roomViewIcon from "../assets/roomView.svg";
 

@@ -28,7 +28,8 @@
         "name": "Name",
         "size (u)": "Größe (U)",
         "height (cm)": "Höhe (cm)"
-      }
+      },
+      "button": "Zur Rack-Detailansicht"
     },
     "deviceTypes": {
       "headingText": "Gerätetypen",
@@ -83,7 +84,7 @@
     "deviceTypes": "Gerätetypen",
     "devices": "Geräte",
     "vms": "VMs",
-    "services": "Leistungen",
+    "services": "Services",
     "customers": "Kunden"
   },
   "error": {

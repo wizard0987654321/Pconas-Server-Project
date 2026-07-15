@@ -1,5 +1,5 @@
 import PageHeading from "../components/PageHeading";
-import ServerCustomers from "../components/ServerCustomers";
+import ServerCustomers from "../components/pageContents/ServerCustomers";
 
 function CustomersPage() {
     return (

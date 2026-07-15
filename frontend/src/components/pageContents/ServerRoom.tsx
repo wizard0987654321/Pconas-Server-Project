@@ -1,11 +1,11 @@
-import serverIcon from "../assets/ServerIcon.svg"
-import buttonIcon from "../assets/AddButton.svg"
-import PrimaryButton from "./buttons/PrimaryButton";
+import serverIcon from "../../assets/ServerIcon.svg"
+import buttonIcon from "../../assets/AddButton.svg"
+import PrimaryButton from "../buttons/PrimaryButton";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { getRoomData, getRackData } from "../services/api";
+import { getRoomData, getRackData } from "../../services/api";
 import { useState, useEffect } from "react";
-import type { Room, Rack } from "../types";
+import type { Room, Rack } from "../../types";
 
 
 function ServerRoom() {
