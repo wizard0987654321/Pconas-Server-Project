@@ -4,16 +4,25 @@ import ServerRoom from "../components/pageContents/ServerRoom";
 import ServerRoomList from "../components/pageContents/ServerRoomList";
 import listViewIcon from "../assets/listView.svg";
 import roomViewIcon from "../assets/roomView.svg";
+import PrimaryButton from "../components/buttons/PrimaryButton";
+import AddRoomModal from "../components/overlays/AddRoomOverlay";
 
 function RoomsPage() {
     const [isListView, setIsListView] = useState(false);
+
+    const [isAddRoomOpen, setIsAddRoomOpen] = useState(false);
+
+    const handleAddRoom = () => {
+        setIsAddRoomOpen(true);
+    };
 
     return (
         <>
             <div className="flex flex-row justify-center flex-wrap items-center p-4 w-full">
                 <PageHeading heading="pages.rooms.headingText" />
 
-                <div className="w-full flex justify-end m-4">
+                <div className="w-full flex justify-between m-4">
+                    <PrimaryButton label="Add Room" onClick={handleAddRoom} margin="m-1" />
                     <button
                         onClick={() => setIsListView(!isListView)}
                         className="p-2 rounded border border-2 border-[#6ADBAF]"
@@ -28,6 +37,12 @@ function RoomsPage() {
 
                 {isListView ? <ServerRoomList /> : <ServerRoom />}
             </div>
+            {/* Modal */}
+            {isAddRoomOpen && (
+                <AddRoomModal
+                    onClose={() => setIsAddRoomOpen(false)}
+                />
+            )}
         </>
     );
 }
