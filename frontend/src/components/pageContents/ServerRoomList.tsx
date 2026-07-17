@@ -1,27 +1,18 @@
 import DataList from "../DataList";
-import { useEffect, useState, useMemo } from "react";
-import { getRoomData } from "../../services/api";
-import type { Room } from "../../types";
+import { useState, useMemo } from "react";
 import { transformData } from "../../helpers/transformData";
+import { useRooms } from "../../helpers/hooks/roomOperations";
+import DeletingOverlay from "../overlays/DeletingOverlay";
 
 function ServerRoomList() {
 
-    const [roomsData, setRoomsData] = useState<Room[]>([]);
+    const { roomsData, deleteRoom } = useRooms();
 
-    useEffect(() => {
-        getRoomData()
-            .then((data) => {
-                setRoomsData(data);
-            })
-            .catch((err) => {
-                console.error("API error", err);
-            });
-    }, []);
+    const [roomToDelete, setRoomToDelete] = useState<number | null>(null);
 
     const displayData = useMemo(
         () =>
             transformData(roomsData, {
-                omit: ["ID"],
                 rename: {
                     Area: "pages.rooms.data.area",
                     Capacity: "pages.rooms.data.capacity",
@@ -33,7 +24,20 @@ function ServerRoomList() {
 
     return (
         <>
-            <DataList data={displayData} />
+            {roomToDelete !== null && (
+                <DeletingOverlay
+                    onCancel={() => setRoomToDelete(null)}
+                    onConfirm={() => {
+                        deleteRoom(roomToDelete);
+                        setRoomToDelete(null);
+                    }}
+                />
+            )}
+
+            <DataList
+                data={displayData}
+                onDelete={(id: number) => setRoomToDelete(id)}
+            />
         </>
     );
 }

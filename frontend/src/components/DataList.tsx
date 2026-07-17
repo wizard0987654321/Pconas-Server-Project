@@ -1,22 +1,24 @@
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import PrimaryButton from "./buttons/PrimaryButton";
+import DeleteButton from "./buttons/DeleteButton";
 
 type DataListProps = {
     data: Record<string, any>[];
     detailPath?: string;
     detailLabel?: string;
     idField?: string; // defaults to "ID"
+    onDelete?: (id: number) => void;
 };
 
-function DataList({ data, detailPath, detailLabel, idField = "ID" }: DataListProps) {
+function DataList({ data, detailPath, detailLabel, idField = "ID", onDelete }: DataListProps) {
     const { t } = useTranslation();
     const navigate = useNavigate();
 
     if (!data.length) return null;
 
     const columns = Object.keys(data[0]).filter((key) => key !== idField);
-    const columnCount = columns.length + (detailPath ? 1 : 0);
+    const columnCount = columns.length + (detailPath ? 1 : 0) + 1; // +1 for delete button
 
     const gridStyle = {
         gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))`,
@@ -25,6 +27,12 @@ function DataList({ data, detailPath, detailLabel, idField = "ID" }: DataListPro
     const handleViewDetails = (row: Record<string, any>) => {
         navigate(`${detailPath}/${row[idField]}`);
     };
+
+    const handleDelete = (row: Record<string, any>) => {
+    if (onDelete) {
+        onDelete(row[idField]);
+    }
+};
 
     return (
         <div className="w-full rounded-xl p-3 s:p-8 lg:p-10 font-mono">
@@ -39,7 +47,9 @@ function DataList({ data, detailPath, detailLabel, idField = "ID" }: DataListPro
                         {column === "#" ? "#" : t(column)}
                     </span>
                 ))}
+
                 {detailPath && <span className="px-3" />}
+                <span className="px-3" />
             </div>
 
             <div className="space-y-3 xl:space-y-0">
@@ -66,7 +76,13 @@ function DataList({ data, detailPath, detailLabel, idField = "ID" }: DataListPro
                                     onClick={() => handleViewDetails(row)}
                                 />
                             )}
+
+                            <DeleteButton
+                                label="Delete"
+                                onClick={() => handleDelete(row)}
+                            />
                         </div>
+
 
                         {/* Desktop */}
                         <div
@@ -88,6 +104,13 @@ function DataList({ data, detailPath, detailLabel, idField = "ID" }: DataListPro
                                     />
                                 </span>
                             )}
+
+                            <span className="p-1">
+                                <DeleteButton
+                                    label="Delete"
+                                    onClick={() => handleDelete(row)}
+                                />
+                            </span>
                         </div>
 
                     </div>

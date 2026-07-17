@@ -3,28 +3,22 @@ import buttonIcon from "../../assets/AddButton.svg"
 import PrimaryButton from "../buttons/PrimaryButton";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { getRoomData, getRackData } from "../../services/api";
+import { getRackData } from "../../services/api";
 import { useState, useEffect } from "react";
 import type { Room, Rack } from "../../types";
+import DeleteButton from "../buttons/DeleteButton";
+import DeletingOverlay from "../overlays/DeletingOverlay";
+import { useRooms } from "../../helpers/hooks/roomOperations";
 
 
 function ServerRoom() {
     const navigate = useNavigate();
     const { t } = useTranslation();
 
-    const [roomsData, setroomsData] = useState<Room[]>([]);
+    const { roomsData, deleteRoom } = useRooms();
     const [racksData, setRacksData] = useState<Rack[]>([]);
 
-    useEffect(() => {
-        getRoomData()
-            .then((data) => {
-                console.log("API Response is sqlistvis roomdata:", data);
-                setroomsData(data);
-            })
-            .catch((err) => {
-                console.error("API error", err);
-            });
-    }, []);
+    const [roomToDelete, setRoomToDelete] = useState<number | null>(null);
 
     useEffect(() => {
         getRackData()
@@ -64,11 +58,22 @@ function ServerRoom() {
         return addButtonElements;
     };
 
+
     return (
         <>
-            {roomsData.map((room) => (
+            {roomToDelete !== null && (
+                <DeletingOverlay
+                    onCancel={() => setRoomToDelete(null)}
+                    onConfirm={() => {
+                        deleteRoom(roomToDelete);
+                        setRoomToDelete(null);
+                    }}
+                />
+            )}
+
+            {roomsData.map((room, index) => (
                 <div key={room.ID} className="flex flex-col items-center p-4">
-                    <h1 className="font-mono font-bold text-xl xs:text-2xl s:text-3xl">{t("pages.rooms.cardHeading")} {room.ID}</h1>
+                    <h1 className="font-mono font-bold text-xl xs:text-2xl s:text-3xl">{t("pages.rooms.cardHeading")} {index + 1}</h1>
                     <div className="flex flex-col items-center border-4 border-solid border-[#6ADBAF] rounded-[10px]">
                         <div
                             className="grid grid-rows-2"
@@ -83,7 +88,13 @@ function ServerRoom() {
                             ))}
                             {renderFreePlaces(room)}
                         </div>
+
                         <PrimaryButton label={t("pages.rooms.button")} onClick={() => navigate(`/rooms/${room.ID}/racks`)} />
+
+                        <DeleteButton
+                            label={t("pages.rooms.deleteButton")}
+                            onClick={() => setRoomToDelete(room.ID)}
+                        />
                     </div>
                 </div>
             ))}

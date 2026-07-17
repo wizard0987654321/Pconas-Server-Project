@@ -21,7 +21,7 @@ function ServerDevices() {
     const displayData = useMemo(
         () =>
             transformData(devicesData, {
-                omit: ["ID","TypeID", "Manufacturer", "Usage"],
+                omit: ["TypeID", "Manufacturer", "Usage"],
                 rename: {
                     TypeID: "pages.devices.data.type",
                     RackID: "pages.devices.data.rack",

@@ -21,7 +21,6 @@ function ServerCustomers() {
     const displayData = useMemo(
         () =>
             transformData(customersData, {
-                omit: ["ID"],
                 rename: {
                     PhoneNumber: "pages.customers.data.number"
                 },

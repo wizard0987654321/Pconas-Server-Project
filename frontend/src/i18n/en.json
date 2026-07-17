@@ -10,7 +10,9 @@
     },
     "rooms": {
       "headingText": "Server Rooms",
-      "button": "View Racks",
+      "addButton": "add room",
+      "deleteButton": "delete room",
+      "button": "view racks",
       "cardHeading": "Room",
       "data": {
         "#": "#",

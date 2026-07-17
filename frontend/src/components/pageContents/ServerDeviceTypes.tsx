@@ -21,7 +21,6 @@ function ServerDeviceTypes() {
     const displayData = useMemo(
         () =>
             transformData(deviceTypesData, {
-                omit: ["ID"],
                 rename: {
                     TypeName: "pages.deviceTypes.data.typeName",
                     Manufacturer: "pages.deviceTypes.data.manufacturer",

@@ -58,6 +58,36 @@ app.get("/testUrl", (req, res) => {
     });
 });
 
+// post operations
+
+app.post('/addRoom', async (req, res) => {
+  const { newRoom } = req.body
+
+  try {
+    await sql.query(`INSERT INTO Room (Area, Capacity, HeightCm) VALUES (${newRoom.area}, ${newRoom.capacity}, ${newRoom.heightcm})`)
+    res.json({ message: 'new Room added' })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to add new Room' })
+  }
+})
+
+// delete operations
+
+app.delete("/deleteRoom/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await sql.query(`
+      DELETE FROM Room
+      WHERE ID = ${id}
+    `);
+
+    res.json({ message: "Room deleted successfully", id });
+  } catch (error) {
+    console.error("Delete room error:", error);
+    res.status(500).json({ error: "Failed to delete room" });
+  }
+});
 
 const PORT = process.env.PORT || 5000;
 

@@ -6,10 +6,12 @@ import listViewIcon from "../assets/listView.svg";
 import roomViewIcon from "../assets/roomView.svg";
 import PrimaryButton from "../components/buttons/PrimaryButton";
 import AddRoomModal from "../components/overlays/AddRoomOverlay";
+import { useTranslation } from "react-i18next";
 
 function RoomsPage() {
-    const [isListView, setIsListView] = useState(false);
+    const { t } = useTranslation();
 
+    const [isListView, setIsListView] = useState(false);
     const [isAddRoomOpen, setIsAddRoomOpen] = useState(false);
 
     const handleAddRoom = () => {
@@ -22,7 +24,7 @@ function RoomsPage() {
                 <PageHeading heading="pages.rooms.headingText" />
 
                 <div className="w-full flex justify-between m-4">
-                    <PrimaryButton label="Add Room" onClick={handleAddRoom} margin="m-1" />
+                    <PrimaryButton label={t("pages.rooms.addButton")} onClick={handleAddRoom} margin="m-1" />
                     <button
                         onClick={() => setIsListView(!isListView)}
                         className="p-2 rounded border border-2 border-[#6ADBAF]"

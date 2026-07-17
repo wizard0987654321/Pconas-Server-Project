@@ -10,6 +10,8 @@
     },
     "rooms": {
       "headingText": "Räume",
+      "addButton": "Raum hinzufügen",
+      "deleteButton": "Raum löschen",
       "button": "zu den Racks",
       "cardHeading": "Raum",
       "data": {
