@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { useState } from "react";
 import AddRackOverlay from "../components/overlays/AddRackOverlay";
 import PrimaryButton from "../components/buttons/PrimaryButton";
-import { getRoomData, getRackData } from "../services/api";
+import { getRackData } from "../services/api";
 
 
 function RacksPage() {

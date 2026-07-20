@@ -124,3 +124,33 @@ export async function deleteRack(id: number) {
     return response.json();
 }
 
+export async function deleteDeviceType(id: number) {
+    const response = await fetch(`${API_URL}/deleteDeviceType/${id}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to delete device type");
+    }
+
+    return response.json();
+}
+
+export async function deleteDevice(id: number) {
+    const response = await fetch(`${API_URL}/deleteDevice/${id}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to delete device");
+    }
+
+    return response.json();
+}
+

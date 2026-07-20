@@ -49,7 +49,23 @@ app.get("/deviceTypes", async (req, res) => {
 });
 
 app.get("/devices", async (req, res) => {
-  const result = await sql.query("SELECT * FROM Device d JOIN DeviceType dt ON d.TypeID=dt.ID");
+  const result = await sql.query(`
+    SELECT
+      d.ID,
+      d.TypeID,
+      d.RackID,
+      d.InternalID,
+      d.PositionFrom,
+      d.PositionTo,
+      d.ElectricityConnected,
+      d.TORConnected,
+      dt.TypeName,
+      dt.Manufacturer,
+      dt.Usage,
+      dt.ID AS DeviceTypeID
+    FROM Device d
+    JOIN DeviceType dt ON d.TypeID = dt.ID
+  `);
   res.json(result.recordset);
 });
 
@@ -104,6 +120,52 @@ app.post('/addRack', async (req, res) => {
   }
 })
 
+app.post('/addDeviceType', async (req, res) => {
+  const { newDeviceType } = req.body
+
+  try {
+    const request = new sql.Request();
+
+    await request
+      .input('typeName', sql.NVarChar, newDeviceType.typeName)
+      .input('manufacturer', sql.NVarChar, newDeviceType.manufacturer)
+      .input('usage', sql.NVarChar, newDeviceType.usage)
+      .query(`INSERT INTO DeviceType (TypeName, Manufacturer, Usage) VALUES (@typeName, @manufacturer, @usage)`)
+
+    res.json({ message: 'new Device Type added' })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to add new Device Type' })
+  }
+})
+
+app.post('/addDevice', async (req, res) => {
+  const { newDevice } = req.body
+
+  try {
+    await sql.query`
+    INSERT INTO Device (
+        TypeID,
+        RackID,
+        InternalID,
+        PositionFrom,
+        PositionTo,
+        ElectricityConnected,
+        TORConnected
+    )
+    VALUES (
+        ${newDevice.typeId},
+        ${newDevice.rackId},
+        ${newDevice.internalId},
+        ${newDevice.positionFrom},
+        ${newDevice.positionTo},
+        ${newDevice.electricityConnected},
+        ${newDevice.torConnected}
+    )`; 
+    res.json({ message: 'new Device added' })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to add new Device' })
+  }
+})
 
 // delete operations
 
@@ -136,6 +198,38 @@ app.delete("/deleteRack/:id", async (req, res) => {
   } catch (error) {
     console.error("Delete rack error:", error);
     res.status(500).json({ error: "Failed to delete rack" });
+  }
+});
+
+app.delete("/deleteDeviceType/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await sql.query(`
+      DELETE FROM DeviceType
+      WHERE ID = ${id}
+    `);
+
+    res.json({ message: "Device Type deleted successfully", id });
+  } catch (error) {
+    console.error("Delete device type error:", error);
+    res.status(500).json({ error: "Failed to delete device type" });
+  }
+});
+
+app.delete("/deleteDevice/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await sql.query(`
+      DELETE FROM Device
+      WHERE ID = ${id}
+    `);
+
+    res.json({ message: "Device deleted successfully", id });
+  } catch (error) {
+    console.error("Delete device error:", error);
+    res.status(500).json({ error: "Failed to delete device" });
   }
 });
 

@@ -1,22 +1,13 @@
 import DataList from "../DataList";
-import { useEffect, useState, useMemo } from "react";
-import { getDeviceTypesData } from "../../services/api";
-import type { DeviceType } from "../../types";
+import { useMemo, useState } from "react";
 import { transformData } from "../../helpers/transformData";
+import { useDeviceTypes } from "../../helpers/hooks/deviceTypeOperations";
+import DeletingOverlay from "../overlays/DeletingOverlay";
 
 function ServerDeviceTypes() {
+    const { deviceTypesData, deleteDeviceType } = useDeviceTypes();
 
-    const [deviceTypesData, setDeviceTypesData] = useState<DeviceType[]>([]);
-
-    useEffect(() => {
-        getDeviceTypesData()
-            .then((data) => {
-                setDeviceTypesData(data);
-            })
-            .catch((err) => {
-                console.error("API error", err);
-            });
-    }, []);
+    const [deviceTypeToDelete, setDeviceTypeToDelete] = useState<number | null>(null);
 
     const displayData = useMemo(
         () =>
@@ -24,7 +15,7 @@ function ServerDeviceTypes() {
                 rename: {
                     TypeName: "pages.deviceTypes.data.typeName",
                     Manufacturer: "pages.deviceTypes.data.manufacturer",
-                    Usage: "pages.deviceTypes.data.usage"
+                    Usage: "pages.deviceTypes.data.usage",
                 },
             }),
         [deviceTypesData]
@@ -32,7 +23,20 @@ function ServerDeviceTypes() {
 
     return (
         <>
-            <DataList data={displayData} />
+            {deviceTypeToDelete !== null && (
+                <DeletingOverlay
+                    onCancel={() => setDeviceTypeToDelete(null)}
+                    onConfirm={() => {
+                        deleteDeviceType(deviceTypeToDelete);
+                        setDeviceTypeToDelete(null);
+                    }}
+                />
+            )}
+
+            <DataList
+                data={displayData}
+                onDelete={(id: number) => setDeviceTypeToDelete(id)}
+            />
         </>
     );
 }

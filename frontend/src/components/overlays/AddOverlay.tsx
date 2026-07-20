@@ -66,6 +66,8 @@ function AddOverlay({
         } catch (error) {
             console.error(error);
         }
+
+        console.log(data)
     };
 
 

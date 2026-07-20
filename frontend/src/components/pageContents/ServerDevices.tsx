@@ -1,26 +1,18 @@
 import DataList from "../DataList";
-import { useEffect, useState, useMemo } from "react";
-import { getDevicesData } from "../../services/api";
-import type { Device } from "../../types";
+import { useMemo, useState } from "react";
 import { transformData } from "../../helpers/transformData";
+import { useDevice } from "../../helpers/hooks/deviceOperations";
+import DeletingOverlay from "../overlays/DeletingOverlay";
 
 function ServerDevices() {
 
-    const [devicesData, setDevicesData] = useState<Device[]>([]);
+    const { deviceData, deleteDevice } = useDevice();
 
-    useEffect(() => {
-        getDevicesData()
-            .then((data) => {
-                setDevicesData(data);
-            })
-            .catch((err) => {
-                console.error("API error", err);
-            });
-    }, []);
+    const [deviceToDelete, setDeviceToDelete] = useState<number | null>(null);
 
     const displayData = useMemo(
         () =>
-            transformData(devicesData, {
+            transformData(deviceData, {
                 omit: ["TypeID", "Manufacturer", "Usage"],
                 rename: {
                     TypeID: "pages.devices.data.type",
@@ -32,12 +24,22 @@ function ServerDevices() {
                     TORConnected: "pages.devices.data.tor connected",
                 },
             }),
-        [devicesData]
+        [deviceData]
     );
 
     return (
         <>
-            <DataList data={displayData} />
+        {deviceToDelete !== null && (
+                <DeletingOverlay
+                    onCancel={() => setDeviceToDelete(null)}
+                    onConfirm={() => {
+                        deleteDevice(deviceToDelete);
+                        setDeviceToDelete(null);
+                    }}
+                />
+            )}
+            <DataList data={displayData} 
+            onDelete={(id: number) => setDeviceToDelete(id)} />
         </>
     );
 }

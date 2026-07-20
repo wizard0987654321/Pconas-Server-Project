@@ -18,6 +18,7 @@ export type Device = {
     ID: number,
     DeviceNumber:number,
     TypeID: number,
+    TypeName: string,
     RackID: number,
     InternalID: string,
     PositionFrom: number,
