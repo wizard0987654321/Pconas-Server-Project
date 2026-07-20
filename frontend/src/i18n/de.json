@@ -57,6 +57,7 @@
     },
     "vms": {
       "headingText": "virtuelle Maschinen",
+      "addButton": "VM hinzufügen",
       "data": {
         "#": "#",
         "service": "Service Name",
@@ -66,6 +67,7 @@
     },
     "services": {
       "headingText": "Services",
+      "addButton": "Service hinzufügen",
       "data": {
         "#": "#",
         "customer": "Kunde",
@@ -74,6 +76,7 @@
     },
     "customers": {
       "headingText": "Kunden",
+      "addButton": "Kunde hinzufügen",
       "data": {
         "number": "Telefonnummer"
       }

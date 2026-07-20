@@ -154,3 +154,96 @@ export async function deleteDevice(id: number) {
     return response.json();
 }
 
+export async function deleteService(id: number) {
+    const response = await fetch(`${API_URL}/deleteService/${id}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to delete service");
+    }
+
+    return response.json();
+}
+
+export async function deleteCustomer(id: number) {
+    const response = await fetch(`${API_URL}/deleteCustomer/${id}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to delete customer");
+    }
+
+    return response.json();
+}
+
+export async function deleteVm(id: number) {
+    const response = await fetch(`${API_URL}/deleteVm/${id}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to delete VM");
+    }
+
+    return response.json();
+}
+
+export async function addService(payload: { newService: { name: string; customerId: number } }) {
+    const response = await fetch(`${API_URL}/addService`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to add service");
+    }
+
+    return response.json();
+}
+
+export async function addCustomer(payload: { newCustomer: { name: string; phoneNumber: string } }) {
+    const response = await fetch(`${API_URL}/addCustomer`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to add customer");
+    }
+
+    return response.json();
+}
+
+export async function addVm(payload: { newVm: { deviceId: number; serviceId: number; name: string } }) {
+    const response = await fetch(`${API_URL}/addVm`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to add VM");
+    }
+
+    return response.json();
+}
+

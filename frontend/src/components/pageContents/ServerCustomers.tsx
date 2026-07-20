@@ -1,22 +1,13 @@
 import DataList from "../DataList";
-import { useEffect, useState, useMemo } from "react";
-import { getCustomersData } from "../../services/api";
-import type { Customer } from "../../types";
+import { useMemo, useState } from "react";
 import { transformData } from "../../helpers/transformData";
+import { useCustomers } from "../../helpers/hooks/customerOperations";
+import DeletingOverlay from "../overlays/DeletingOverlay";
 
 function ServerCustomers() {
 
-    const [customersData, setCustomersData] = useState<Customer[]>([]);
-
-    useEffect(() => {
-        getCustomersData()
-            .then((data) => {
-                setCustomersData(data);
-            })
-            .catch((err) => {
-                console.error("API error", err);
-            });
-    }, []);
+    const { customersData, deleteCustomer } = useCustomers();
+    const [customerToDelete, setCustomerToDelete] = useState<number | null>(null);
 
     const displayData = useMemo(
         () =>
@@ -30,7 +21,20 @@ function ServerCustomers() {
 
     return (
         <>
-            <DataList data={displayData} />
+            {customerToDelete !== null && (
+                <DeletingOverlay
+                    onCancel={() => setCustomerToDelete(null)}
+                    onConfirm={() => {
+                        deleteCustomer(customerToDelete);
+                        setCustomerToDelete(null);
+                    }}
+                />
+            )}
+
+            <DataList
+                data={displayData}
+                onDelete={(id: number) => setCustomerToDelete(id)}
+            />
         </>
     );
 }

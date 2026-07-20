@@ -167,6 +167,58 @@ app.post('/addDevice', async (req, res) => {
   }
 })
 
+app.post('/addService', async (req, res) => {
+  const { newService } = req.body
+
+  try {
+    const request = new sql.Request();
+
+    await request
+      .input('name', sql.NVarChar, newService.name)
+      .input('customerId', sql.Int, newService.customerId)
+      .query(`INSERT INTO Service (Name, CustomerID) VALUES (@name, @customerId)`)
+
+    res.json({ message: 'new Service added' })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to add new Service' })
+  }
+})
+
+app.post('/addCustomer', async (req, res) => {
+  const { newCustomer } = req.body
+
+  try {
+    const request = new sql.Request();
+
+    await request
+      .input('name', sql.NVarChar, newCustomer.name)
+      .input('phoneNumber', sql.NVarChar, newCustomer.phoneNumber)
+      .query(`INSERT INTO Customer (Name, PhoneNumber) VALUES (@name, @phoneNumber)`)
+
+    res.json({ message: 'new Customer added' })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to add new Customer' })
+  }
+})
+
+app.post('/addVm', async (req, res) => {
+  const { newVm } = req.body
+
+  try {
+    const request = new sql.Request();
+
+    await request
+      .input('deviceId', sql.Int, newVm.deviceId)
+      .input('serviceId', sql.Int, newVm.serviceId)
+      .input('name', sql.NVarChar, newVm.name)
+      .query(`INSERT INTO VM (DeviceID, ServiceID, Name) VALUES (@deviceId, @serviceId, @name)`)
+
+    res.json({ message: 'new VM added' })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to add new VM' })
+  }
+})
+
 // delete operations
 
 app.delete("/deleteRoom/:id", async (req, res) => {
@@ -230,6 +282,54 @@ app.delete("/deleteDevice/:id", async (req, res) => {
   } catch (error) {
     console.error("Delete device error:", error);
     res.status(500).json({ error: "Failed to delete device" });
+  }
+});
+
+app.delete("/deleteService/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await sql.query(`
+      DELETE FROM Service
+      WHERE ID = ${id}
+    `);
+
+    res.json({ message: "Service deleted successfully", id });
+  } catch (error) {
+    console.error("Delete service error:", error);
+    res.status(500).json({ error: "Failed to delete service" });
+  }
+});
+
+app.delete("/deleteCustomer/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await sql.query(`
+      DELETE FROM Customer
+      WHERE ID = ${id}
+    `);
+
+    res.json({ message: "Customer deleted successfully", id });
+  } catch (error) {
+    console.error("Delete customer error:", error);
+    res.status(500).json({ error: "Failed to delete customer" });
+  }
+});
+
+app.delete("/deleteVm/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await sql.query(`
+      DELETE FROM VM
+      WHERE ID = ${id}
+    `);
+
+    res.json({ message: "VM deleted successfully", id });
+  } catch (error) {
+    console.error("Delete VM error:", error);
+    res.status(500).json({ error: "Failed to delete VM" });
   }
 });
 
