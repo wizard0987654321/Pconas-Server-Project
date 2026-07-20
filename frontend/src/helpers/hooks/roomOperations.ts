@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
-import { getRoomData } from "../../services/api";
 import type { Room } from "../../types";
-
-const API_URL = import.meta.env.VITE_API_URL;
+import { getRoomData, deleteRoom as deleteRoomApi } from "../../services/api";
 
 export function useRooms() {
     const [roomsData, setRoomsData] = useState<Room[]>([]);
@@ -10,44 +8,22 @@ export function useRooms() {
 
     useEffect(() => {
         getRoomData()
-            .then((data) => {
-                setRoomsData(data);
-            })
-            .catch((err) => {
-                console.error("API error:", err);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+            .then(setRoomsData)
+            .catch(console.error)
+            .finally(() => setLoading(false));
     }, []);
 
     const deleteRoom = async (id: number) => {
         try {
-            const response = await fetch(`${API_URL}/deleteRoom/${id}`, {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
+            await deleteRoomApi(id);
 
-            if (!response.ok) {
-                throw new Error("Failed to delete room");
-            }
-
-            await response.json();
-
-            setRoomsData((prevRooms) =>
-                prevRooms.filter((room) => room.ID !== id)
+            setRoomsData(prev =>
+                prev.filter(room => room.ID !== id)
             );
-
-        } catch (error) {
-            console.error("Delete error:", error);
+        } catch (err) {
+            console.error(err);
         }
     };
 
-    return {
-        roomsData,
-        deleteRoom,
-        loading,
-    };
+    return { roomsData, loading, deleteRoom };
 }

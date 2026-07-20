@@ -1,5 +1,7 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
+// get paths
+
 export async function getHealth() {
   const response = await fetch(`${API_URL}/`);
 
@@ -89,3 +91,36 @@ export async function getDeviceTypesData() {
 
     return response.json();
 }
+
+//delete paths
+
+export async function deleteRoom(id: number) {
+    const response = await fetch(`${API_URL}/deleteRoom/${id}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to delete room");
+    }
+
+    return response.json();
+}
+
+export async function deleteRack(id: number) {
+    const response = await fetch(`${API_URL}/deleteRack/${id}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to delete rack");
+    }
+
+    return response.json();
+}
+

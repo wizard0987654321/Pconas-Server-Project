@@ -1,40 +1,46 @@
 import DataList from "../DataList";
-import { useEffect, useState, useMemo } from "react";
-import { getRackData } from "../../services/api";
-import type { Rack } from "../../types";
+import { useMemo, useState } from "react";
 import { transformData } from "../../helpers/transformData";
+import { useRacks } from "../../helpers/hooks/rackOperations";
+import { useRooms } from "../../helpers/hooks/roomOperations";
+import DeletingOverlay from "../overlays/DeletingOverlay";
 
 type ServerRacksProps = {
-    roomId?: string;
+    internalRoomId?: string;
 };
 
-function ServerRacks({ roomId }: ServerRacksProps) {
+function ServerRacks({ internalRoomId }: ServerRacksProps) {
+    const { racksData, deleteRack } = useRacks();
+    const { roomsData } = useRooms();
 
-    const [racksData, setRacksData] = useState<Rack[]>([]);
+    const [rackToDelete, setRackToDelete] = useState<number | null>(null);
 
-    useEffect(() => {
-        getRackData()
-            .then((data) => {
-                setRacksData(data);
-            })
-            .catch((err) => {
-                console.error("API error", err);
-            });
-    }, []);
+    const roomNumber = useMemo(() => {
+        if (!internalRoomId) return undefined;
+
+        const room = roomsData.find(
+            (room) => String(room.ID) === internalRoomId
+        );
+
+        return room?.RoomNumber;
+    }, [roomsData, internalRoomId]);
 
     const filteredData = useMemo(
         () =>
-            roomId
-                ? racksData.filter((rack) => String(rack.RoomID) === roomId)
+            internalRoomId
+                ? racksData.filter(
+                      (rack) => String(rack.RoomID) === internalRoomId
+                  )
                 : racksData,
-        [racksData, roomId]
+        [racksData, internalRoomId]
     );
 
     const displayData = useMemo(
         () =>
             transformData(filteredData, {
+                omit: ["RoomID"],
                 rename: {
-                    RoomID: "pages.racks.data.room",
+                    RoomNumber: "pages.racks.data.room",
                     UnitsSize: "pages.racks.data.size (u)",
                     HeightCm: "pages.racks.data.height (cm)",
                 },
@@ -44,8 +50,28 @@ function ServerRacks({ roomId }: ServerRacksProps) {
 
     return (
         <>
-            {roomId && (<h1 className="font-mono font-bold text-xl m:text-2xl l:text-3xl xl:text-4xl">Room {roomId}</h1>)}
-            <DataList data={displayData} detailPath="/racks" detailLabel={"pages.racks.button"} />
+            {rackToDelete !== null && (
+                <DeletingOverlay
+                    onCancel={() => setRackToDelete(null)}
+                    onConfirm={() => {
+                        deleteRack(rackToDelete);
+                        setRackToDelete(null);
+                    }}
+                />
+            )}
+
+            {internalRoomId && (
+                <h1 className="font-mono font-bold text-xl m:text-2xl l:text-3xl xl:text-4xl">
+                    Room {roomNumber}
+                </h1>
+            )}
+
+            <DataList
+                data={displayData}
+                detailPath="/racks"
+                detailLabel="pages.racks.button"
+                onDelete={(id: number) => setRackToDelete(id)}
+            />
         </>
     );
 }

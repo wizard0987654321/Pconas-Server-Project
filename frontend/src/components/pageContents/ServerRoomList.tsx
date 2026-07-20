@@ -14,6 +14,7 @@ function ServerRoomList() {
         () =>
             transformData(roomsData, {
                 rename: {
+                    RoomNumber: "#",
                     Area: "pages.rooms.data.area",
                     Capacity: "pages.rooms.data.capacity",
                     HeightCm: "pages.rooms.data.height (cm)",

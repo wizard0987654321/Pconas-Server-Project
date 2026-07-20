@@ -5,7 +5,7 @@ import ServerRoomList from "../components/pageContents/ServerRoomList";
 import listViewIcon from "../assets/listView.svg";
 import roomViewIcon from "../assets/roomView.svg";
 import PrimaryButton from "../components/buttons/PrimaryButton";
-import AddRoomModal from "../components/overlays/AddRoomOverlay";
+import AddRoomOverlay from "../components/overlays/AddRoomOverlay";
 import { useTranslation } from "react-i18next";
 
 function RoomsPage() {
@@ -41,7 +41,7 @@ function RoomsPage() {
             </div>
             {/* Modal */}
             {isAddRoomOpen && (
-                <AddRoomModal
+                <AddRoomOverlay
                     onClose={() => setIsAddRoomOpen(false)}
                 />
             )}

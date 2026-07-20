@@ -122,3 +122,7 @@ function DataList({ data, detailPath, detailLabel, idField = "ID", onDelete }: D
 }
 
 export default DataList;
+
+
+
+

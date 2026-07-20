@@ -1,15 +1,36 @@
 import ServerRacks from "../components/pageContents/ServerRacks";
 import PageHeading from "../components/PageHeading";
 import { useParams } from "react-router-dom";
+import { useState } from "react";
+import AddRackOverlay from "../components/overlays/AddRackOverlay";
+import PrimaryButton from "../components/buttons/PrimaryButton";
+import { getRoomData, getRackData } from "../services/api";
+
 
 function RacksPage() {
 
     const { roomId } = useParams();
+
+    const [isAddRackOpen, setIsAddRackOpen] = useState(false);
+
+    const handleRackAdded = () => {
+        setIsAddRackOpen(true);
+    }
+    
+    const result = getRackData()
+
+    console.log(result);
     
     return (
         <div className="flex flex-col justify-center flex-wrap items-center p-4 w-full">
                 <PageHeading heading="Racks" />
-                <ServerRacks roomId={roomId}/>
+                <PrimaryButton label={"add rack"} onClick={handleRackAdded} margin="m-1" />
+                <ServerRacks internalRoomId={roomId}/>
+                {isAddRackOpen && (
+                <AddRackOverlay
+                    onClose={() => setIsAddRackOpen(false)}
+                />
+            )}
         </div>
     );
 }
