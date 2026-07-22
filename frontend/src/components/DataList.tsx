@@ -29,10 +29,10 @@ function DataList({ data, detailPath, detailLabel, idField = "ID", onDelete }: D
     };
 
     const handleDelete = (row: Record<string, any>) => {
-    if (onDelete) {
-        onDelete(row[idField]);
-    }
-};
+        if (onDelete) {
+            onDelete(row[idField]);
+        }
+    };
 
     return (
         <div className="w-full rounded-xl p-3 s:p-8 lg:p-10 font-mono">
@@ -65,7 +65,9 @@ function DataList({ data, detailPath, detailLabel, idField = "ID", onDelete }: D
                                     </span>
 
                                     <span className="ml-auto text-right break-words">
-                                        {row[key]}
+                                        {typeof row[key] === "boolean"
+                                            ? row[key] ? "Yes" : "No" // for boolean type columns
+                                            : row[key]}
                                     </span>
                                 </div>
                             ))}
@@ -91,7 +93,9 @@ function DataList({ data, detailPath, detailLabel, idField = "ID", onDelete }: D
                         >
                             {columns.map((column) => (
                                 <span className="p-1" key={column}>
-                                    {row[column]}
+                                    {typeof row[column] === "boolean"
+                                        ? row[column] ? "Yes" : "No" // for boolean type columns
+                                        : row[column]}
                                 </span>
                             ))}
 
