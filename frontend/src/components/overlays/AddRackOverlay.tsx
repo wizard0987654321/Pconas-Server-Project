@@ -19,6 +19,22 @@ function AddRackOverlay({ onClose }:AddRackOverlayProps) {
 
             onClose={onClose}
 
+            validate={(data) => {
+                const selectedRoom = roomsData.find(
+                    room => room.ID === Number(data.roomId)
+                );
+
+                if (!selectedRoom) {
+                    return "Please select a room.";
+                }
+
+                if (Number(data.height) > selectedRoom.HeightCm) {
+                    return `Rack height cannot be greater than the selected room height (${selectedRoom.HeightCm} cm).`;
+                }
+
+                return null;
+            }}
+
 
             fields={[
                 {

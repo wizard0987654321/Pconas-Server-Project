@@ -1,6 +1,7 @@
 import AddOverlay from "./AddOverlay";
 import { useRacks } from "../../helpers/hooks/rackOperations";
 import { useDeviceTypes } from "../../helpers/hooks/deviceTypeOperations";
+import { useDevice } from "../../helpers/hooks/deviceOperations";
 
 type AddDeviceOverlayProps = {
     onClose: () => void;
@@ -9,12 +10,54 @@ type AddDeviceOverlayProps = {
 function AddDeviceOverlay({ onClose }: AddDeviceOverlayProps) {
     const { racksData } = useRacks();
     const { deviceTypesData } = useDeviceTypes();
+    const { deviceData } = useDevice();
+
 
     return (
         <AddOverlay
             title="Add New Device"
             endpoint="/addDevice"
             onClose={onClose}
+            validate={(data) => {
+                const selectedRackId = Number(data.rackId);
+                const selectedRack = racksData.find(rack => rack.ID == selectedRackId);
+                const positionFrom = Number(data.positionFrom);
+                const positionTo = Number(data.positionTo);
+
+                if (!selectedRackId) {
+                    return "Please select a rack.";
+                }
+
+                if (positionFrom > positionTo) {
+                    return "Position (From) must be less than or equal to Position (To).";
+                }
+
+                if (selectedRack) {
+                    if (positionFrom >= selectedRack.UnitsSize) {
+                        return `Position (From) must be less than total size (Units) of chosen rack, size - ${selectedRack.UnitsSize}`
+                    }
+
+                    if (positionTo > selectedRack.UnitsSize) {
+                        return `Position (To) can not be more than total size (Units) of chosen rack, size - ${selectedRack.UnitsSize}`
+                    }
+                }
+
+            
+                
+
+                const overlapsExistingDevice = deviceData.some(
+                    device =>
+                        device.RackID === selectedRackId &&
+                        positionFrom <= device.PositionTo &&
+                        positionTo >= device.PositionFrom 
+                );
+
+                if (overlapsExistingDevice) {
+                    return "The selected device positions overlap with an existing device in this rack.";
+                }
+
+                return null;
+            }}
             fields={[
                 {
                     name: "rackId",

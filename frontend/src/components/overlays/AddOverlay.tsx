@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type FieldConfig = {
     name: string;
@@ -18,6 +18,7 @@ type AddOverlayProps = {
     endpoint: string;
     onClose: () => void;
     transformData?: (data: Record<string, string>) => any;
+    validate?: (data: Record<string, string>) => string | null;
 };
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -28,9 +29,19 @@ function AddOverlay({
     endpoint,
     onClose,
     transformData = (data) => data,
+    validate,
 }: AddOverlayProps) {
 
     const [formData, setFormData] = useState<Record<string, string>>({});
+    const [errorMessage, setErrorMessage] = useState<string>("");
+
+    useEffect(() => {
+        document.body.style.overflow = "hidden";
+
+        return () => {
+            document.body.style.overflow = "";
+        };
+    }, []);
 
     const handleChange = (name: string, value: string) => {
         setFormData(prev => ({
@@ -39,9 +50,19 @@ function AddOverlay({
         }));
     };
 
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        setErrorMessage("");
+
+        if (validate) {
+            const validationError = validate(formData);
+
+            if (validationError) {
+                setErrorMessage(validationError);
+                return;
+            }
+        }
 
         const data = transformData(formData);
 
@@ -64,108 +85,114 @@ function AddOverlay({
             window.location.reload();
 
         } catch (error) {
+            setErrorMessage(
+                error instanceof Error ? error.message : "Failed request"
+            );
             console.error(error);
         }
 
-        console.log(data)
+        console.log(data);
     };
 
-
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-            <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-lg">
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50 p-3 sm:p-4">
+            <div className="flex min-h-full items-center justify-center">
+                <div className="w-full max-w-[18rem] max-h-[90vh] overflow-y-auto rounded-xl bg-white p-4 shadow-lg sm:max-w-sm sm:p-6">
 
-                <h2 className="mb-4 text-xl font-bold">
-                    {title}
-                </h2>
+                    <h2 className="mb-3 text-lg font-bold sm:mb-4 sm:text-xl">
+                        {title}
+                    </h2>
 
+                    <form
+                        onSubmit={handleSubmit}
+                        className="flex flex-col gap-3 sm:gap-4"
+                    >
 
-                <form
-                    onSubmit={handleSubmit}
-                    className="flex flex-col gap-4"
-                >
+                        {errorMessage && (
+                            <p className="rounded border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+                                {errorMessage}
+                            </p>
+                        )}
 
-                    {fields.map(field => (
-                        <div key={field.name}>
+                        {fields.map(field => (
+                            <div key={field.name}>
 
-                            <label className="mb-1 block font-medium">
-                                {field.label}
-                            </label>
+                                <label className="mb-1 block text-sm font-medium sm:text-base">
+                                    {field.label}
+                                </label>
 
+                                {field.options ? (
 
-                            {field.options ? (
-
-                                <select
-                                    value={formData[field.name] ?? ""}
-                                    onChange={(e) =>
-                                        handleChange(
-                                            field.name,
-                                            e.target.value
-                                        )
-                                    }
-                                    className="w-full rounded border p-2"
-                                    required
-                                >
-                                    <option value="">
-                                        Select
-                                    </option>
-
-                                    {field.options.map(option => (
-                                        <option
-                                            key={option.value}
-                                            value={option.value}
-                                        >
-                                            {option.label}
+                                    <select
+                                        value={formData[field.name] ?? ""}
+                                        onChange={(e) =>
+                                            handleChange(
+                                                field.name,
+                                                e.target.value
+                                            )
+                                        }
+                                        className="w-full rounded border p-1.5 text-sm sm:p-2 sm:text-base"
+                                        required
+                                    >
+                                        <option value="">
+                                            Select
                                         </option>
-                                    ))}
 
-                                </select>
+                                        {field.options.map(option => (
+                                            <option
+                                                key={option.value}
+                                                value={option.value}
+                                            >
+                                                {option.label}
+                                            </option>
+                                        ))}
 
-                            ) : (
+                                    </select>
 
-                                <input
-                                    type={field.type ?? "number"}
-                                    value={formData[field.name] ?? ""}
-                                    onChange={(e) =>
-                                        handleChange(
-                                            field.name,
-                                            e.target.value
-                                        )
-                                    }
-                                    min={field.min}
-                                    step={field.step}
-                                    className="w-full rounded border p-2"
-                                    required
-                                />
+                                ) : (
 
-                            )}
+                                    <input
+                                        type={field.type ?? "number"}
+                                        value={formData[field.name] ?? ""}
+                                        onChange={(e) =>
+                                            handleChange(
+                                                field.name,
+                                                e.target.value
+                                            )
+                                        }
+                                        min={field.min}
+                                        step={field.step}
+                                        className="w-full rounded border p-1.5 text-sm sm:p-2 sm:text-base"
+                                        required
+                                    />
+
+                                )}
+
+                            </div>
+                        ))}
+
+                        <div className="flex justify-end gap-2 sm:gap-3">
+
+                            <button
+                                type="button"
+                                onClick={onClose}
+                                className="cursor-pointer rounded border px-3 py-1.5 text-sm transition-colors hover:bg-gray-100 sm:px-4 sm:py-2 sm:text-base"
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                type="submit"
+                                className="cursor-pointer rounded bg-[#6ADBAF] px-3 py-1.5 text-sm text-white transition-opacity hover:opacity-90 sm:px-4 sm:py-2 sm:text-base"
+                            >
+                                Save
+                            </button>
 
                         </div>
-                    ))}
 
+                    </form>
 
-                    <div className="flex justify-end gap-3">
-
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            className="cursor-pointer rounded border px-4 py-2"
-                        >
-                            Cancel
-                        </button>
-
-
-                        <button
-                            type="submit"
-                            className="cursor-pointer rounded bg-[#6ADBAF] px-4 py-2 text-white"
-                        >
-                            Save
-                        </button>
-
-                    </div>
-
-                </form>
-
+                </div>
             </div>
         </div>
     );
