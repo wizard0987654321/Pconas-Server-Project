@@ -13,11 +13,13 @@ function CustomersPage() {
         <div className="flex flex-col justify-center flex-wrap items-center p-4 w-full">
             <PageHeading heading="pages.customers.headingText" />
 
-            <PrimaryButton
-                label={t("pages.customers.addButton")}
-                onClick={() => setIsAddCustomerOpen(true)}
-                margin="m-1"
-            />
+            <div className="w-[100%] flex flex-start">
+                <PrimaryButton
+                    label={t("pages.customers.addButton")}
+                    onClick={() => setIsAddCustomerOpen(true)}
+                    margin="m-1"
+                />
+            </div>
 
             <ServerCustomers />
 

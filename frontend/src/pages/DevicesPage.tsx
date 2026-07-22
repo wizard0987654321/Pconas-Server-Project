@@ -3,8 +3,11 @@ import ServerDevices from "../components/pageContents/ServerDevices";
 import { useState } from "react";
 import AddDeviceOverlay from "../components/overlays/AddDeviceOverlay";
 import PrimaryButton from "../components/buttons/PrimaryButton";
+import { useTranslation } from "react-i18next";
 
 function DevicesPage() {
+    const { t } = useTranslation();
+    
     const [isAddDeviceOpen, setIsAddDeviceOpen] = useState(false);
 
     const handleDeviceAdded = () => {
@@ -15,11 +18,13 @@ function DevicesPage() {
         <div className="flex flex-col justify-center flex-wrap items-center p-4 w-full">
             <PageHeading heading="pages.devices.headingText" />
 
-            <PrimaryButton
-                label="Add Device"
-                onClick={handleDeviceAdded}
-                margin="m-1"
-            />
+            <div className="w-[100%] flex flex-start">
+                <PrimaryButton
+                    label={t("pages.devices.addButton")}
+                    onClick={handleDeviceAdded}
+                    margin="m-1"
+                />
+            </div>
 
             <ServerDevices />
 

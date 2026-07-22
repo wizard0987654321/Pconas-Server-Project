@@ -15,7 +15,7 @@ function ServerDevices() {
             transformData(deviceData, {
                 omit: ["TypeID", "Manufacturer", "Usage"],
                 rename: {
-                    TypeID: "pages.devices.data.type",
+                    TypeName: "pages.devices.data.type",
                     RackID: "pages.devices.data.rack",
                     InternalID: "pages.devices.data.internal id",
                     PositionFrom: "pages.devices.data.from",
@@ -26,6 +26,8 @@ function ServerDevices() {
             }),
         [deviceData]
     );
+
+    console.log(deviceData);
 
     return (
         <>

@@ -13,11 +13,13 @@ function ServicesPage() {
         <div className="flex flex-col justify-center flex-wrap items-center p-4 w-full">
             <PageHeading heading="pages.services.headingText" />
 
-            <PrimaryButton
-                label={t("pages.services.addButton")}
-                onClick={() => setIsAddServiceOpen(true)}
-                margin="m-1"
-            />
+            <div className="w-[100%] flex flex-start">
+                <PrimaryButton
+                    label={t("pages.services.addButton")}
+                    onClick={() => setIsAddServiceOpen(true)}
+                    margin="m-1"
+                />
+            </div>
 
             <ServerServices />
 

@@ -24,7 +24,10 @@ function RoomsPage() {
                 <PageHeading heading="pages.rooms.headingText" />
 
                 <div className="w-full flex justify-between m-4">
+                                <div className="w-[100%] flex flex-start">
+
                     <PrimaryButton label={t("pages.rooms.addButton")} onClick={handleAddRoom} margin="m-1" />
+                    </div>
                     <button
                         onClick={() => setIsListView(!isListView)}
                         className="p-2 rounded border border-2 border-[#6ADBAF]"

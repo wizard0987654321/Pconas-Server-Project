@@ -24,6 +24,7 @@
     },
     "racks": {
       "headingText": "Racks",
+      "addButton": "add rack",
       "data": {
         "#": "#",
         "room": "room",
@@ -35,6 +36,7 @@
     },
     "deviceTypes": {
       "headingText": "Device Types",
+      "addButton": "add device type",
       "data": {
         "typeName": "name",
         "manufacturer": "manufacturer",
@@ -43,6 +45,7 @@
     },
     "devices": {
       "headingText": "Devices",
+      "addButton": "add device",
       "data": {
         "#": "#",
         "type": "type",

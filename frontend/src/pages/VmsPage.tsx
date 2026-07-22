@@ -12,12 +12,14 @@ function VmsPage() {
     return (
         <div className="flex flex-col justify-center flex-wrap items-center p-4 w-full">
             <PageHeading heading="pages.vms.headingText" />
+            <div className="w-[100%] flex flex-start">
 
-            <PrimaryButton
-                label={t("pages.vms.addButton")}
-                onClick={() => setIsAddVmOpen(true)}
-                margin="m-1"
-            />
+                <PrimaryButton
+                    label={t("pages.vms.addButton")}
+                    onClick={() => setIsAddVmOpen(true)}
+                    margin="m-1"
+                />
+            </div>
 
             <ServerVms />
 

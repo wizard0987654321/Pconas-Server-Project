@@ -149,7 +149,7 @@ function AddOverlay({
                         <button
                             type="button"
                             onClick={onClose}
-                            className="rounded border px-4 py-2"
+                            className="cursor-pointer rounded border px-4 py-2"
                         >
                             Cancel
                         </button>
@@ -157,7 +157,7 @@ function AddOverlay({
 
                         <button
                             type="submit"
-                            className="rounded bg-[#6ADBAF] px-4 py-2 text-white"
+                            className="cursor-pointer rounded bg-[#6ADBAF] px-4 py-2 text-white"
                         >
                             Save
                         </button>

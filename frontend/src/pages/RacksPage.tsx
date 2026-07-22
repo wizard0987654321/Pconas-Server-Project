@@ -5,9 +5,11 @@ import { useState } from "react";
 import AddRackOverlay from "../components/overlays/AddRackOverlay";
 import PrimaryButton from "../components/buttons/PrimaryButton";
 import { getRackData } from "../services/api";
+import { useTranslation } from "react-i18next";
 
 
 function RacksPage() {
+    const { t } = useTranslation();
 
     const { roomId } = useParams();
 
@@ -16,17 +18,19 @@ function RacksPage() {
     const handleRackAdded = () => {
         setIsAddRackOpen(true);
     }
-    
+
     const result = getRackData()
 
     console.log(result);
-    
+
     return (
         <div className="flex flex-col justify-center flex-wrap items-center p-4 w-full">
-                <PageHeading heading="Racks" />
-                <PrimaryButton label={"add rack"} onClick={handleRackAdded} margin="m-1" />
-                <ServerRacks internalRoomId={roomId}/>
-                {isAddRackOpen && (
+            <PageHeading heading="Racks" />
+            <div className="w-[100%] flex flex-start">
+                <PrimaryButton label={t("pages.racks.addButton")} onClick={handleRackAdded} margin="m-1" />
+            </div>
+            <ServerRacks internalRoomId={roomId} />
+            {isAddRackOpen && (
                 <AddRackOverlay
                     onClose={() => setIsAddRackOpen(false)}
                 />

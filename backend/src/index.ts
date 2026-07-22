@@ -62,7 +62,7 @@ app.get("/devices", async (req, res) => {
       dt.TypeName,
       dt.Manufacturer,
       dt.Usage,
-      dt.ID AS DeviceTypeID
+      dt.ID 
     FROM Device d
     JOIN DeviceType dt ON d.TypeID = dt.ID
   `);

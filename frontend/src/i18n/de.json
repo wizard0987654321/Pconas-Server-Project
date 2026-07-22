@@ -24,6 +24,7 @@
     },
     "racks": {
       "headingText": "Racks",
+      "addButton": "Rack hinzufügen",
       "data": {
         "#": "#",
         "room": "Raum",
@@ -35,6 +36,7 @@
     },
     "deviceTypes": {
       "headingText": "Gerätetypen",
+      "addButton": "Gerättyp hinzufügen",
       "data": {
         "typeName": "Name",
         "manufacturer": "Hersteller",
@@ -43,6 +45,7 @@
     },
     "devices": {
       "headingText": "Geräte",
+      "addButton": "Gerät hinzufügen",
       "data": {
         "#": "#",
         "type": "Typ",

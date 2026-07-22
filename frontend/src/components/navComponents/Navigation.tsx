@@ -24,7 +24,7 @@ function Navigation() {
                     </div>
                 )}
 
-                <div className="flex items-center">
+                <div className="py-8 flex items-start">
                     <DesktopSidebar />
                 </div>
 
