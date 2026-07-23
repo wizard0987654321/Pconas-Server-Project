@@ -6,7 +6,8 @@
   "pages": {
     "home": {
       "helloText": "Willkommen in deinem Pconas Trainee Portal",
-      "button": "Rechenzentrum entdecken"
+      "button": "Rechenzentrum entdecken",
+      "deleteButton": "löschen"
     },
     "rooms": {
       "headingText": "Räume",

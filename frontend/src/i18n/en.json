@@ -6,7 +6,8 @@
   "pages": {
     "home": {
       "helloText": "Welcome to your Pconas Trainee Portal",
-      "button": "Discover Server Center"
+      "button": "Discover Server Center",
+      "deleteButton": "delete"
     },
     "rooms": {
       "headingText": "Server Rooms",

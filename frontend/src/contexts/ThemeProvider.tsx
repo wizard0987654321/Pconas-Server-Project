@@ -11,8 +11,11 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
-    const saved = localStorage.getItem('theme') as Theme | null;
+    const saved = localStorage.getItem('theme') as Theme | null;   //initial check, whether something save in local storage
+
     if (saved) return saved;
+
+    //second check, what is browser preferenced theme
     return window.matchMedia('(prefers-color-scheme: dark)').matches
       ? 'dark'
       : 'light';
@@ -20,6 +23,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
+    //saving preferences theme in localStorage, so it does not change on every reload
     localStorage.setItem('theme', theme);
   }, [theme]);
 

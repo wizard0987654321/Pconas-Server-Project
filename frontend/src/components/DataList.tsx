@@ -64,9 +64,16 @@ function DataList({ data, detailPath, detailLabel, idField = "ID", onDelete }: D
                                         {key === "#" ? "#" : t(key)}
                                     </span>
 
-                                    <span className="ml-auto text-right break-words">
-                                        {typeof row[key] === "boolean"
-                                            ? row[key] ? "Yes" : "No" // for boolean type columns
+                                    <span
+                                        className={`ml-auto text-right break-words ${typeof row[key] === "boolean" && !row[key]
+                                            ? "text-[#FF6B6B] font-bold" //red for answer no, so it's more visible
+                                            : ""
+                                            }`}
+                                    > 
+                                        {typeof row[key] === "boolean" //only for boolean type columns
+                                            ? row[key]
+                                                ? "Yes"
+                                                : "No"
                                             : row[key]}
                                     </span>
                                 </div>
@@ -92,9 +99,12 @@ function DataList({ data, detailPath, detailLabel, idField = "ID", onDelete }: D
                             style={gridStyle}
                         >
                             {columns.map((column) => (
-                                <span className="p-1" key={column}>
+                                <span className={`p-1 ${typeof row[column] === "boolean" && !row[column]
+                                    ? "text-[#FF6B6B] font-bold" //red for answer no, so it's more visible
+                                    : ""
+                                    }`} key={column}>
                                     {typeof row[column] === "boolean"
-                                        ? row[column] ? "Yes" : "No" // for boolean type columns
+                                        ? row[column] ? "Yes" : "No" //for boolean type columns
                                         : row[column]}
                                 </span>
                             ))}
@@ -111,7 +121,7 @@ function DataList({ data, detailPath, detailLabel, idField = "ID", onDelete }: D
 
                             <span className="p-1">
                                 <DeleteButton
-                                    label="Delete"
+                                    label={t("pages.home.deleteButton")}
                                     onClick={() => handleDelete(row)}
                                 />
                             </span>
