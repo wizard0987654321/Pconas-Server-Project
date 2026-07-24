@@ -4,7 +4,6 @@ import PageHeading from "../components/PageHeading";
 import PrimaryButton from "../components/buttons/PrimaryButton";
 import { useAuth } from "../contexts/AuthProvider";
 
-
 function Homepage() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -13,7 +12,6 @@ function Homepage() {
   const headingKey = user?.role?.toLowerCase() === "trainer"
     ? "pages.home.trainerHelloText"
     : "pages.home.traineeHelloText";
-
 
   return (
     <div className="p-4 flex flex-col items-center">

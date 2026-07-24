@@ -38,6 +38,9 @@
   "buttons": {
     "logOut": "abmelden"
   },
+  "buttons": {
+    "logOut": "abmelden"
+  },
   "pages": {
     "login": {
       "comment": "Login-Testseite",
