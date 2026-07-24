@@ -41,6 +41,9 @@
   "buttons": {
     "logOut": "log out"
   },
+  "buttons": {
+    "logOut": "log out"
+  },
   "pages": {
     "login": {
       "comment": "Login Test Screen",
