@@ -7,6 +7,7 @@ import { getDisplayLabel, useAuth } from "../contexts/AuthProvider"
 import { useTranslation } from "react-i18next"
 
 function Header() {
+
     const { user, logout } = useAuth();
     const { t } = useTranslation();
 
@@ -27,7 +28,7 @@ function Header() {
                         className="hidden h-full max-h-12 w-auto scale-50 m:scale-75 l:scale-100 cursor-pointer dark:block"
                     />
                 </Link>
-                <span className="hidden m:inline font-mono text-3xl font-bold text-[#111827] dark:text-[#F9FAFB]">
+                <span className="hidden m:inline font-mono text-3xl font-bold text-black-700 dark:text-gray-100">
                     Trainer
                 </span>
                 <div className="ml-auto flex items-center gap-3 pr-2 sm:gap-4">

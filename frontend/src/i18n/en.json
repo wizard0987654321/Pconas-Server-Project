@@ -35,6 +35,9 @@
   "buttons": {
     "logOut": "log out"
   },
+  "buttons": {
+    "logOut": "log out"
+  },
   "pages": {
     "home": {
       "trainerHelloText": "Welcome to your Pconas Trainer Portal",
