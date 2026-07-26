@@ -1,5 +1,7 @@
-import serverIcon from "../../assets/ServerIcon.svg"
-import buttonIcon from "../../assets/AddButton.svg"
+// ServerRoom.tsx
+
+import serverIcon from "../../assets/ServerIcon.svg";
+import buttonIcon from "../../assets/AddButton.svg";
 import PrimaryButton from "../buttons/PrimaryButton";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -9,16 +11,17 @@ import type { Room, Rack } from "../../types";
 import DeleteButton from "../buttons/DeleteButton";
 import DeletingOverlay from "../overlays/DeletingOverlay";
 import { useRooms } from "../../helpers/hooks/roomOperations";
-
+import AddRackOverlay from "../overlays/AddRackOverlay";
 
 function ServerRoom() {
     const navigate = useNavigate();
     const { t } = useTranslation();
 
     const { roomsData, deleteRoom } = useRooms();
-    const [racksData, setRacksData] = useState<Rack[]>([]);
 
+    const [racksData, setRacksData] = useState<Rack[]>([]);
     const [roomToDelete, setRoomToDelete] = useState<number | null>(null);
+    const [selectedRoomId, setSelectedRoomId] = useState<number | null>(null);
 
     useEffect(() => {
         getRackData()
@@ -31,33 +34,24 @@ function ServerRoom() {
             });
     }, []);
 
-    const handleAddButtonClick = () => {
-        console.log("addButton clicked");
+    const handleAddButtonClick = (roomId: number) => {
+        setSelectedRoomId(roomId);
     };
 
-
-    //Free places button helper function
     const renderFreePlaces = (room: Room) => {
-        //Count racks in this room
-        const occupied = racksData.filter(
-            (rack) => rack.RoomID === room.ID
-        ).length;
-
-        //Calculate free slots
+        const occupied = racksData.filter(rack => rack.RoomID === room.ID).length;
         const free = room.Capacity - occupied;
 
         const addButtonElements = [];
 
         for (let i = 0; i < free; i++) {
             addButtonElements.push(
-                <img key={i} src={buttonIcon} alt="Server Icon" onClick={handleAddButtonClick}
-                    className="cursor-pointer transition-transform duration-150 hover:scale-110 active:scale-95" />
+                <img key={i} src={buttonIcon} alt="Add Rack" onClick={() => handleAddButtonClick(room.ID)} className="cursor-pointer transition-transform duration-150 hover:scale-110 active:scale-95" />
             );
         }
 
         return addButtonElements;
     };
-
 
     return (
         <>
@@ -71,35 +65,33 @@ function ServerRoom() {
                 />
             )}
 
+            {selectedRoomId !== null && (
+                <AddRackOverlay roomId={selectedRoomId} onClose={() => setSelectedRoomId(null)} />
+            )}
+
             {roomsData.map((room, index) => (
                 <div key={room.ID} className="flex flex-col items-center p-4">
-                    <h1 className="font-mono font-bold text-xl xs:text-2xl s:text-3xl">{t("pages.rooms.cardHeading")} {index + 1}</h1>
+                    <h1 className="font-mono font-bold text-xl xs:text-2xl s:text-3xl">
+                        {t("pages.rooms.cardHeading")} {index + 1}
+                    </h1>
+
                     <div className="flex flex-col items-center border-4 border-solid border-[#6ADBAF] rounded-[10px]">
-                        <div
-                            className="grid grid-rows-2"
-                            style={{
-                                gridTemplateColumns: `repeat(${Math.ceil(room.Capacity / 2)}, minmax(0, 1fr))`,
-                            }}
-                        >
-                            {racksData.map((rack) => (
-                                rack.RoomID == room.ID ? (
-                                    <img key={rack.ID} src={serverIcon} alt="Server Icon" />
-                                ) : null
+                        <div className="grid grid-rows-2" style={{ gridTemplateColumns: `repeat(${Math.ceil(room.Capacity / 2)}, minmax(0, 1fr))` }}>
+                            {racksData.map(rack => (
+                                rack.RoomID === room.ID ? <img key={rack.ID} src={serverIcon} alt="Server Icon" /> : null
                             ))}
+
                             {renderFreePlaces(room)}
                         </div>
 
                         <PrimaryButton label={t("pages.rooms.button")} onClick={() => navigate(`/rooms/${room.ID}/racks`)} />
 
-                        <DeleteButton
-                            label={t("pages.rooms.deleteButton")}
-                            onClick={() => setRoomToDelete(room.ID)}
-                        />
+                        <DeleteButton label={t("pages.rooms.deleteButton")} onClick={() => setRoomToDelete(room.ID)} />
                     </div>
                 </div>
             ))}
         </>
-    )
+    );
 }
 
 export default ServerRoom;

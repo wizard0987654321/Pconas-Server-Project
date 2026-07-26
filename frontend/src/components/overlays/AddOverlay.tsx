@@ -19,6 +19,7 @@ type AddOverlayProps = {
     onClose: () => void;
     transformData?: (data: Record<string, string>) => any;
     validate?: (data: Record<string, string>) => string | null;
+    initialData?: Record<string, string>;
 };
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -30,9 +31,10 @@ function AddOverlay({
     onClose,
     transformData = (data) => data,
     validate,
+    initialData,
 }: AddOverlayProps) {
 
-    const [formData, setFormData] = useState<Record<string, string>>({});
+    const [formData, setFormData] = useState<Record<string, string>>(initialData ?? {});
     const [errorMessage, setErrorMessage] = useState<string>("");
 
     useEffect(() => {
@@ -75,9 +77,7 @@ function AddOverlay({
                 body: JSON.stringify(data),
             });
 
-            if (!response.ok) {
-                throw new Error("Failed request");
-            }
+            if (!response.ok) throw new Error("Failed request");
 
             await response.json();
 
@@ -85,9 +85,7 @@ function AddOverlay({
             window.location.reload();
 
         } catch (error) {
-            setErrorMessage(
-                error instanceof Error ? error.message : "Failed request"
-            );
+            setErrorMessage(error instanceof Error ? error.message : "Failed request");
             console.error(error);
         }
 
@@ -99,14 +97,9 @@ function AddOverlay({
             <div className="flex min-h-full items-center justify-center">
                 <div className="w-full max-w-[18rem] max-h-[90vh] overflow-y-auto rounded-xl bg-white p-4 shadow-lg sm:max-w-sm sm:p-6">
 
-                    <h2 className="mb-3 text-lg font-bold sm:mb-4 sm:text-xl">
-                        {title}
-                    </h2>
+                    <h2 className="mb-3 text-lg font-bold sm:mb-4 sm:text-xl">{title}</h2>
 
-                    <form
-                        onSubmit={handleSubmit}
-                        className="flex flex-col gap-3 sm:gap-4"
-                    >
+                    <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:gap-4">
 
                         {errorMessage && (
                             <p className="rounded border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
@@ -122,50 +115,17 @@ function AddOverlay({
                                 </label>
 
                                 {field.options ? (
-
-                                    <select
-                                        value={formData[field.name] ?? ""}
-                                        onChange={(e) =>
-                                            handleChange(
-                                                field.name,
-                                                e.target.value
-                                            )
-                                        }
-                                        className="w-full rounded border p-1.5 text-sm sm:p-2 sm:text-base"
-                                        required
-                                    >
-                                        <option value="">
-                                            Select
-                                        </option>
+                                    <select value={formData[field.name] ?? ""} onChange={(e) => handleChange(field.name, e.target.value)} className="w-full rounded border p-1.5 text-sm sm:p-2 sm:text-base" required>
+                                        <option value="">Select</option>
 
                                         {field.options.map(option => (
-                                            <option
-                                                key={option.value}
-                                                value={option.value}
-                                            >
+                                            <option key={option.value} value={option.value}>
                                                 {option.label}
                                             </option>
                                         ))}
-
                                     </select>
-
                                 ) : (
-
-                                    <input
-                                        type={field.type ?? "number"}
-                                        value={formData[field.name] ?? ""}
-                                        onChange={(e) =>
-                                            handleChange(
-                                                field.name,
-                                                e.target.value
-                                            )
-                                        }
-                                        min={field.min}
-                                        step={field.step}
-                                        className="w-full rounded border p-1.5 text-sm sm:p-2 sm:text-base"
-                                        required
-                                    />
-
+                                    <input type={field.type ?? "number"} value={formData[field.name] ?? ""} onChange={(e) => handleChange(field.name, e.target.value)} min={field.min} step={field.step} className="w-full rounded border p-1.5 text-sm sm:p-2 sm:text-base" required />
                                 )}
 
                             </div>
@@ -173,18 +133,11 @@ function AddOverlay({
 
                         <div className="flex justify-end gap-2 sm:gap-3">
 
-                            <button
-                                type="button"
-                                onClick={onClose}
-                                className="cursor-pointer rounded border px-3 py-1.5 text-sm transition-colors hover:bg-gray-100 sm:px-4 sm:py-2 sm:text-base"
-                            >
+                            <button type="button" onClick={onClose} className="cursor-pointer rounded border px-3 py-1.5 text-sm transition-colors hover:bg-gray-100 sm:px-4 sm:py-2 sm:text-base">
                                 Cancel
                             </button>
 
-                            <button
-                                type="submit"
-                                className="cursor-pointer rounded bg-[#6ADBAF] px-3 py-1.5 text-sm text-white transition-opacity hover:opacity-90 sm:px-4 sm:py-2 sm:text-base"
-                            >
+                            <button type="submit" className="cursor-pointer rounded bg-[#6ADBAF] px-3 py-1.5 text-sm text-white transition-opacity hover:opacity-90 sm:px-4 sm:py-2 sm:text-base">
                                 Save
                             </button>
 
