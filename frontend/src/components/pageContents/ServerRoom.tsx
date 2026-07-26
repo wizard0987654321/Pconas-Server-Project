@@ -77,9 +77,21 @@ function ServerRoom() {
 
                     <div className="flex flex-col items-center border-4 border-solid border-[#6ADBAF] rounded-[10px]">
                         <div className="grid grid-rows-2" style={{ gridTemplateColumns: `repeat(${Math.ceil(room.Capacity / 2)}, minmax(0, 1fr))` }}>
-                            {racksData.map(rack => (
-                                rack.RoomID === room.ID ? <img key={rack.ID} src={serverIcon} alt="Server Icon" /> : null
-                            ))}
+                            {racksData.map( rack => rack.RoomID === room.ID ? (
+                                <div key={rack.ID} className="relative group">
+                                    <img
+                                        src={serverIcon}
+                                        alt="Server Icon"
+                                        className="cursor-pointer transition-transform duration-150 hover:scale-110"
+                                    />
+
+                                    <div className="absolute font-mono left-1/2 top-full z-10 mt-2 hidden w-40 -translate-x-1/2 rounded-md border-3 border-[#6ADBAF] bg-white p-2 text-xs shadow-lg group-hover:block">
+                                        <p><span className="font-semibold">Rack:</span> {rack.ID}</p>
+                                        <p><span className="font-semibold">Units:</span> {rack.UnitsSize} U</p>
+                                        <p><span className="font-semibold">Height:</span> {rack.HeightCm} cm</p>
+                                    </div>
+                                </div>
+                            ) : null)}
 
                             {renderFreePlaces(room)}
                         </div>
