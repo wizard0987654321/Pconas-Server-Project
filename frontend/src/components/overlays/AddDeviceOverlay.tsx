@@ -4,10 +4,11 @@ import { useDeviceTypes } from "../../helpers/hooks/deviceTypeOperations";
 import { useDevice } from "../../helpers/hooks/deviceOperations";
 
 type AddDeviceOverlayProps = {
-    onClose: () => void;
+    onClose: () => void,
+    rackId?: number | null;
 };
 
-function AddDeviceOverlay({ onClose }: AddDeviceOverlayProps) {
+function AddDeviceOverlay({ onClose, rackId }: AddDeviceOverlayProps) {
     const { racksData } = useRacks();
     const { deviceTypesData } = useDeviceTypes();
     const { deviceData } = useDevice();
@@ -18,6 +19,7 @@ function AddDeviceOverlay({ onClose }: AddDeviceOverlayProps) {
             title="Add New Device"
             endpoint="/addDevice"
             onClose={onClose}
+            initialData={rackId != null ? { rackId: String(rackId) } : undefined}
             validate={(data) => {
                 const selectedRackId = Number(data.rackId);
                 const selectedRack = racksData.find(rack => rack.ID == selectedRackId);
@@ -59,14 +61,16 @@ function AddDeviceOverlay({ onClose }: AddDeviceOverlayProps) {
                 return null;
             }}
             fields={[
-                {
-                    name: "rackId",
-                    label: "Rack",
-                    options: racksData.map((rack, index) => ({
-                        value: rack.ID,
-                        label: `Rack ${index + 1}`,
-                    })),
-                },
+                ...(rackId == null
+                    ? [{
+                        name: "rackId",
+                        label: "Rack",
+                        options: racksData.map((rack, index) => ({
+                            value: rack.ID,
+                            label: `Rack ${index + 1}`
+                        }))
+                    }]
+                    : []),
                 {
                     name: "internalId",
                     label: "Internal ID",

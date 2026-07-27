@@ -66,7 +66,7 @@ function ServerRoom() {
             )}
 
             {selectedRoomId !== null && (
-                <AddRackOverlay roomId={selectedRoomId} onClose={() => setSelectedRoomId(null)} />
+                <AddRackOverlay onClose={() => setSelectedRoomId(null)} roomId={selectedRoomId} />
             )}
 
             {roomsData.map((room, index) => (
