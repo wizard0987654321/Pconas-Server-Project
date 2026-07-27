@@ -23,6 +23,10 @@ function ServerRoom() {
     const [roomToDelete, setRoomToDelete] = useState<number | null>(null);
     const [selectedRoomId, setSelectedRoomId] = useState<number | null>(null);
 
+    const handleRackClick = (rackId: number) => {
+        navigate(`/racks/${rackId}`);
+    };
+
     useEffect(() => {
         getRackData()
             .then((data) => {
@@ -77,11 +81,12 @@ function ServerRoom() {
 
                     <div className="flex flex-col items-center border-4 border-solid border-[#6ADBAF] rounded-[10px]">
                         <div className="grid grid-rows-2" style={{ gridTemplateColumns: `repeat(${Math.ceil(room.Capacity / 2)}, minmax(0, 1fr))` }}>
-                            {racksData.map( rack => rack.RoomID === room.ID ? (
+                            {racksData.map(rack => rack.RoomID === room.ID ? (
                                 <div key={rack.ID} className="relative group">
                                     <img
                                         src={serverIcon}
                                         alt="Server Icon"
+                                        onClick={() => handleRackClick(rack.ID)}
                                         className="cursor-pointer transition-transform duration-150 hover:scale-110"
                                     />
 
