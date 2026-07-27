@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getRackData, getDevicesData } from "../services/api";
+import { getRackData, getDevicesData, getDeviceTypesData } from "../services/api";
 import type { Rack, Device } from "../types";
 import { useTranslation } from "react-i18next";
 import PrimaryButton from "./buttons/PrimaryButton";
@@ -11,7 +11,7 @@ function DetailedRack() {
     const { t } = useTranslation();
 
     const [selectedRackId, setSelectedRackId] = useState<number | null>(null);
-
+    const [deviceTypes, setDeviceTypes] = useState<any[]>([]);
 
     const handleDeviceAdded = (rackId: number) => {
         setSelectedRackId(rackId);
@@ -43,6 +43,14 @@ function DetailedRack() {
             .catch((err) => console.error(err))
             .finally(() => setLoadingDevices(false));
     }, [id]);
+
+    useEffect(() => {
+        getDeviceTypesData()
+            .then((data) => {
+                setDeviceTypes(data);
+            })
+            .catch((err) => console.error(err));
+    }, []);
 
     if (loadingRack || loadingDevices) {
         return <p>{t("common.loading")}</p>;
@@ -97,8 +105,24 @@ function DetailedRack() {
 
                                 <div className="flex-1 flex items-center px-2">
                                     {device ? (
-                                        <div className="w-full rounded bg-blue-600 text-white text-xs px-2 py-1">
-                                            {device.InternalID}
+                                        <div className="relative group w-full">
+                                            <div className="w-full cursor-pointer rounded bg-blue-600 px-2 py-1 text-xs text-white transition-transform duration-150 hover:scale-[1.02]">
+                                                {device.InternalID}
+                                            </div>
+
+                                            <div className="absolute left-1/2 top-full z-20 mt-2 hidden w-52 -translate-x-1/2 rounded-md border-2 border-[#6ADBAF] bg-white p-3 font-mono text-xs text-black shadow-lg group-hover:block">
+                                                <p><span className="font-semibold">Internal ID:</span> {device.InternalID}</p>
+                                                <p>
+                                                    <span className="font-semibold">Type:</span>{" "}
+                                                    {
+                                                        deviceTypes.find(
+                                                            type => type.ID === device.TypeID
+                                                        )?.TypeName ?? "Unknown"
+                                                    }
+                                                </p>                                                <p><span className="font-semibold">Position:</span> {device.PositionFrom}U - {device.PositionTo}U</p>
+                                                <p><span className="font-semibold">Electricity:</span> {device.ElectricityConnected ? "Yes" : "No"}</p>
+                                                <p><span className="font-semibold">TOR:</span> {device.TORConnected ? "Yes" : "No"}</p>
+                                            </div>
                                         </div>
                                     ) : (
                                         <div className="w-full h-5 rounded border border-dashed border-gray-300"></div>
