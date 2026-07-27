@@ -35,7 +35,7 @@ function DataList({ data, detailPath, detailLabel, idField = "ID", onDelete }: D
     };
 
     return (
-        <div className="w-full rounded-xl p-3 s:p-8 lg:p-10 font-mono">
+        <div className="w-full rounded-xl p-3 s:p-8 lg:p-10 font-mono text-[#111827] dark:text-[#F9FAFB]">
 
             {/* Desktop Header */}
             <div
@@ -57,7 +57,7 @@ function DataList({ data, detailPath, detailLabel, idField = "ID", onDelete }: D
                     <div key={index}>
 
                         {/* Mobile */}
-                        <div className="xl:hidden rounded-lg text-sm m:text-xl border-3 border-[#6ADBAF] p-4 space-y-2 bg-white">
+                        <div className="xl:hidden rounded-lg text-sm m:text-xl border-3 border-[#6ADBAF] p-4 space-y-2 bg-[#F8FAFC] dark:bg-[#0F234F]">
                             {columns.map((key) => (
                                 <div key={key} className="flex items-center">
                                     <span className="p-2 font-bold text-[#6ADBAF] shrink-0">
@@ -69,7 +69,7 @@ function DataList({ data, detailPath, detailLabel, idField = "ID", onDelete }: D
                                             ? "text-[#FF6B6B] font-bold" //red for answer no, so it's more visible
                                             : ""
                                             }`}
-                                    > 
+                                    >
                                         {typeof row[key] === "boolean" //only for boolean type columns
                                             ? row[key]
                                                 ? "Yes"
@@ -80,10 +80,12 @@ function DataList({ data, detailPath, detailLabel, idField = "ID", onDelete }: D
                             ))}
 
                             {detailPath && (
-                                <PrimaryButton
-                                    label={detailLabel ? t(detailLabel) : t("common.viewDetails")}
-                                    onClick={() => handleViewDetails(row)}
-                                />
+                                <div className="flex justify-center">
+                                    <PrimaryButton
+                                        label={detailLabel ? t(detailLabel) : t("common.viewDetails")}
+                                        onClick={() => handleViewDetails(row)}
+                                    />
+                                </div>
                             )}
 
                             <DeleteButton

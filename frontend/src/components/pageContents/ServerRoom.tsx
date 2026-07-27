@@ -79,7 +79,7 @@ function ServerRoom() {
                         {t("pages.rooms.cardHeading")} {index + 1}
                     </h1>
 
-                    <div className="flex flex-col items-center border-4 border-solid border-[#6ADBAF] rounded-[10px]">
+                    <div className="flex flex-col items-center border-4 border-solid border-[#6ADBAF] rounded-[10px] bg-[#F8FAFC] text-[#111827] dark:bg-[#0F234F] dark:text-[#F9FAFB]">
                         <div className="grid grid-rows-2" style={{ gridTemplateColumns: `repeat(${Math.ceil(room.Capacity / 2)}, minmax(0, 1fr))` }}>
                             {racksData.map(rack => rack.RoomID === room.ID ? (
                                 <div key={rack.ID} className="relative group">
@@ -90,7 +90,7 @@ function ServerRoom() {
                                         className="cursor-pointer transition-transform duration-150 hover:scale-110"
                                     />
 
-                                    <div className="absolute font-mono left-1/2 top-full z-10 mt-2 hidden w-40 -translate-x-1/2 rounded-md border-3 border-[#6ADBAF] bg-white p-2 text-xs shadow-lg group-hover:block">
+                                    <div className="absolute font-mono left-1/2 top-full z-10 mt-2 hidden w-40 -translate-x-1/2 rounded-md border-3 border-[#6ADBAF] bg-[#F8FAFC] p-2 text-xs text-[#111827] shadow-lg group-hover:block dark:bg-[#0E1F48] dark:text-[#F9FAFB]">
                                         <p><span className="font-semibold">Rack:</span> {rack.ID}</p>
                                         <p><span className="font-semibold">Units:</span> {rack.UnitsSize} U</p>
                                         <p><span className="font-semibold">Height:</span> {rack.HeightCm} cm</p>

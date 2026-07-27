@@ -7,8 +7,8 @@ function ErrorPage() {
 
     return (
         <>
-            <h1 className="text-blue-600 dark:text-red-600">This is Error Page</h1>
-            <p>{t('error.errorMessage')}</p>
+            <h1 className="text-blue-600 dark:text-[#F9FAFB]">This is Error Page</h1>
+            <p className="text-[#111827] dark:text-[#F9FAFB]">{t('error.errorMessage')}</p>
         </>
     )
 }

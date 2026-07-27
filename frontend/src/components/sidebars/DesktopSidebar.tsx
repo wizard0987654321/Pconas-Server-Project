@@ -6,8 +6,8 @@ function DesktopSidebar() {
             className="
                         hidden sm:flex
                         flex-col
-                        bg-[#F8FAFC] dark:bg-gray-900
-                        border-4 border-[#6ADBAF] dark:border-[#3f8c6f]
+                        bg-[#F8FAFC] dark:bg-[#0F234F]
+                        border-4 border-[#6ADBAF] dark:border-[#6ADBAF]
                         h-[80vh]
                         xl:h-[60vh]
                         w-[20vw]

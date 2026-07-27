@@ -17,8 +17,8 @@ function NavItem (
             to={to}
             onClick={onClick}
             className={({ isActive }) =>
-                `py-4 font-mono text-sm m:text-lg transition-colors ${
-                    isActive ? "font-bold text-[#6ADBAF]" : "text-black"
+                `py-4 font-mono text-sm m:text-lg transition-colors hover:text-[#6ADBAF] ${
+                    isActive ? "font-bold text-[#6ADBAF]" : "text-[#111827] dark:text-[#F9FAFB]"
                 }`
             }
         >

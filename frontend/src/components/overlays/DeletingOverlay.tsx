@@ -9,7 +9,7 @@ function DeletingOverlay({
 }: DeletingOverlayProps) {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-            <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-lg">
+            <div className="w-full max-w-sm rounded-xl bg-[#F8FAFC] p-6 text-[#111827] shadow-lg dark:bg-[#0F234F] dark:text-[#F9FAFB]">
                 <h2 className="mb-4 font-mono text-xl font-bold">
                     Are you sure you want to delete?
                 </h2>
@@ -27,7 +27,7 @@ function DeletingOverlay({
                     </button>
                     <button
                         onClick={onCancel}
-                        className="cursor-pointer rounded border px-4 py-2"
+                        className="cursor-pointer rounded border border-[#6ADBAF] px-4 py-2 hover:bg-gray-100 dark:hover:bg-white/10"
                     >
                         No
                     </button>

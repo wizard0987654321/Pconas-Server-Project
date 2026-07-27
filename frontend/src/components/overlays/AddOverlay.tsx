@@ -95,14 +95,14 @@ function AddOverlay({
     return (
         <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50 p-3 sm:p-4">
             <div className="flex min-h-full items-center justify-center">
-                <div className="w-full max-w-[18rem] max-h-[90vh] overflow-y-auto rounded-xl bg-white p-4 shadow-lg sm:max-w-sm sm:p-6">
+                <div className="w-full max-w-[18rem] max-h-[90vh] overflow-y-auto rounded-xl bg-[#F8FAFC] p-4 text-[#111827] shadow-lg dark:bg-[#0F234F] dark:text-[#F9FAFB] sm:max-w-sm sm:p-6">
 
                     <h2 className="mb-3 text-lg font-bold sm:mb-4 sm:text-xl">{title}</h2>
 
                     <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:gap-4">
 
                         {errorMessage && (
-                            <p className="rounded border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+                            <p className="rounded border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-400/40 dark:bg-red-500/10 dark:text-red-200">
                                 {errorMessage}
                             </p>
                         )}
@@ -115,7 +115,7 @@ function AddOverlay({
                                 </label>
 
                                 {field.options ? (
-                                    <select value={formData[field.name] ?? ""} onChange={(e) => handleChange(field.name, e.target.value)} className="w-full rounded border p-1.5 text-sm sm:p-2 sm:text-base" required>
+                                    <select value={formData[field.name] ?? ""} onChange={(e) => handleChange(field.name, e.target.value)} className="w-full rounded border border-[#6ADBAF] bg-white p-1.5 text-sm text-[#111827] dark:bg-[#0E1F48] dark:text-[#F9FAFB] sm:p-2 sm:text-base" required>
                                         <option value="">Select</option>
 
                                         {field.options.map(option => (
@@ -125,7 +125,7 @@ function AddOverlay({
                                         ))}
                                     </select>
                                 ) : (
-                                    <input type={field.type ?? "number"} value={formData[field.name] ?? ""} onChange={(e) => handleChange(field.name, e.target.value)} min={field.min} step={field.step} className="w-full rounded border p-1.5 text-sm sm:p-2 sm:text-base" required />
+                                    <input type={field.type ?? "number"} value={formData[field.name] ?? ""} onChange={(e) => handleChange(field.name, e.target.value)} min={field.min} step={field.step} className="w-full rounded border border-[#6ADBAF] bg-white p-1.5 text-sm text-[#111827] dark:bg-[#0E1F48] dark:text-[#F9FAFB] sm:p-2 sm:text-base" required />
                                 )}
 
                             </div>
@@ -133,7 +133,7 @@ function AddOverlay({
 
                         <div className="flex justify-end gap-2 sm:gap-3">
 
-                            <button type="button" onClick={onClose} className="cursor-pointer rounded border px-3 py-1.5 text-sm transition-colors hover:bg-gray-100 sm:px-4 sm:py-2 sm:text-base">
+                            <button type="button" onClick={onClose} className="cursor-pointer rounded border border-[#6ADBAF] px-3 py-1.5 text-sm transition-colors hover:bg-gray-100 dark:hover:bg-white/10 sm:px-4 sm:py-2 sm:text-base">
                                 Cancel
                             </button>
 

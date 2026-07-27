@@ -11,7 +11,7 @@ export default function LanguageToggle() {
   return (
     <button
       onClick={toggleLanguage}
-      className="p-2 rounded-md bg-gray-100 dark:bg-gray-800 cursor-pointer text-2xl"
+      className="p-2 rounded-md bg-gray-100 text-[#111827] dark:bg-gray-800 dark:text-[#F9FAFB] cursor-pointer text-2xl"
     >
       {i18n.language === 'en' ? '🇩🇪' : '🇬🇧'}
     </button>

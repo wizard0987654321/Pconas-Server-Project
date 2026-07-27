@@ -73,7 +73,7 @@ function DetailedRack() {
                 />
             )}
 
-            <div className="w-full h-full flex flex-col items-center">
+            <div className="w-full h-full flex flex-col items-center text-[#111827] dark:text-[#F9FAFB]">
                 <div className="w-[100%] flex flex-start">
                     <PrimaryButton
                         label={t("pages.devices.addButton")}
@@ -81,9 +81,9 @@ function DetailedRack() {
                         margin="m-6"
                     />
                 </div>
-                <div className="my-4 w-[80%] xs:w-[70%] l:w-[40%] border-4 border-gray-700 rounded overflow-hidden">
+                <div className="my-4 w-[80%] xs:w-[70%] l:w-[40%] border-4 border-[#6ADBAF] rounded overflow-hidden bg-[#F8FAFC] dark:bg-[#0F234F]">
 
-                    <div className="bg-gray-800 text-white text-center py-2 font-bold">
+                    <div className="bg-[#0E1F48] text-[#F9FAFB] text-center py-2 font-bold">
                         Rack {rack.ID}
                     </div>
 
@@ -97,9 +97,9 @@ function DetailedRack() {
                         return (
                             <div
                                 key={unit}
-                                className="flex h-8 border-b border-gray-300"
+                                className="flex h-8 border-b border-[#6ADBAF]/40"
                             >
-                                <div className="w-10 flex items-center justify-center bg-gray-100 border-r text-xs font-semibold">
+                                <div className="w-10 flex items-center justify-center bg-[#EAF9F2] border-r border-[#6ADBAF]/40 text-xs font-semibold dark:bg-[#12315f]">
                                     {unit}
                                 </div>
 
@@ -110,7 +110,7 @@ function DetailedRack() {
                                                 {device.InternalID}
                                             </div>
 
-                                            <div className="absolute left-1/2 top-full z-20 mt-2 hidden w-52 -translate-x-1/2 rounded-md border-2 border-[#6ADBAF] bg-white p-3 font-mono text-xs text-black shadow-lg group-hover:block">
+                                            <div className="absolute left-1/2 top-full z-20 mt-2 hidden w-52 -translate-x-1/2 rounded-md border-2 border-[#6ADBAF] bg-[#F8FAFC] p-3 font-mono text-xs text-[#111827] shadow-lg group-hover:block dark:bg-[#0E1F48] dark:text-[#F9FAFB]">
                                                 <p><span className="font-semibold">Internal ID:</span> {device.InternalID}</p>
                                                 <p>
                                                     <span className="font-semibold">Type:</span>{" "}
@@ -125,7 +125,7 @@ function DetailedRack() {
                                             </div>
                                         </div>
                                     ) : (
-                                        <div className="w-full h-5 rounded border border-dashed border-gray-300"></div>
+                                        <div className="w-full h-5 rounded border border-dashed border-[#6ADBAF]/40"></div>
                                     )}
                                 </div>
                             </div>
