@@ -60,7 +60,7 @@ function LoginScreen() {
           </div>
 
           <button type="submit" className="sr-only">
-            Submit login
+            t("pages.login.button")
           </button>
         </form>
       </div>
