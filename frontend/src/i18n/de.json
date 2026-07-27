@@ -39,6 +39,15 @@
     "logOut": "abmelden"
   },
   "pages": {
+    "login": {
+      "comment": "Login-Testseite",
+      "username": "Benutzername",
+      "password": "Passwort",
+      "usernamePlaceholder": "Trainer oder Trainee",
+      "passwordPlaceholder": "Dein Passwort",
+      "loginButton": "Anmelden",
+      "checking": "Wird geprüft..."
+    },
     "home": {
       "trainerHelloText": "Willkommen in deinem Pconas Trainer Portal",
       "traineeHelloText": "Willkommen in deinem Pconas Trainee Portal",
