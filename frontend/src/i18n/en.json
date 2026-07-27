@@ -46,7 +46,8 @@
       "usernamePlaceholder": "trainer or trainee",
       "passwordPlaceholder": "your password",
       "loginButton": "Log in",
-      "checking": "Checking..."
+      "checking": "Checking...",
+      "button": "log in"
     },
     "home": {
       "trainerHelloText": "Welcome to your Pconas Trainer Portal",
