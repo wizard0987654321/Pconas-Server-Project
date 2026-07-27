@@ -1,7 +1,36 @@
 {
+  "common": {
+    "loading": "Loading...",
+    "notFound": "Not found",
+    "select": "Select",
+    "cancel": "Cancel",
+    "save": "Save",
+    "yes": "Yes",
+    "no": "No",
+    "unknown": "Unknown",
+    "logoAlt": "Pconas logo",
+    "brandName": "Trainer",
+    "addRackAlt": "Add rack",
+    "serverIconAlt": "Server icon",
+    "listViewAlt": "List view",
+    "roomViewAlt": "Room view",
+    "deleteTitle": "Are you sure you want to delete?",
+    "deleteWarning": "This action cannot be undone.",
+    "rack": "Rack",
+    "room": "Room",
+    "device": "Device",
+    "internalId": "Internal ID",
+    "type": "Type",
+    "position": "Position",
+    "electricity": "Electricity",
+    "tor": "TOR",
+    "units": "Units",
+    "height": "Height"
+  },
   "test": {
     "testWord": "testWord",
-    "secondWord": "apple"
+    "secondWord": "apple",
+    "title": "This is a test page"
   },
   "pages": {
     "home": {
@@ -15,6 +44,12 @@
       "deleteButton": "delete room",
       "button": "view racks",
       "cardHeading": "Room",
+      "form": {
+        "title": "Add New Room",
+        "area": "Area (m²)",
+        "capacity": "Capacity",
+        "height": "Height (cm)"
+      },
       "data": {
         "#": "#",
         "area": "area",
@@ -26,6 +61,16 @@
     "racks": {
       "headingText": "Racks",
       "addButton": "add rack",
+      "form": {
+        "title": "Add New Rack",
+        "room": "Room",
+        "unitsSize": "Size in units (U)",
+        "height": "Height (cm)",
+        "validation": {
+          "noRoomSelected": "Please select a room.",
+          "heightTooLarge": "Rack height cannot be greater than the selected room height ({{height}} cm)."
+        }
+      },
       "data": {
         "#": "#",
         "room": "room",
@@ -38,6 +83,12 @@
     "deviceTypes": {
       "headingText": "Device Types",
       "addButton": "add device type",
+      "form": {
+        "title": "Add New Device Type",
+        "typeName": "Type Name",
+        "manufacturer": "Manufacturer",
+        "usage": "Usage"
+      },
       "data": {
         "typeName": "name",
         "manufacturer": "manufacturer",
@@ -47,6 +98,26 @@
     "devices": {
       "headingText": "Devices",
       "addButton": "add device",
+      "form": {
+        "title": "Add New Device",
+        "rack": "Rack",
+        "internalId": "Internal ID",
+        "positionFrom": "Position (From)",
+        "positionTo": "Position (To)",
+        "electricityConnected": "Electricity Connected",
+        "torConnected": "TOR Connected",
+        "deviceType": "Device Type",
+        "selectRack": "Rack {{number}}",
+        "yes": "Yes",
+        "no": "No",
+        "validation": {
+          "noRackSelected": "Please select a rack.",
+          "positionOrder": "Position (From) must be less than or equal to Position (To).",
+          "positionFromTooLarge": "Position (From) must be less than total size (Units) of chosen rack, size - {{size}}",
+          "positionToTooLarge": "Position (To) can not be more than total size (Units) of chosen rack, size - {{size}}",
+          "overlap": "The selected device positions overlap with an existing device in this rack."
+        }
+      },
       "data": {
         "#": "#",
         "type": "type",
@@ -72,6 +143,11 @@
     "services": {
       "headingText": "Services",
       "addButton": "add service",
+      "form": {
+        "title": "Add New Service",
+        "serviceName": "Service Name",
+        "customer": "Customer"
+      },
       "data": {
         "#": "#",
         "customer": "customer",
@@ -81,6 +157,11 @@
     "customers": {
       "headingText": "Customers",
       "addButton": "add customer",
+      "form": {
+        "title": "Add New Customer",
+        "name": "Name",
+        "phoneNumber": "Phone Number"
+      },
       "data": {
         "number": "phone number"
       }
@@ -97,6 +178,7 @@
     "customers": "Customers"
   },
   "error": {
+    "pageTitle": "This is error",
     "errorMessage": "This is error"
   }
 }

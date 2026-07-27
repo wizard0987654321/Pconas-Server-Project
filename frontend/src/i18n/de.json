@@ -1,7 +1,36 @@
 {
+  "common": {
+    "loading": "Wird geladen...",
+    "notFound": "Nicht gefunden",
+    "select": "Auswählen",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "yes": "Ja",
+    "no": "Nein",
+    "unknown": "Unbekannt",
+    "logoAlt": "Pconas Logo",
+    "brandName": "Trainer",
+    "addRackAlt": "Rack hinzufügen",
+    "serverIconAlt": "Server-Icon",
+    "listViewAlt": "Listenansicht",
+    "roomViewAlt": "Raumansicht",
+    "deleteTitle": "Möchtest du wirklich löschen?",
+    "deleteWarning": "Diese Aktion kann nicht rückgängig gemacht werden.",
+    "rack": "Rack",
+    "room": "Raum",
+    "device": "Gerät",
+    "internalId": "Interne ID",
+    "type": "Typ",
+    "position": "Position",
+    "electricity": "Strom",
+    "tor": "TOR",
+    "units": "Einheiten",
+    "height": "Höhe"
+  },
   "test": {
     "testWord": "TestWort",
-    "secondWord": "Apfel"
+    "secondWord": "Apfel",
+    "title": "Dies ist eine Testseite"
   },
   "pages": {
     "home": {
@@ -15,6 +44,12 @@
       "deleteButton": "Raum löschen",
       "button": "zu den Racks",
       "cardHeading": "Raum",
+      "form": {
+        "title": "Neuen Raum hinzufügen",
+        "area": "Fläche (m²)",
+        "capacity": "Kapazität",
+        "height": "Höhe (cm)"
+      },
       "data": {
         "#": "#",
         "name": "Name",
@@ -26,6 +61,16 @@
     "racks": {
       "headingText": "Racks",
       "addButton": "Rack hinzufügen",
+      "form": {
+        "title": "Neues Rack hinzufügen",
+        "room": "Raum",
+        "unitsSize": "Größe in Einheiten (U)",
+        "height": "Höhe (cm)",
+        "validation": {
+          "noRoomSelected": "Bitte wähle einen Raum aus.",
+          "heightTooLarge": "Die Rack-Höhe darf nicht größer als die ausgewählte Raumhöhe ({{height}} cm) sein."
+        }
+      },
       "data": {
         "#": "#",
         "room": "Raum",
@@ -38,6 +83,12 @@
     "deviceTypes": {
       "headingText": "Gerätetypen",
       "addButton": "Gerättyp hinzufügen",
+      "form": {
+        "title": "Neuen Gerätetyp hinzufügen",
+        "typeName": "Typname",
+        "manufacturer": "Hersteller",
+        "usage": "Nutzung"
+      },
       "data": {
         "typeName": "Name",
         "manufacturer": "Hersteller",
@@ -47,6 +98,26 @@
     "devices": {
       "headingText": "Geräte",
       "addButton": "Gerät hinzufügen",
+      "form": {
+        "title": "Neues Gerät hinzufügen",
+        "rack": "Rack",
+        "internalId": "Interne ID",
+        "positionFrom": "Position (Von)",
+        "positionTo": "Position (Bis)",
+        "electricityConnected": "Strom angeschlossen",
+        "torConnected": "TOR angeschlossen",
+        "deviceType": "Gerätetyp",
+        "selectRack": "Rack {{number}}",
+        "yes": "Ja",
+        "no": "Nein",
+        "validation": {
+          "noRackSelected": "Bitte wähle ein Rack aus.",
+          "positionOrder": "Position (Von) muss kleiner oder gleich Position (Bis) sein.",
+          "positionFromTooLarge": "Position (Von) muss kleiner als die Gesamtgröße (Einheiten) des ausgewählten Racks sein, Größe - {{size}}",
+          "positionToTooLarge": "Position (Bis) darf nicht größer als die Gesamtgröße (Einheiten) des ausgewählten Racks sein, Größe - {{size}}",
+          "overlap": "Die ausgewählten Gerätepositionen überschneiden sich mit einem vorhandenen Gerät in diesem Rack."
+        }
+      },
       "data": {
         "#": "#",
         "type": "Typ",
@@ -72,6 +143,11 @@
     "services": {
       "headingText": "Services",
       "addButton": "Service hinzufügen",
+      "form": {
+        "title": "Neuen Service hinzufügen",
+        "serviceName": "Service Name",
+        "customer": "Kunde"
+      },
       "data": {
         "#": "#",
         "customer": "Kunde",
@@ -81,6 +157,11 @@
     "customers": {
       "headingText": "Kunden",
       "addButton": "Kunde hinzufügen",
+      "form": {
+        "title": "Neuen Kunden hinzufügen",
+        "name": "Name",
+        "phoneNumber": "Telefonnummer"
+      },
       "data": {
         "number": "Telefonnummer"
       }
@@ -97,6 +178,7 @@
     "customers": "Kunden"
   },
   "error": {
+    "pageTitle": "Das ist Error",
     "errorMessage": "Das ist Error"
   }
 }

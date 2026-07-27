@@ -2,6 +2,7 @@ import AddOverlay from "./AddOverlay";
 import { useRacks } from "../../helpers/hooks/rackOperations";
 import { useDeviceTypes } from "../../helpers/hooks/deviceTypeOperations";
 import { useDevice } from "../../helpers/hooks/deviceOperations";
+import { useTranslation } from "react-i18next";
 
 type AddDeviceOverlayProps = {
     onClose: () => void,
@@ -9,6 +10,7 @@ type AddDeviceOverlayProps = {
 };
 
 function AddDeviceOverlay({ onClose, rackId }: AddDeviceOverlayProps) {
+    const { t } = useTranslation();
     const { racksData } = useRacks();
     const { deviceTypesData } = useDeviceTypes();
     const { deviceData } = useDevice();
@@ -16,7 +18,7 @@ function AddDeviceOverlay({ onClose, rackId }: AddDeviceOverlayProps) {
 
     return (
         <AddOverlay
-            title="Add New Device"
+            title={t("pages.devices.form.title")}
             endpoint="/addDevice"
             onClose={onClose}
             initialData={rackId != null ? { rackId: String(rackId) } : undefined}
@@ -27,20 +29,20 @@ function AddDeviceOverlay({ onClose, rackId }: AddDeviceOverlayProps) {
                 const positionTo = Number(data.positionTo);
 
                 if (!selectedRackId) {
-                    return "Please select a rack.";
+                    return t("pages.devices.form.validation.noRackSelected");
                 }
 
                 if (positionFrom > positionTo) {
-                    return "Position (From) must be less than or equal to Position (To).";
+                    return t("pages.devices.form.validation.positionOrder");
                 }
 
                 if (selectedRack) {
                     if (positionFrom >= selectedRack.UnitsSize) {
-                        return `Position (From) must be less than total size (Units) of chosen rack, size - ${selectedRack.UnitsSize}`
+                        return t("pages.devices.form.validation.positionFromTooLarge", { size: selectedRack.UnitsSize })
                     }
 
                     if (positionTo > selectedRack.UnitsSize) {
-                        return `Position (To) can not be more than total size (Units) of chosen rack, size - ${selectedRack.UnitsSize}`
+                        return t("pages.devices.form.validation.positionToTooLarge", { size: selectedRack.UnitsSize })
                     }
                 }
 
@@ -55,7 +57,7 @@ function AddDeviceOverlay({ onClose, rackId }: AddDeviceOverlayProps) {
                 );
 
                 if (overlapsExistingDevice) {
-                    return "The selected device positions overlap with an existing device in this rack.";
+                    return t("pages.devices.form.validation.overlap");
                 }
 
                 return null;
@@ -64,47 +66,47 @@ function AddDeviceOverlay({ onClose, rackId }: AddDeviceOverlayProps) {
                 ...(rackId == null
                     ? [{
                         name: "rackId",
-                        label: "Rack",
+                        label: t("pages.devices.form.rack"),
                         options: racksData.map((rack, index) => ({
                             value: rack.ID,
-                            label: `Rack ${index + 1}`
+                            label: t("pages.devices.form.selectRack", { number: index + 1 })
                         }))
                     }]
                     : []),
                 {
                     name: "internalId",
-                    label: "Internal ID",
+                    label: t("pages.devices.form.internalId"),
                     type: "text",
                 },
                 {
                     name: "positionFrom",
-                    label: "Position (From)",
+                    label: t("pages.devices.form.positionFrom"),
                     min: 1,
                 },
                 {
                     name: "positionTo",
-                    label: "Position (To)",
+                    label: t("pages.devices.form.positionTo"),
                     min: 1,
                 },
                 {
                     name: "electricityConnected",
-                    label: "Electricity Connected",
+                    label: t("pages.devices.form.electricityConnected"),
                     options: [
-                        { value: "true", label: "Yes" },
-                        { value: "false", label: "No" },
+                        { value: "true", label: t("pages.devices.form.yes") },
+                        { value: "false", label: t("pages.devices.form.no") },
                     ],
                 },
                 {
                     name: "torConnected",
-                    label: "TOR Connected",
+                    label: t("pages.devices.form.torConnected"),
                     options: [
-                        { value: "true", label: "Yes" },
-                        { value: "false", label: "No" },
+                        { value: "true", label: t("pages.devices.form.yes") },
+                        { value: "false", label: t("pages.devices.form.no") },
                     ],
                 },
                 {
                     name: "typeId",
-                    label: "Device Type",
+                    label: t("pages.devices.form.deviceType"),
                     options: deviceTypesData.map((deviceType) => ({
                         value: deviceType.ID,
                         label: deviceType.TypeName,

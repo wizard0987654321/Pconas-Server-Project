@@ -15,7 +15,7 @@ function DeviceTypesPage() {
 
     return (
         <div className="flex flex-col justify-center flex-wrap items-center p-4 w-full">
-            <PageHeading heading="Device Types" />
+            <PageHeading heading="pages.deviceTypes.headingText" />
 
             <div className="w-[100%] flex flex-start">
                 <PrimaryButton

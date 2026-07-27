@@ -111,17 +111,17 @@ function DetailedRack() {
                                             </div>
 
                                             <div className="absolute left-1/2 top-full z-20 mt-2 hidden w-52 -translate-x-1/2 rounded-md border-2 border-[#6ADBAF] bg-[#F8FAFC] p-3 font-mono text-xs text-[#111827] shadow-lg group-hover:block dark:bg-[#0E1F48] dark:text-[#F9FAFB]">
-                                                <p><span className="font-semibold">Internal ID:</span> {device.InternalID}</p>
+                                                <p><span className="font-semibold">{t("common.internalId")}:</span> {device.InternalID}</p>
                                                 <p>
-                                                    <span className="font-semibold">Type:</span>{" "}
+                                                    <span className="font-semibold">{t("common.type")}:</span>{" "}
                                                     {
                                                         deviceTypes.find(
                                                             type => type.ID === device.TypeID
-                                                        )?.TypeName ?? "Unknown"
+                                                        )?.TypeName ?? t("common.unknown")
                                                     }
-                                                </p>                                                <p><span className="font-semibold">Position:</span> {device.PositionFrom}U - {device.PositionTo}U</p>
-                                                <p><span className="font-semibold">Electricity:</span> {device.ElectricityConnected ? "Yes" : "No"}</p>
-                                                <p><span className="font-semibold">TOR:</span> {device.TORConnected ? "Yes" : "No"}</p>
+                                                </p>                                                <p><span className="font-semibold">{t("common.position")}:</span> {device.PositionFrom}U - {device.PositionTo}U</p>
+                                                <p><span className="font-semibold">{t("common.electricity")}:</span> {device.ElectricityConnected ? t("common.yes") : t("common.no")}</p>
+                                                <p><span className="font-semibold">{t("common.tor")}:</span> {device.TORConnected ? t("common.yes") : t("common.no")}</p>
                                             </div>
                                         </div>
                                     ) : (

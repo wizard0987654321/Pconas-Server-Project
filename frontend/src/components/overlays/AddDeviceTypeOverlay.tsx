@@ -1,16 +1,18 @@
 import AddOverlay from "./AddOverlay";
+import { useTranslation } from "react-i18next";
 
 type AddDeviceTypeOverlayProps = {
     onClose: () => void;
 };
 
 function AddDeviceTypeOverlay({ onClose }:AddDeviceTypeOverlayProps) {
+    const { t } = useTranslation();
 
 
     return (
         <AddOverlay
 
-            title="Add New Device Type"
+            title={t("pages.deviceTypes.form.title")}
 
             endpoint="/addDeviceType"
 
@@ -20,19 +22,19 @@ function AddDeviceTypeOverlay({ onClose }:AddDeviceTypeOverlayProps) {
             fields={[
                 {
                     name:"name",
-                    label:"Type Name",
+                    label:t("pages.deviceTypes.form.typeName"),
                     type: "text"
                 },
 
                 {
                     name:"manufacturer",
-                    label:"Manufacturer",
+                    label:t("pages.deviceTypes.form.manufacturer"),
                     type: "text"
                 },
 
                 {
                     name:"usage",
-                    label:"Usage",
+                    label:t("pages.deviceTypes.form.usage"),
                     type: "text"
                 }
             ]}

@@ -1,32 +1,34 @@
 import AddOverlay from "./AddOverlay";
+import { useTranslation } from "react-i18next";
 
 type AddRoomOverlayProps = {
     onClose: () => void;
 };
 
 function AddRoomOverlay({ onClose }: AddRoomOverlayProps) {
+    const { t } = useTranslation();
 
     return (
         <AddOverlay
-            title="Add New Room"
+            title={t("pages.rooms.form.title")}
             endpoint="/addRoom"
             onClose={onClose}
 
             fields={[
                 {
                     name: "area",
-                    label: "Area (m²)",
+                    label: t("pages.rooms.form.area"),
                     min: 0,
                     step: 0.01,
                 },
                 {
                     name: "capacity",
-                    label: "Capacity",
+                    label: t("pages.rooms.form.capacity"),
                     min: 1,
                 },
                 {
                     name: "height",
-                    label: "Height (cm)",
+                    label: t("pages.rooms.form.height"),
                     min: 0,
                     step: 0.01,
                 },

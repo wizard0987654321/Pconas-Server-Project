@@ -72,8 +72,8 @@ function DataList({ data, detailPath, detailLabel, idField = "ID", onDelete }: D
                                     >
                                         {typeof row[key] === "boolean" //only for boolean type columns
                                             ? row[key]
-                                                ? "Yes"
-                                                : "No"
+                                                ? t("common.yes")
+                                                : t("common.no")
                                             : row[key]}
                                     </span>
                                 </div>
@@ -106,7 +106,7 @@ function DataList({ data, detailPath, detailLabel, idField = "ID", onDelete }: D
                                     : ""
                                     }`} key={column}>
                                     {typeof row[column] === "boolean"
-                                        ? row[column] ? "Yes" : "No" //for boolean type columns
+                                        ? row[column] ? t("common.yes") : t("common.no") //for boolean type columns
                                         : row[column]}
                                 </span>
                             ))}

@@ -2,6 +2,7 @@
 
 import { useRooms } from "../../helpers/hooks/roomOperations";
 import AddOverlay from "./AddOverlay";
+import { useTranslation } from "react-i18next";
 
 type AddRackOverlayProps = {
     onClose: () => void;
@@ -9,21 +10,22 @@ type AddRackOverlayProps = {
 };
 
 function AddRackOverlay({ onClose, roomId }: AddRackOverlayProps) {
+    const { t } = useTranslation();
     const { roomsData } = useRooms();
 
     return (
         <AddOverlay
-            title="Add New Rack"
+            title={t("pages.racks.form.title")}
             endpoint="/addRack"
             onClose={onClose}
             initialData={roomId != null ? { roomId: String(roomId) } : undefined}
             validate={(data) => {
                 const selectedRoom = roomsData.find(room => room.ID === Number(data.roomId));
 
-                if (!selectedRoom) return "Please select a room.";
+                if (!selectedRoom) return t("pages.racks.form.validation.noRoomSelected");
 
                 if (Number(data.height) > selectedRoom.HeightCm) {
-                    return `Rack height cannot be greater than the selected room height (${selectedRoom.HeightCm} cm).`;
+                    return t("pages.racks.form.validation.heightTooLarge", { height: selectedRoom.HeightCm });
                 }
 
                 return null;
@@ -32,21 +34,21 @@ function AddRackOverlay({ onClose, roomId }: AddRackOverlayProps) {
                 ...(roomId == null
                     ? [{
                         name: "roomId",
-                        label: "Room",
+                        label: t("pages.racks.form.room"),
                         options: roomsData.map((room, index) => ({
                             value: room.ID,
-                            label: `Room ${index + 1}`
+                            label: `${t("common.room")} ${index + 1}`
                         }))
                     }]
                     : []),
                 {
                     name: "unitsSize",
-                    label: "Size in units (U)",
+                    label: t("pages.racks.form.unitsSize"),
                     min: 1
                 },
                 {
                     name: "height",
-                    label: "Height (cm)",
+                    label: t("pages.racks.form.height"),
                     min: 0,
                     step: 0.01
                 }

@@ -1,27 +1,29 @@
 import AddOverlay from "./AddOverlay";
 import { useCustomers } from "../../helpers/hooks/customerOperations";
+import { useTranslation } from "react-i18next";
 
 type AddServiceOverlayProps = {
     onClose: () => void;
 };
 
 function AddServiceOverlay({ onClose }: AddServiceOverlayProps) {
+    const { t } = useTranslation();
     const { customersData } = useCustomers();
 
     return (
         <AddOverlay
-            title="Add New Service"
+            title={t("pages.services.form.title")}
             endpoint="/addService"
             onClose={onClose}
             fields={[
                 {
                     name: "name",
-                    label: "Service Name",
+                    label: t("pages.services.form.serviceName"),
                     type: "text",
                 },
                 {
                     name: "customerId",
-                    label: "Customer",
+                    label: t("pages.services.form.customer"),
                     options: customersData.map((customer) => ({
                         value: customer.ID,
                         label: customer.Name,

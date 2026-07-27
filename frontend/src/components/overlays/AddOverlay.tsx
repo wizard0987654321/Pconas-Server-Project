@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 type FieldConfig = {
     name: string;
@@ -33,6 +34,7 @@ function AddOverlay({
     validate,
     initialData,
 }: AddOverlayProps) {
+    const { t } = useTranslation();
 
     const [formData, setFormData] = useState<Record<string, string>>(initialData ?? {});
     const [errorMessage, setErrorMessage] = useState<string>("");
@@ -116,7 +118,7 @@ function AddOverlay({
 
                                 {field.options ? (
                                     <select value={formData[field.name] ?? ""} onChange={(e) => handleChange(field.name, e.target.value)} className="w-full rounded border border-[#6ADBAF] bg-white p-1.5 text-sm text-[#111827] dark:bg-[#0E1F48] dark:text-[#F9FAFB] sm:p-2 sm:text-base" required>
-                                        <option value="">Select</option>
+                                        <option value="">{t("common.select")}</option>
 
                                         {field.options.map(option => (
                                             <option key={option.value} value={option.value}>
@@ -134,11 +136,11 @@ function AddOverlay({
                         <div className="flex justify-end gap-2 sm:gap-3">
 
                             <button type="button" onClick={onClose} className="cursor-pointer rounded border border-[#6ADBAF] px-3 py-1.5 text-sm transition-colors hover:bg-gray-100 dark:hover:bg-white/10 sm:px-4 sm:py-2 sm:text-base">
-                                Cancel
+                                {t("common.cancel")}
                             </button>
 
                             <button type="submit" className="cursor-pointer rounded bg-[#6ADBAF] px-3 py-1.5 text-sm text-white transition-opacity hover:opacity-90 sm:px-4 sm:py-2 sm:text-base">
-                                Save
+                                {t("common.save")}
                             </button>
 
                         </div>
