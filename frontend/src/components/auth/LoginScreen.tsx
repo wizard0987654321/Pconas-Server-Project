@@ -2,11 +2,13 @@ import { useState } from "react";
 import PageHeading from "../PageHeading";
 import PrimaryButton from "../buttons/PrimaryButton";
 import { useAuth } from "../../contexts/AuthProvider";
+import { useTranslation } from "react-i18next";
 
 function LoginScreen() {
   const { login, isLoggingIn, error } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const { t } = useTranslation();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -19,31 +21,29 @@ function LoginScreen() {
         <PageHeading heading="pages.home.helloText" />
 
         <p className="mt-4 text-center font-mono text-sm uppercase tracking-[0.2em] text-[#2b6a52] dark:text-[#6ADBAF]">
-          Login test screen
+          {t("pages.login.comment")}
         </p>
 
         <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
           <label className="flex flex-col gap-2 font-mono text-sm font-bold">
-            Username
+            {t("pages.login.username")}
             <input
               value={username}
               onChange={(event) => setUsername(event.target.value)}
               className="rounded-[14px] border-2 border-[#6ADBAF] bg-transparent px-4 py-3 outline-none dark:text-[#F8FAFC] dark:placeholder:text-gray-400"
               autoComplete="username"
-              placeholder="trainer or trainee"
-            />
+              placeholder={t("pages.login.usernamePlaceholder")} />
           </label>
 
           <label className="flex flex-col gap-2 font-mono text-sm font-bold">
-            Password
+            {t("pages.login.password")}
             <input
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               className="rounded-[14px] border-2 border-[#6ADBAF] bg-transparent px-4 py-3 outline-none dark:text-[#F8FAFC] dark:placeholder:text-gray-400"
               type="password"
               autoComplete="current-password"
-              placeholder="your password"
-            />
+              placeholder={t("pages.login.passwordPlaceholder")} />
           </label>
 
           {error ? (
@@ -54,8 +54,7 @@ function LoginScreen() {
 
           <div className="flex justify-center">
             <PrimaryButton
-              label={isLoggingIn ? "Checking..." : "Log in"}
-              onClick={() => undefined}
+              label={isLoggingIn ? t("pages.login.checking") : t("pages.login.loginButton")} onClick={() => undefined}
               margin="m-0"
             />
           </div>
