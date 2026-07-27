@@ -15,7 +15,7 @@ function LoginScreen() {
 
   return (
     <div className="flex w-full justify-center p-4">
-      <div className=" xl:max-w-[60%] rounded-[24px] border-4 border-[#6ADBAF] bg-white/85 p-6 shadow-lg backdrop-blur dark:bg-gray-900/85 dark:text-white">
+      <div className="xl:max-w-[60%] rounded-[24px] border-4 border-[#6ADBAF] bg-white/85 p-6 shadow-lg backdrop-blur dark:bg-[#0E1F48] dark:text-[#F8FAFC]">
         <PageHeading heading="pages.home.helloText" />
 
         <p className="mt-4 text-center font-mono text-sm uppercase tracking-[0.2em] text-[#2b6a52] dark:text-[#6ADBAF]">
@@ -28,7 +28,7 @@ function LoginScreen() {
             <input
               value={username}
               onChange={(event) => setUsername(event.target.value)}
-              className="rounded-[14px] border-2 border-[#6ADBAF] bg-transparent px-4 py-3 outline-none"
+              className="rounded-[14px] border-2 border-[#6ADBAF] bg-transparent px-4 py-3 outline-none dark:text-[#F8FAFC] dark:placeholder:text-gray-400"
               autoComplete="username"
               placeholder="trainer or trainee"
             />
@@ -39,7 +39,7 @@ function LoginScreen() {
             <input
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              className="rounded-[14px] border-2 border-[#6ADBAF] bg-transparent px-4 py-3 outline-none"
+              className="rounded-[14px] border-2 border-[#6ADBAF] bg-transparent px-4 py-3 outline-none dark:text-[#F8FAFC] dark:placeholder:text-gray-400"
               type="password"
               autoComplete="current-password"
               placeholder="your password"
