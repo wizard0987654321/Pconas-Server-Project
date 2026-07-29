@@ -11,7 +11,7 @@ function Header() {
 
     return (
         <>
-            <header className="h-[15vh] w-full bg-[#F8FAFC] dark:bg-gray-900 border-4 border-[#6ADBAF] dark:border-[#3f8c6f] flex items-center justify-between l:px-4">
+            <header className="h-[15vh] w-full border-4 border-[#6ADBAF] flex items-center justify-between dark:bg-[#0E1F48] l:px-4">
                 <Link to="/">
                     <img
                         src={logo}
