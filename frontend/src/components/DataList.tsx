@@ -13,10 +13,15 @@ type DataListProps = {
     onDelete?: (id: number) => void;
 };
 
+
+//general component used for each page to display data
+
 function DataList({ data, detailPath, detailLabel, idField = "ID", onDelete }: DataListProps) {
     const { t } = useTranslation();
     const navigate = useNavigate();
 
+
+    //simple animation for dataList component
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -27,6 +32,7 @@ function DataList({ data, detailPath, detailLabel, idField = "ID", onDelete }: D
 
     if (!data.length) return null;
 
+    //setting up grid for the right size, dynamic for different sized data
     const columns = Object.keys(data[0]).filter((key) => key !== idField);
     const columnCount = columns.length + (detailPath ? 1 : 0) + 1; // +1 for delete button
 
@@ -35,6 +41,7 @@ function DataList({ data, detailPath, detailLabel, idField = "ID", onDelete }: D
     };
 
 
+    //for example detailed rack view, also possible for other pages
     const handleViewDetails = (row: Record<string, any>) => {
         navigate(`${detailPath}/${row[idField]}`);
     };
@@ -75,6 +82,7 @@ function DataList({ data, detailPath, detailLabel, idField = "ID", onDelete }: D
                                         {key === "#" ? "#" : t(key)}
                                     </span>
 
+                                {/*for boolean type values*/}
                                     <span
                                         className={`ml-auto text-right break-words ${typeof row[key] === "boolean" && !row[key]
                                             ? "text-[#FF6B6B] font-bold" //red for answer no, so it's more visible
@@ -90,6 +98,7 @@ function DataList({ data, detailPath, detailLabel, idField = "ID", onDelete }: D
                                 </div>
                             ))}
 
+                            {/* view details button visible only when detail path is passed as prop */}
                             {detailPath && (
                                 <div className="flex justify-center">
                                     <PrimaryButton
@@ -122,6 +131,7 @@ function DataList({ data, detailPath, detailLabel, idField = "ID", onDelete }: D
                                 </span>
                             ))}
 
+                            {/* view details button visible only when detail path is passed as prop */}
                             {detailPath && (
                                 <span className="p-1">
                                     <PrimaryButton

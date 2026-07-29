@@ -7,6 +7,8 @@ import AddCustomerOverlay from "../components/overlays/AddCustomerOverlay";
 
 function CustomersPage() {
     const { t } = useTranslation();
+
+    // state for opening overlay
     const [isAddCustomerOpen, setIsAddCustomerOpen] = useState(false);
 
     return (
@@ -22,7 +24,8 @@ function CustomersPage() {
             </div>
 
             <ServerCustomers />
-
+            
+            {/* overlay, located in  src/components/overlays*/}
             {isAddCustomerOpen && (
                 <AddCustomerOverlay onClose={() => setIsAddCustomerOpen(false)} />
             )}

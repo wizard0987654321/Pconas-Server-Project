@@ -9,6 +9,7 @@ function ServerServices() {
     const { servicesData, deleteService } = useServices();
     const [serviceToDelete, setServiceToDelete] = useState<number | null>(null);
 
+    // using helper function for raw data update
     const displayData = useMemo(
         () =>
             transformData(servicesData, {
@@ -22,6 +23,7 @@ function ServerServices() {
 
     return (
         <>
+            {/*showing overlay only when state has id to delete*/}
             {serviceToDelete !== null && (
                 <DeletingOverlay
                     onCancel={() => setServiceToDelete(null)}
@@ -32,6 +34,7 @@ function ServerServices() {
                 />
             )}
 
+            {/*passing updated data as prop*/}
             <DataList
                 data={displayData}
                 onDelete={(id: number) => setServiceToDelete(id)}

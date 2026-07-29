@@ -7,6 +7,8 @@ import AddServiceOverlay from "../components/overlays/AddServiceOverlay";
 
 function ServicesPage() {
     const { t } = useTranslation();
+
+    // state for opening overlay
     const [isAddServiceOpen, setIsAddServiceOpen] = useState(false);
 
     return (
@@ -23,6 +25,7 @@ function ServicesPage() {
 
             <ServerServices />
 
+            {/* overlay, located in  src/components/overlays*/}
             {isAddServiceOpen && (
                 <AddServiceOverlay onClose={() => setIsAddServiceOpen(false)} />
             )}

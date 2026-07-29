@@ -14,6 +14,7 @@ function RoomsPage() {
     const [isListView, setIsListView] = useState(false);
     const [isAddRoomOpen, setIsAddRoomOpen] = useState(false);
 
+    // state for opening overlay
     const handleAddRoom = () => {
         setIsAddRoomOpen(true);
     };
@@ -28,6 +29,7 @@ function RoomsPage() {
 
                     <PrimaryButton label={t("pages.rooms.addButton")} onClick={handleAddRoom} margin="m-1" />
                     </div>
+                    {/* two different possible views, list and room visual */}
                     <button
                         onClick={() => setIsListView(!isListView)}
                         className="p-2 rounded border border-2 border-[#6ADBAF]"
@@ -42,7 +44,7 @@ function RoomsPage() {
 
                 {isListView ? <ServerRoomList /> : <ServerRoom />}
             </div>
-            {/* Modal */}
+            {/* overlay, located in  src/components/overlays*/}
             {isAddRoomOpen && (
                 <AddRoomOverlay
                     onClose={() => setIsAddRoomOpen(false)}

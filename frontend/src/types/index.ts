@@ -1,3 +1,5 @@
+//centralised file for typescript types, used in whole code
+
 export type Room = {
     ID: number,
     RoomNumber: number,

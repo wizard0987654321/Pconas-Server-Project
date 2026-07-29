@@ -2,6 +2,8 @@
 @import 'tailwindcss';
 /*font-mono in tailwind classes*/
 
+
+/*enabling dark mode and breakpoint for responsive design*/
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
@@ -14,6 +16,8 @@
   --breakpoint-xl: 85rem;
   --breakpoint-2xl: 100rem;
 }
+
+/*for all PrimaryButton.tsxs, css animation*/
 
 @keyframes gradient-x {
   0%, 100% { background-position: 100% 50%; }

@@ -7,10 +7,14 @@ type PageHeadingProps = {
   heading: string;
 };
 
+//general page heading component
+
 function PageHeading({ heading }: PageHeadingProps) {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
 
+
+  //GSAP animation for general page heading component
   useGSAP(() => {
     if (containerRef.current) {
       pageHeadingAnimation(containerRef.current);

@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+
+//database connection
 const trustServerCertificate =
   process.env.DB_TRUST_SERVER_CERT === 'true' ||
   process.env.DB_TRUST_SERVER_CERTIFICATE === 'true';

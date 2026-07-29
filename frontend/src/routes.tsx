@@ -19,9 +19,9 @@ const routes = [
         children: [
             { index: true, element: <Homepage /> },
             { path: 'rooms', element: <RoomsPage /> },
-            { path: 'rooms/:roomId/racks', element: <RacksPage /> },
+            { path: 'rooms/:roomId/racks', element: <RacksPage /> }, //for filterin RacksPage 
             { path: 'racks', element: <RacksPage /> },
-            { path: 'racks/:id', element: <DetailedRack /> },
+            { path: 'racks/:id', element: <DetailedRack /> }, //for rack detailed view
             { path: 'deviceTypes', element: <DeviceTypesPage /> },
             { path: 'devices', element: <DevicesPage /> },
             { path: 'vms', element: <VmsPage /> },

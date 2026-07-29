@@ -10,6 +10,7 @@ function ServerDevices() {
 
     const [deviceToDelete, setDeviceToDelete] = useState<number | null>(null);
 
+    // using helper function for raw data update
     const displayData = useMemo(
         () =>
             transformData(deviceData, {
@@ -27,10 +28,9 @@ function ServerDevices() {
         [deviceData]
     );
 
-    console.log(deviceData);
-
     return (
         <>
+        {/*showing overlay only when state has id to delete*/}
         {deviceToDelete !== null && (
                 <DeletingOverlay
                     onCancel={() => setDeviceToDelete(null)}
@@ -40,6 +40,8 @@ function ServerDevices() {
                     }}
                 />
             )}
+
+            {/*passing updated data as prop*/}
             <DataList data={displayData} 
             onDelete={(id: number) => setDeviceToDelete(id)} />
         </>

@@ -9,6 +9,7 @@ function DeviceTypesPage() {
     const { t } = useTranslation();
     const [isAddDeviceTypeOpen, setIsAddDeviceTypeOpen] = useState(false);
 
+    // state for opening overlay
     const handleDeviceTypeAdded = () => {
         setIsAddDeviceTypeOpen(true);
     };
@@ -27,6 +28,7 @@ function DeviceTypesPage() {
 
             <ServerDeviceTypes />
 
+            {/* overlay, located in  src/components/overlays*/}
             {isAddDeviceTypeOpen && (
                 <AddDeviceTypeOverlay
                     onClose={() => setIsAddDeviceTypeOpen(false)}

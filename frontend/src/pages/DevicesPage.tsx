@@ -10,6 +10,7 @@ function DevicesPage() {
     
     const [isAddDeviceOpen, setIsAddDeviceOpen] = useState(false);
 
+    // state for opening overlay
     const handleDeviceAdded = () => {
         setIsAddDeviceOpen(true);
     };
@@ -28,6 +29,7 @@ function DevicesPage() {
 
             <ServerDevices />
 
+            {/* overlay, located in  src/components/overlays*/}
             {isAddDeviceOpen && (
                 <AddDeviceOverlay
                     onClose={() => setIsAddDeviceOpen(false)}

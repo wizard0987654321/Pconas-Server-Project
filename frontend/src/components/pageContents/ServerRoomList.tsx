@@ -10,6 +10,7 @@ function ServerRoomList() {
 
     const [roomToDelete, setRoomToDelete] = useState<number | null>(null);
 
+    // using helper function for raw data update
     const displayData = useMemo(
         () =>
             transformData(roomsData, {
@@ -25,6 +26,7 @@ function ServerRoomList() {
 
     return (
         <>
+            {/*showing overlay only when state has id to delete*/}
             {roomToDelete !== null && (
                 <DeletingOverlay
                     onCancel={() => setRoomToDelete(null)}
@@ -35,6 +37,7 @@ function ServerRoomList() {
                 />
             )}
 
+            {/*passing updated data as prop*/}
             <DataList
                 data={displayData}
                 onDelete={(id: number) => setRoomToDelete(id)}

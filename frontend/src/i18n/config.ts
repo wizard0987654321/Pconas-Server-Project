@@ -4,6 +4,9 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import en from './en.json';
 import de from './de.json';
 
+//i18n for 2 language setup, automatic translation, easily extendable
+//tranlastions located in the siblin de.json and en.json folders
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)

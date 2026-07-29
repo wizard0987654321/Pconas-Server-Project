@@ -1,7 +1,9 @@
+//api requests, communication with server
+
+//variable url, so when it is hosted i can just change this url 
 const API_URL = import.meta.env.VITE_API_URL;
 
-// get paths
-
+//two test paths
 export async function getHealth() {
   const response = await fetch(`${API_URL}/`);
 
@@ -22,6 +24,8 @@ export async function getTestMessage() {
   return response.json();
 }
 
+
+// get paths
 export async function getRoomData() {
     const response = await fetch(`${API_URL}/rooms`);
 
@@ -199,6 +203,8 @@ export async function deleteVm(id: number) {
     return response.json();
 }
 
+
+//post paths
 export async function addService(payload: { newService: { name: string; customerId: number } }) {
     const response = await fetch(`${API_URL}/addService`, {
         method: "POST",

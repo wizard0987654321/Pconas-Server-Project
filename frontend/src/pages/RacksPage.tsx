@@ -4,7 +4,6 @@ import { useParams } from "react-router-dom";
 import { useState } from "react";
 import AddRackOverlay from "../components/overlays/AddRackOverlay";
 import PrimaryButton from "../components/buttons/PrimaryButton";
-import { getRackData } from "../services/api";
 import { useTranslation } from "react-i18next";
 
 
@@ -15,13 +14,10 @@ function RacksPage() {
 
     const [isAddRackOpen, setIsAddRackOpen] = useState(false);
 
+    // state for opening overlay
     const handleRackAdded = () => {
         setIsAddRackOpen(true);
     }
-
-    const result = getRackData()
-
-    console.log(result);
 
     return (
         <div className="flex flex-col justify-center flex-wrap items-center p-4 w-full">
@@ -30,6 +26,8 @@ function RacksPage() {
                 <PrimaryButton label={t("pages.racks.addButton")} onClick={handleRackAdded} margin="m-1" />
             </div>
             <ServerRacks internalRoomId={roomId} />
+
+            {/* overlay, located in  src/components/overlays*/}
             {isAddRackOpen && (
                 <AddRackOverlay
                     onClose={() => setIsAddRackOpen(false)}

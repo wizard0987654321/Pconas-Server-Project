@@ -25,20 +25,23 @@ function ServerRoom() {
     const [roomToDelete, setRoomToDelete] = useState<number | null>(null);
     const [selectedRoomId, setSelectedRoomId] = useState<number | null>(null);
 
+
     const containerRef = useRef<HTMLDivElement>(null);
 
+    //gsap animation for racks in room visual view
     useGSAP(
-    () => {
-        if (containerRef.current) {
-            serverRoomAnimation(containerRef.current);
+        () => {
+            if (containerRef.current) {
+                serverRoomAnimation(containerRef.current);
+            }
+        },
+        {
+            scope: containerRef,
+            dependencies: [roomsData, racksData],
         }
-    },
-    {
-        scope: containerRef,
-        dependencies: [roomsData, racksData],
-    }
-);
+    );
 
+    //path to rack detailed view
     const handleRackClick = (rackId: number) => {
         navigate(`/racks/${rackId}`);
     };
@@ -46,7 +49,6 @@ function ServerRoom() {
     useEffect(() => {
         getRackData()
             .then((data) => {
-                console.log("API Response is sqlistvis rackdata:", data);
                 setRacksData(data);
             })
             .catch((err) => {
@@ -58,6 +60,7 @@ function ServerRoom() {
         setSelectedRoomId(roomId);
     };
 
+    //calculating with capacity and current rack number, how many places are occupied, displaying + buttons 
     const renderFreePlaces = (room: Room) => {
         const occupied = racksData.filter(rack => rack.RoomID === room.ID).length;
         const free = room.Capacity - occupied;

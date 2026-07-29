@@ -4,6 +4,8 @@ import Header from "../Header";
 import DesktopSidebar from "../sidebars/DesktopSidebar";
 import MobileSidebar from "../sidebars/MobileSidebar";
 
+
+//import and using both, mobile and desktop sidebars responsively
 function Navigation() {
     const [isOpen, setIsOpen] = useState(false);
 

@@ -5,6 +5,7 @@ type DeletingOverlayProps = {
     onCancel: () => void;
 };
 
+// common delete overlay for all deletions, either confirm or cancel
 function DeletingOverlay({
     onConfirm,
     onCancel,

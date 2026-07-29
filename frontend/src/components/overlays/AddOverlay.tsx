@@ -25,6 +25,7 @@ type AddOverlayProps = {
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+//general overlay that display received data, alongside input fields
 function AddOverlay({
     title,
     fields,
@@ -39,6 +40,7 @@ function AddOverlay({
     const [formData, setFormData] = useState<Record<string, string>>(initialData ?? {});
     const [errorMessage, setErrorMessage] = useState<string>("");
 
+    //component hidden unless clicked on adding button
     useEffect(() => {
         document.body.style.overflow = "hidden";
 
@@ -47,6 +49,7 @@ function AddOverlay({
         };
     }, []);
 
+    //two functions for data, writing and selecting input
     const handleChange = (name: string, value: string) => {
         setFormData(prev => ({
             ...prev,
@@ -70,6 +73,7 @@ function AddOverlay({
 
         const data = transformData(formData);
 
+        //post request, corresponding to the endpoint received
         try {
             const response = await fetch(`${API_URL}${endpoint}`, {
                 method: "POST",
@@ -109,6 +113,7 @@ function AddOverlay({
                             </p>
                         )}
 
+                        {/*mapping through passed prop, either input fields, or select options*/}
                         {fields.map(field => (
                             <div key={field.name}>
 

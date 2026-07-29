@@ -29,12 +29,13 @@ function ServerRacks({ internalRoomId }: ServerRacksProps) {
         () =>
             internalRoomId
                 ? racksData.filter(
-                      (rack) => String(rack.RoomID) === internalRoomId
-                  )
+                    (rack) => String(rack.RoomID) === internalRoomId
+                )
                 : racksData,
         [racksData, internalRoomId]
     );
 
+    // using helper function for raw data update
     const displayData = useMemo(
         () =>
             transformData(filteredData, {
@@ -50,6 +51,7 @@ function ServerRacks({ internalRoomId }: ServerRacksProps) {
 
     return (
         <>
+            {/*showing overlay only when state has id to delete*/}
             {rackToDelete !== null && (
                 <DeletingOverlay
                     onCancel={() => setRackToDelete(null)}
@@ -60,6 +62,7 @@ function ServerRacks({ internalRoomId }: ServerRacksProps) {
                 />
             )}
 
+            {/*passing updated data as prop*/}
             {internalRoomId && (
                 <h1 className="font-mono font-bold text-xl m:text-2xl l:text-3xl xl:text-4xl">
                     Room {roomNumber}

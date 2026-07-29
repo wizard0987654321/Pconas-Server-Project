@@ -28,6 +28,7 @@ function AddDeviceOverlay({ onClose, rackId }: AddDeviceOverlayProps) {
                 const positionFrom = Number(data.positionFrom);
                 const positionTo = Number(data.positionTo);
 
+                {/* checking that device has free space to be mounted, position is not out of rack range*/}
                 if (!selectedRackId) {
                     return t("pages.devices.form.validation.noRackSelected");
                 }

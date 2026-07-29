@@ -7,6 +7,8 @@ import AddVmOverlay from "../components/overlays/AddVmOverlay";
 
 function VmsPage() {
     const { t } = useTranslation();
+
+    // state for opening overlay
     const [isAddVmOpen, setIsAddVmOpen] = useState(false);
 
     return (
@@ -23,6 +25,7 @@ function VmsPage() {
 
             <ServerVms />
 
+            {/* overlay, located in  src/components/overlays*/}
             {isAddVmOpen && (
                 <AddVmOverlay onClose={() => setIsAddVmOpen(false)} />
             )}

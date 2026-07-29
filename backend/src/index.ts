@@ -10,6 +10,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+//backend communication with database
 
 app.get("/rooms", async (req, res) => {
   const result = await sql.query(`

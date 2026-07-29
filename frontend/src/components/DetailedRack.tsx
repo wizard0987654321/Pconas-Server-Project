@@ -8,6 +8,7 @@ import AddDeviceOverlay from "./overlays/AddDeviceOverlay";
 import { useGSAP } from "@gsap/react";
 import { detailedRackAnimation } from "../animations/detailedRackAnimation";
 
+//detailed view for rack, can be opened with "to the rack detailed view" button
 function DetailedRack() {
     const { id } = useParams();
     const { t } = useTranslation();
@@ -25,6 +26,7 @@ function DetailedRack() {
     const [loadingDevices, setLoadingDevices] = useState(true);
 
 
+    //GSAP animation for rack
     const rackRef = useRef<HTMLDivElement>(null);
 
     useGSAP(() => {
@@ -36,6 +38,7 @@ function DetailedRack() {
         dependencies: [devices, rack],
     });
 
+    //getting rack, device types and devices data so that device can be displayed inside racks
     useEffect(() => {
         getRackData()
             .then((data: Rack[]) => {
@@ -74,6 +77,7 @@ function DetailedRack() {
         return <p>{t("common.notFound")}</p>;
     }
 
+    // calculating total size of units
     const units = Array.from(
         { length: rack.UnitsSize },
         (_, i) => rack.UnitsSize - i
@@ -81,6 +85,7 @@ function DetailedRack() {
 
     return (
         <>
+        {/*overlay for adding new device*/}
             {selectedRackId !== null && (
                 <AddDeviceOverlay
                     onClose={() => setSelectedRackId(null)} rackId={selectedRackId}
@@ -105,6 +110,7 @@ function DetailedRack() {
                         </div>
                     </div>
 
+                    {/*calculating where devices should be located in the rack*/}
                     {units.map((unit) => {
                         const device = devices.find(
                             (d: Device) =>
@@ -131,6 +137,7 @@ function DetailedRack() {
                                             <div className="absolute left-1/2 top-full z-40 mt-2 hidden w-52 -translate-x-1/2 rounded-md border-2 border-[#6ADBAF] bg-[#F8FAFC] p-3 font-mono text-xs text-[#111827] shadow-lg group-hover:block dark:bg-[#0E1F48] dark:text-[#F9FAFB]">
                                                 <p><span className="font-semibold">{t("common.internalId")}:</span> {device.InternalID}</p>
                                                 <p>
+                                                    {/*displaying device name instead of foreign id foreign key*/}
                                                     <span className="font-semibold">{t("common.type")}:</span>{" "}
                                                     {
                                                         deviceTypes.find(

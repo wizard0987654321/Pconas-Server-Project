@@ -9,6 +9,7 @@ function ServerVms() {
     const { vmsData, deleteVm } = useVms();
     const [vmToDelete, setVmToDelete] = useState<number | null>(null);
 
+    // using helper function for raw data update
     const displayData = useMemo(
         () =>
             transformData(vmsData, {
@@ -23,6 +24,7 @@ function ServerVms() {
 
     return (
         <>
+        {/*showing overlay only when state has id to delete*/}
             {vmToDelete !== null && (
                 <DeletingOverlay
                     onCancel={() => setVmToDelete(null)}
@@ -33,6 +35,7 @@ function ServerVms() {
                 />
             )}
 
+            {/*passing updated data as prop*/}
             <DataList
                 data={displayData}
                 onDelete={(id: number) => setVmToDelete(id)}

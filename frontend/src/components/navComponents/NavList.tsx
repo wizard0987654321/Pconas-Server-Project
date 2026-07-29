@@ -5,6 +5,8 @@ type Props = {
     onItemClick?: () => void;
 };
 
+
+//common NavList data component for mobile and desktop sidebars
 function NavList({ onItemClick }: Props) {
     return (
         <>

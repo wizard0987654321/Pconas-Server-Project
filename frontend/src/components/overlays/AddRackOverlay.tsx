@@ -24,6 +24,7 @@ function AddRackOverlay({ onClose, roomId }: AddRackOverlayProps) {
 
                 if (!selectedRoom) return t("pages.racks.form.validation.noRoomSelected");
 
+                {/* checking that rakc height is not more than room height */}
                 if (Number(data.height) > selectedRoom.HeightCm) {
                     return t("pages.racks.form.validation.heightTooLarge", { height: selectedRoom.HeightCm });
                 }

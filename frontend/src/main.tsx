@@ -8,9 +8,11 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
 const router = createBrowserRouter(routes);
 
+//ThemeProvider for dark mode
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ThemeProvider>
+    <ThemeProvider>   
       <RouterProvider router={router} />
     </ThemeProvider>
   </StrictMode>,
