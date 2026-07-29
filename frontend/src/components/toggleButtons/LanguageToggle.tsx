@@ -13,7 +13,7 @@ export default function LanguageToggle() {
       onClick={toggleLanguage}
       className="p-2 rounded-md bg-gray-100 text-[#111827] dark:bg-gray-800 dark:text-[#F9FAFB] cursor-pointer text-2xl"
     >
-      {i18n.language === 'en' ? '🇩🇪' : '🇬🇧'}
+      {i18n.language === 'en' ? 'DE' : 'EN'}
     </button>
   );
 }

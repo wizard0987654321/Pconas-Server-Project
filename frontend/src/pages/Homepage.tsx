@@ -6,9 +6,15 @@ import { useNavigate } from "react-router-dom";
 import PageHeading from "../components/PageHeading";
 import PrimaryButton from "../components/buttons/PrimaryButton";
 
+import { useRef } from "react";
+import { useGSAP } from "@gsap/react";
+import { animateHome } from "../animations/homepage";
+
 function Homepage() {
   const navigate = useNavigate();
   const { t } = useTranslation();
+
+  const container = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     getHealth()
@@ -40,9 +46,15 @@ function Homepage() {
       });
   }, []);
 
+  useGSAP(() => {
+    animateHome();
+  }, { scope: container });
+
   return (
-    <div className="p-4 flex flex-col items-center">
-      <PageHeading heading="pages.home.helloText"/>
+    <div ref={container} className="p-4 flex flex-col items-center">
+      <div className="home-heading">
+        <PageHeading heading="pages.home.helloText" />
+      </div>
       <PrimaryButton label={t("pages.home.button")} onClick={() => navigate("/rooms")} />
     </div>
   );

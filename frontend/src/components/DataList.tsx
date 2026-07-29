@@ -2,6 +2,8 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import PrimaryButton from "./buttons/PrimaryButton";
 import DeleteButton from "./buttons/DeleteButton";
+import { useEffect, useRef } from "react";
+import { dataListAnimation } from "../animations/dataListAnimation";
 
 type DataListProps = {
     data: Record<string, any>[];
@@ -15,6 +17,14 @@ function DataList({ data, detailPath, detailLabel, idField = "ID", onDelete }: D
     const { t } = useTranslation();
     const navigate = useNavigate();
 
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (!containerRef.current) return;
+
+        dataListAnimation(containerRef.current);
+    }, [data]);
+
     if (!data.length) return null;
 
     const columns = Object.keys(data[0]).filter((key) => key !== idField);
@@ -23,6 +33,7 @@ function DataList({ data, detailPath, detailLabel, idField = "ID", onDelete }: D
     const gridStyle = {
         gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))`,
     };
+
 
     const handleViewDetails = (row: Record<string, any>) => {
         navigate(`${detailPath}/${row[idField]}`);
@@ -35,7 +46,7 @@ function DataList({ data, detailPath, detailLabel, idField = "ID", onDelete }: D
     };
 
     return (
-        <div className="w-full rounded-xl p-3 s:p-8 lg:p-10 font-mono text-[#111827] dark:text-[#F9FAFB]">
+        <div className="w-full rounded-xl p-3 s:p-8 lg:p-10 font-mono text-[#111827] dark:text-[#F9FAFB]" ref={containerRef}>
 
             {/* Desktop Header */}
             <div
@@ -54,7 +65,7 @@ function DataList({ data, detailPath, detailLabel, idField = "ID", onDelete }: D
 
             <div className="space-y-3 xl:space-y-0">
                 {data.map((row, index) => (
-                    <div key={index}>
+                    <div key={index} className="data-list-row">
 
                         {/* Mobile */}
                         <div className="xl:hidden rounded-lg text-sm m:text-xl border-3 border-[#6ADBAF] p-4 space-y-2 bg-[#F8FAFC] dark:bg-[#0F234F]">

@@ -1,10 +1,12 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { getRackData, getDevicesData, getDeviceTypesData } from "../services/api";
 import type { Rack, Device } from "../types";
 import { useTranslation } from "react-i18next";
 import PrimaryButton from "./buttons/PrimaryButton";
 import AddDeviceOverlay from "./overlays/AddDeviceOverlay";
+import { useGSAP } from "@gsap/react";
+import { detailedRackAnimation } from "../animations/detailedRackAnimation";
 
 function DetailedRack() {
     const { id } = useParams();
@@ -21,6 +23,18 @@ function DetailedRack() {
     const [devices, setDevices] = useState<Device[]>([]);
     const [loadingRack, setLoadingRack] = useState(true);
     const [loadingDevices, setLoadingDevices] = useState(true);
+
+
+    const rackRef = useRef<HTMLDivElement>(null);
+
+    useGSAP(() => {
+        if (!rackRef.current) return;
+
+        detailedRackAnimation(rackRef.current);
+    }, {
+        scope: rackRef,
+        dependencies: [devices, rack],
+    });
 
     useEffect(() => {
         getRackData()
@@ -81,10 +95,14 @@ function DetailedRack() {
                         margin="m-6"
                     />
                 </div>
-                <div className="my-4 w-[80%] xs:w-[70%] l:w-[40%] border-4 border-[#6ADBAF] rounded overflow-hidden bg-[#F8FAFC] dark:bg-[#0F234F]">
-
-                    <div className="bg-[#0E1F48] text-[#F9FAFB] text-center py-2 font-bold">
-                        Rack {rack.ID}
+                <div
+                    ref={rackRef}
+                    className="relative my-4 w-[80%] xs:w-[70%] l:w-[40%] border-4 border-[#6ADBAF] rounded bg-[#F8FAFC] dark:bg-[#0F234F]"
+                >
+                    <div className="overflow-hidden rounded-t">
+                        <div className="bg-[#0E1F48] text-[#F9FAFB] text-center py-2 font-bold">
+                            Rack {rack.ID}
+                        </div>
                     </div>
 
                     {units.map((unit) => {
@@ -97,7 +115,7 @@ function DetailedRack() {
                         return (
                             <div
                                 key={unit}
-                                className="flex h-8 border-b border-[#6ADBAF]/40"
+                                className="rack-unit-row flex h-8 border-b border-[#6ADBAF]/40"
                             >
                                 <div className="w-10 flex items-center justify-center bg-[#EAF9F2] border-r border-[#6ADBAF]/40 text-xs font-semibold dark:bg-[#12315f]">
                                     {unit}
@@ -105,12 +123,12 @@ function DetailedRack() {
 
                                 <div className="flex-1 flex items-center px-2">
                                     {device ? (
-                                        <div className="relative group w-full">
-                                            <div className="w-full cursor-pointer rounded bg-blue-600 px-2 py-1 text-xs text-white transition-transform duration-150 hover:scale-[1.02]">
+                                        <div className="relative group w-full hover:z-50">
+                                            <div className="w-full cursor-pointer rounded bg-[#6ADBAF] px-2 py-1 text-xs text-white transition-transform duration-150 hover:scale-[1.02]">
                                                 {device.InternalID}
                                             </div>
-
-                                            <div className="absolute left-1/2 top-full z-20 mt-2 hidden w-52 -translate-x-1/2 rounded-md border-2 border-[#6ADBAF] bg-[#F8FAFC] p-3 font-mono text-xs text-[#111827] shadow-lg group-hover:block dark:bg-[#0E1F48] dark:text-[#F9FAFB]">
+                                            {/* hover div */}
+                                            <div className="absolute left-1/2 top-full z-40 mt-2 hidden w-52 -translate-x-1/2 rounded-md border-2 border-[#6ADBAF] bg-[#F8FAFC] p-3 font-mono text-xs text-[#111827] shadow-lg group-hover:block dark:bg-[#0E1F48] dark:text-[#F9FAFB]">
                                                 <p><span className="font-semibold">{t("common.internalId")}:</span> {device.InternalID}</p>
                                                 <p>
                                                     <span className="font-semibold">{t("common.type")}:</span>{" "}
