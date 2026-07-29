@@ -32,9 +32,14 @@
     "secondWord": "apple",
     "title": "This is a test page"
   },
+  "buttons": {
+    "logOut": "log out"
+  },
   "pages": {
     "home": {
-      "helloText": "Welcome to your Pconas Trainee Portal",
+      "trainerHelloText": "Welcome to your Pconas Trainer Portal",
+      "traineeHelloText": "Welcome to your Pconas Trainee Portal",
+      "helloText": "Log into your Pconas Trainer/Trainee Portal",
       "button": "Discover Server Center",
       "deleteButton": "delete"
     },

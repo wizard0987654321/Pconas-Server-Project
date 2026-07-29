@@ -3,8 +3,13 @@ import LanguageToggle from "./toggleButtons/LanguageToggle"
 import logo from "../assets/pconasLogo.png"
 import darkLogo from "../assets/pconasLogoDark.png"
 import { Link } from "react-router-dom"
+import { getDisplayLabel, useAuth } from "../contexts/AuthProvider"
+import { useTranslation } from "react-i18next"
 
 function Header() {
+    const { user, logout } = useAuth();
+    const { t } = useTranslation();
+
     return (
         <>
             <header className="h-[15vh] w-full bg-[#F8FAFC] border-4 border-[#6ADBAF] flex items-center justify-between dark:bg-[#0E1F48] l:px-4">
@@ -25,10 +30,19 @@ function Header() {
                 <span className="hidden m:inline font-mono text-3xl font-bold text-[#111827] dark:text-[#F9FAFB]">
                     Trainer
                 </span>
-                <div className="flex scale-75 flex-col gap-4 m-2 items-center 
-                                m:flex-row xs:scale-100">
-                    <ThemeToggle />
-                    <LanguageToggle />
+                <div className="ml-auto flex items-center gap-3 pr-2 sm:gap-4">
+                    <div className="flex items-center gap-2 sm:gap-4">
+                        <ThemeToggle />
+                        <LanguageToggle />
+                    </div>
+                    {user ? (
+                        <button
+                            onClick={logout}
+                            className="cursor-pointer rounded-[16px] border-2 border-[#6ADBAF] px-3 py-2 font-mono font-bold text-black dark:text-white"
+                        >
+                            {t("buttons.logOut")}
+                        </button>
+                    ) : null}
                 </div>
             </header>
         </>
