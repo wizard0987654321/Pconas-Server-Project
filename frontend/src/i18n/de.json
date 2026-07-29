@@ -32,9 +32,14 @@
     "secondWord": "Apfel",
     "title": "Dies ist eine Testseite"
   },
+  "buttons": {
+    "logOut": "abmelden"
+  },
   "pages": {
     "home": {
-      "helloText": "Willkommen in deinem Pconas Trainee Portal",
+      "trainerHelloText": "Willkommen in deinem Pconas Trainer Portal",
+      "traineeHelloText": "Willkommen in deinem Pconas Trainee Portal",
+      "helloText": "In Pconas Trainer/Trainee Portal anmelden",
       "button": "Rechenzentrum entdecken",
       "deleteButton": "löschen"
     },

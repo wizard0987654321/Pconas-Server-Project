@@ -85,6 +85,11 @@ app.get("/customers", async (req, res) => {
   res.json(result.recordset);
 });
 
+app.get("/users", async (req, res) => {
+  const result = await sql.query("SELECT * FROM Users");
+  res.json(result.recordset);
+});
+
 app.get("/", (req, res) => {
   res.json({
     message: "API is working giorA",

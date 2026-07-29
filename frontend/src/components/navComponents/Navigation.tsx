@@ -3,11 +3,22 @@ import { Outlet } from "react-router-dom";
 import Header from "../Header";
 import DesktopSidebar from "../sidebars/DesktopSidebar";
 import MobileSidebar from "../sidebars/MobileSidebar";
+import { useAuth } from "../../contexts/AuthProvider";
+import LoginScreen from "../auth/LoginScreen";
 
 
 //import and using both, mobile and desktop sidebars responsively
 function Navigation() {
     const [isOpen, setIsOpen] = useState(false);
+    const { user } = useAuth();
+
+    if (!user) {
+        return (
+            <div className="min-h-screen bg-gradient-to-b from-[#F8FAFC] to-[#DBDDDF] dark:from-gray-900 dark:to-gray-950 flex items-center justify-center">
+                <LoginScreen />
+            </div>
+        );
+    }
 
     return (
         <div className="flex min-h-screen flex-col bg-gradient-to-b from-[#F8FAFC] to-[#DBDDDF] text-[#111827] dark:bg-[linear-gradient(180deg,#0E1F48_62%,#0A286D_100%)] dark:text-[#F9FAFB]">
