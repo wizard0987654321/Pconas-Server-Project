@@ -1,6 +1,7 @@
 import ThemeToggle from "./toggleButtons/ThemeToggle"
 import LanguageToggle from "./toggleButtons/LanguageToggle"
 import logo from "../assets/pconasLogo.png"
+import darkLogo from "../assets/pconasLogoDark.png"
 import { Link } from "react-router-dom"
 import { getDisplayLabel, useAuth } from "../contexts/AuthProvider"
 import { useTranslation } from "react-i18next"
@@ -16,7 +17,14 @@ function Header() {
                     <img
                         src={logo}
                         alt="Logo"
-                        className="h-full max-h-12 w-auto scale-50 m:scale-75 l:scale-100 cursor-pointer"
+                        className="h-full max-h-12 w-auto scale-50 m:scale-75 l:scale-100 cursor-pointer dark:hidden"
+                    />
+
+                {/* rendering logo for dark mode */}
+                    <img
+                        src={darkLogo}
+                        alt="Logo"
+                        className="hidden h-full max-h-12 w-auto scale-50 m:scale-75 l:scale-100 cursor-pointer dark:block"
                     />
                 </Link>
                 <span className="hidden m:flex flex-col items-center font-mono text-3xl font-bold text-black-700 dark:text-gray-100">
