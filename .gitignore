@@ -35,3 +35,6 @@ build/
 
 # local files
 *.local
+
+# Prisma generated client
+src/generated/prisma/

@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+}
+
+model Customer {
+  ID          Int       @id(map: "PK__Customer__3214EC27CB657927") @default(autoincrement())
+  Name        String?   @db.NVarChar(50)
+  PhoneNumber String?   @db.NVarChar(50)
+  Service     Service[]
+}
+
+model Device {
+  ID                   Int         @id(map: "PK__Device__3214EC27C2EA0DCA") @default(autoincrement())
+  TypeID               Int?
+  RackID               Int?
+  InternalID           String?     @db.NVarChar(50)
+  PositionFrom         Int?
+  PositionTo           Int?
+  ElectricityConnected Boolean?    @default(false, map: "DF__Device__Electric__5165187F")
+  TORConnected         Boolean?    @default(false, map: "DF__Device__TORConne__52593CB8")
+  DeviceType           DeviceType? @relation(fields: [TypeID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_DeviceType_Device")
+  Rack                 Rack?       @relation(fields: [RackID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_Rack_Device")
+  VM                   VM[]
+}
+
+model DeviceType {
+  ID           Int      @id(map: "PK__DeviceTy__3214EC2747ECF2C0") @default(autoincrement())
+  TypeName     String?  @db.NVarChar(100)
+  Manufacturer String?  @db.NVarChar(50)
+  Usage        String?  @db.NVarChar(100)
+  Device       Device[]
+}
+
+model Rack {
+  ID        Int      @id(map: "PK__Rack__3214EC2711A61F92") @default(autoincrement())
+  RoomID    Int?
+  UnitsSize Int?
+  HeightCm  Decimal? @db.Decimal(5, 2)
+  Device    Device[]
+  Room      Room?    @relation(fields: [RoomID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_Rack_Room")
+}
+
+model Room {
+  ID       Int      @id(map: "PK__Room__3214EC278D3F5492") @default(autoincrement())
+  Area     Int?
+  Capacity Int?
+  HeightCm Decimal? @db.Decimal(5, 2)
+  Rack     Rack[]
+}
+
+model Service {
+  ID         Int       @id(map: "PK__Service__3214EC27DE6E787B") @default(autoincrement())
+  CustomerID Int?
+  Name       String?   @db.NVarChar(100)
+  Customer   Customer? @relation(fields: [CustomerID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_CustomerID_Service")
+  VM         VM[]
+}
+
+model Users {
+  Id        Int       @id(map: "PK__Users__3214EC07664EB737") @default(autoincrement())
+  Username  String    @unique(map: "UQ__Users__A9D1053411B1AFA5") @db.NVarChar(255)
+  Password  String    @db.NVarChar(255)
+  Role      String    @db.NVarChar(20)
+  CreatedAt DateTime? @default(now(), map: "DF__Users__CreatedAt__71D1E811")
+}
+
+model VM {
+  ID        Int      @id(map: "PK__VM__3214EC277FF317EB") @default(autoincrement())
+  ServiceID Int?
+  DeviceID  Int?
+  Name      String?  @db.NVarChar(50)
+  Device    Device?  @relation(fields: [DeviceID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_VM_DeviceID")
+  Service   Service? @relation(fields: [ServiceID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_VM_ServiceID")
+}

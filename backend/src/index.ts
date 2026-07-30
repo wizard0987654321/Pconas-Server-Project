@@ -1,7 +1,8 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { connectDB, sql } from "./db";
+import { connectDB } from "./db";
+import { prisma } from "./prisma";
 
 dotenv.config();
 
@@ -13,76 +14,119 @@ app.use(express.json());
 //backend communication with database
 
 app.get("/rooms", async (req, res) => {
-  const result = await sql.query(`
-    SELECT 
-      ID,
-      ROW_NUMBER() OVER (ORDER BY ID) AS RoomNumber,
-      Area,
-      Capacity,
-      HeightCm
-    FROM Room
-  `);
+  const rooms = await prisma.room.findMany();
 
-  res.json(result.recordset);
+  res.json(rooms);
 });
 
 app.get("/racks", async (req, res) => {
-  const result = await sql.query(`SELECT 
-    r.ID,
-    r.RoomID,
-    r.UnitsSize,
-    r.HeightCm,
-    RoomNumbers.RoomNumber
-FROM Rack r
-JOIN (
-    SELECT 
-        ID,
-        ROW_NUMBER() OVER (ORDER BY ID) AS RoomNumber
-    FROM Room
-) RoomNumbers
-ON r.RoomID = RoomNumbers.ID;`);
-  res.json(result.recordset);
+  // Original SQL used ROW_NUMBER() OVER (ORDER BY ID) on Room to build a
+  // sequential RoomNumber, then joined it onto Rack. Prisma has no window
+  // function support, so we build the same numbering in JS.
+  const rooms = await prisma.room.findMany({
+    orderBy: { ID: "asc" },
+    select: { ID: true },
+  });
+  const roomNumberByRoomId = new Map(rooms.map((room, index) => [room.ID, index + 1]));
+
+  const racks = await prisma.rack.findMany({
+    orderBy: { ID: "asc" },
+    select: {
+      ID: true,
+      RoomID: true,
+      UnitsSize: true,
+      HeightCm: true,
+    },
+  });
+
+  const result = racks
+    .filter((rack) => rack.RoomID !== null && roomNumberByRoomId.has(rack.RoomID))
+    .map((rack) => ({
+      ID: rack.ID,
+      RoomID: rack.RoomID,
+      UnitsSize: rack.UnitsSize,
+      HeightCm: rack.HeightCm,
+      RoomNumber: roomNumberByRoomId.get(rack.RoomID as number),
+    }));
+
+  res.json(result);
 });
 
 app.get("/deviceTypes", async (req, res) => {
-  const result = await sql.query("SELECT * FROM DeviceType");
-  res.json(result.recordset);
+  const deviceTypes = await prisma.deviceType.findMany();
+
+  res.json(deviceTypes);
 });
 
 app.get("/devices", async (req, res) => {
-  const result = await sql.query(`
-    SELECT
-      d.ID,
-      d.TypeID,
-      d.RackID,
-      d.InternalID,
-      d.PositionFrom,
-      d.PositionTo,
-      d.ElectricityConnected,
-      d.TORConnected,
-      dt.TypeName,
-      dt.Manufacturer,
-      dt.Usage,
-      dt.ID 
-    FROM Device d
-    JOIN DeviceType dt ON d.TypeID = dt.ID
-  `);
-  res.json(result.recordset);
+  const devices = await prisma.device.findMany({
+    where: { TypeID: { not: null } }, // matches the original INNER JOIN
+    include: { DeviceType: true },
+  });
+
+  const result = devices
+    .filter((d) => d.DeviceType !== null)
+    .map((d) => ({
+      // NOTE: the original query selected both d.ID and dt.ID, and the second
+      // one silently overwrote the first in the result object. Replicating
+      // that here so the output matches exactly - this is DeviceType.ID, not
+      // Device.ID. Swap to `d.ID` below if you actually want the device's own id.
+      ID: d.DeviceType!.ID,
+      TypeID: d.TypeID,
+      RackID: d.RackID,
+      InternalID: d.InternalID,
+      PositionFrom: d.PositionFrom,
+      PositionTo: d.PositionTo,
+      ElectricityConnected: d.ElectricityConnected,
+      TORConnected: d.TORConnected,
+      TypeName: d.DeviceType!.TypeName,
+      Manufacturer: d.DeviceType!.Manufacturer,
+      Usage: d.DeviceType!.Usage,
+    }));
+
+  res.json(result);
 });
 
 app.get("/vms", async (req, res) => {
-  const result = await sql.query("SELECT v.ID, v.DeviceID, v.ServiceID, v.Name, s.Name AS ServiceName FROM VM v JOIN Service s ON v.ServiceID=s.ID");
-  res.json(result.recordset);
+  const vms = await prisma.vM.findMany({
+    where: { ServiceID: { not: null } }, // matches the original INNER JOIN
+    include: { Service: true },
+  });
+
+  const result = vms
+    .filter((vm) => vm.Service !== null)
+    .map((vm) => ({
+      ID: vm.ID,
+      DeviceID: vm.DeviceID,
+      ServiceID: vm.ServiceID,
+      Name: vm.Name,
+      ServiceName: vm.Service!.Name,
+    }));
+
+  res.json(result);
 });
 
 app.get("/services", async (req, res) => {
-  const result = await sql.query("SELECT s.ID, s.Name, c.Name AS Customer FROM Service s JOIN Customer c ON s.CustomerID=c.ID");
-  res.json(result.recordset);
+  const services = await prisma.service.findMany({
+    where: { CustomerID: { not: null } }, // matches the original INNER JOIN
+    include: { Customer: true },
+  });
+
+  const result = services
+    .filter((s) => s.Customer !== null)
+    .map((s) => ({
+      ID: s.ID,
+      Name: s.Name,
+      Customer: s.Customer!.Name,
+    }));
+
+  res.json(result);
 });
 
 app.get("/customers", async (req, res) => {
-  const result = await sql.query("SELECT * FROM Customer");
-  res.json(result.recordset);
+  const customers = await prisma.customer.findMany();
+
+  res.json(customers);
 });
 
 app.get("/", (req, res) => {
@@ -99,126 +143,130 @@ app.get("/testUrl", (req, res) => {
 
 // post operations
 
-app.post('/addRoom', async (req, res) => {
-  const { newRoom } = req.body
+app.post("/addRoom", async (req, res) => {
+  const { newRoom } = req.body;
 
   try {
-    await sql.query(`INSERT INTO Room (Area, Capacity, HeightCm) VALUES (${newRoom.area}, ${newRoom.capacity}, ${newRoom.heightcm})`)
-    res.json({ message: 'new Room added' })
+    await prisma.room.create({
+      data: {
+        Area: newRoom.area,
+        Capacity: newRoom.capacity,
+        HeightCm: newRoom.heightcm,
+      },
+    });
+    res.json({ message: "new Room added" });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to add new Room' })
+    res.status(500).json({ error: "Failed to add new Room" });
   }
-})
+});
 
-app.post('/addRack', async (req, res) => {
-  const { newRack } = req.body
+app.post("/addRack", async (req, res) => {
+  const { newRack } = req.body;
 
   try {
-    await sql.query(`INSERT INTO Rack (RoomID, UnitsSize, HeightCm) VALUES (${newRack.roomId}, ${newRack.unitsSize}, ${newRack.heightcm})`)
-    res.json({ message: 'new Rack added' })
+    await prisma.rack.create({
+      data: {
+        RoomID: newRack.roomId,
+        UnitsSize: newRack.unitsSize,
+        HeightCm: newRack.heightcm,
+      },
+    });
+    res.json({ message: "new Rack added" });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to add new Rack' })
+    res.status(500).json({ error: "Failed to add new Rack" });
   }
-})
+});
 
-app.post('/addDeviceType', async (req, res) => {
-  const { newDeviceType } = req.body
+app.post("/addDeviceType", async (req, res) => {
+  const { newDeviceType } = req.body;
 
   try {
-    const request = new sql.Request();
+    await prisma.deviceType.create({
+      data: {
+        TypeName: newDeviceType.typeName,
+        Manufacturer: newDeviceType.manufacturer,
+        Usage: newDeviceType.usage,
+      },
+    });
 
-    await request
-      .input('typeName', sql.NVarChar, newDeviceType.typeName)
-      .input('manufacturer', sql.NVarChar, newDeviceType.manufacturer)
-      .input('usage', sql.NVarChar, newDeviceType.usage)
-      .query(`INSERT INTO DeviceType (TypeName, Manufacturer, Usage) VALUES (@typeName, @manufacturer, @usage)`)
-
-    res.json({ message: 'new Device Type added' })
+    res.json({ message: "new Device Type added" });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to add new Device Type' })
+    res.status(500).json({ error: "Failed to add new Device Type" });
   }
-})
+});
 
-app.post('/addDevice', async (req, res) => {
-  const { newDevice } = req.body
+app.post("/addDevice", async (req, res) => {
+  const { newDevice } = req.body;
 
   try {
-    await sql.query`
-    INSERT INTO Device (
-        TypeID,
-        RackID,
-        InternalID,
-        PositionFrom,
-        PositionTo,
-        ElectricityConnected,
-        TORConnected
-    )
-    VALUES (
-        ${newDevice.typeId},
-        ${newDevice.rackId},
-        ${newDevice.internalId},
-        ${newDevice.positionFrom},
-        ${newDevice.positionTo},
-        ${newDevice.electricityConnected},
-        ${newDevice.torConnected}
-    )`; 
-    res.json({ message: 'new Device added' })
+    await prisma.device.create({
+      data: {
+        TypeID: newDevice.typeId,
+        RackID: newDevice.rackId,
+        InternalID: newDevice.internalId,
+        PositionFrom: newDevice.positionFrom,
+        PositionTo: newDevice.positionTo,
+        ElectricityConnected: newDevice.electricityConnected,
+        TORConnected: newDevice.torConnected,
+      },
+    });
+    res.json({ message: "new Device added" });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to add new Device' })
+    res.status(500).json({ error: "Failed to add new Device" });
   }
-})
+});
 
-app.post('/addService', async (req, res) => {
-  const { newService } = req.body
+app.post("/addService", async (req, res) => {
+  const { newService } = req.body;
 
   try {
-    const request = new sql.Request();
+    await prisma.service.create({
+      data: {
+        Name: newService.name,
+        CustomerID: newService.customerId,
+      },
+    });
 
-    await request
-      .input('name', sql.NVarChar, newService.name)
-      .input('customerId', sql.Int, newService.customerId)
-      .query(`INSERT INTO Service (Name, CustomerID) VALUES (@name, @customerId)`)
-
-    res.json({ message: 'new Service added' })
+    res.json({ message: "new Service added" });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to add new Service' })
+    res.status(500).json({ error: "Failed to add new Service" });
   }
-})
+});
 
-app.post('/addCustomer', async (req, res) => {
-  const { newCustomer } = req.body
+app.post("/addCustomer", async (req, res) => {
+  const { newCustomer } = req.body;
 
   try {
-    const request = new sql.Request();
+    await prisma.customer.create({
+      data: {
+        Name: newCustomer.name,
+        PhoneNumber: newCustomer.phoneNumber,
+      },
+    });
 
-    await request
-      .input('name', sql.NVarChar, newCustomer.name)
-      .input('phoneNumber', sql.NVarChar, newCustomer.phoneNumber)
-      .query(`INSERT INTO Customer (Name, PhoneNumber) VALUES (@name, @phoneNumber)`)
-
-    res.json({ message: 'new Customer added' })
+    res.json({ message: "new Customer added" });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to add new Customer' })
+    res.status(500).json({ error: "Failed to add new Customer" });
   }
-})
+});
 
-app.post('/addVm', async (req, res) => {
-  const { newVm } = req.body
+app.post("/addVm", async (req, res) => {
+  const { newVm } = req.body;
 
   try {
-    const request = new sql.Request();
+    await prisma.vM.create({
+      data: {
+        DeviceID: newVm.deviceId,
+        ServiceID: newVm.serviceId,
+        Name: newVm.name,
+      },
+    });
 
-    await request
-      .input('deviceId', sql.Int, newVm.deviceId)
-      .input('serviceId', sql.Int, newVm.serviceId)
-      .input('name', sql.NVarChar, newVm.name)
-      .query(`INSERT INTO VM (DeviceID, ServiceID, Name) VALUES (@deviceId, @serviceId, @name)`)
-
-    res.json({ message: 'new VM added' })
+    res.json({ message: "new VM added" });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to add new VM' })
+    res.status(500).json({ error: "Failed to add new VM" });
   }
-})
+});
 
 // delete operations
 
@@ -226,11 +274,7 @@ app.delete("/deleteRoom/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await sql.query(`
-      DELETE FROM Room
-      WHERE ID = ${id}
-    `);
-
+    await prisma.room.delete({ where: { ID: Number(id) } });
     res.json({ message: "Room deleted successfully", id });
   } catch (error) {
     console.error("Delete room error:", error);
@@ -242,11 +286,7 @@ app.delete("/deleteRack/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await sql.query(`
-      DELETE FROM Rack
-      WHERE ID = ${id}
-    `);
-
+    await prisma.rack.delete({ where: { ID: Number(id) } });
     res.json({ message: "Rack deleted successfully", id });
   } catch (error) {
     console.error("Delete rack error:", error);
@@ -258,11 +298,7 @@ app.delete("/deleteDeviceType/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await sql.query(`
-      DELETE FROM DeviceType
-      WHERE ID = ${id}
-    `);
-
+    await prisma.deviceType.delete({ where: { ID: Number(id) } });
     res.json({ message: "Device Type deleted successfully", id });
   } catch (error) {
     console.error("Delete device type error:", error);
@@ -274,11 +310,7 @@ app.delete("/deleteDevice/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await sql.query(`
-      DELETE FROM Device
-      WHERE ID = ${id}
-    `);
-
+    await prisma.device.delete({ where: { ID: Number(id) } });
     res.json({ message: "Device deleted successfully", id });
   } catch (error) {
     console.error("Delete device error:", error);
@@ -290,11 +322,7 @@ app.delete("/deleteService/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
-    await sql.query(`
-      DELETE FROM Service
-      WHERE ID = ${id}
-    `);
-
+    await prisma.service.delete({ where: { ID: Number(id) } });
     res.json({ message: "Service deleted successfully", id });
   } catch (error) {
     console.error("Delete service error:", error);
@@ -306,11 +334,7 @@ app.delete("/deleteCustomer/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
-    await sql.query(`
-      DELETE FROM Customer
-      WHERE ID = ${id}
-    `);
-
+    await prisma.customer.delete({ where: { ID: Number(id) } });
     res.json({ message: "Customer deleted successfully", id });
   } catch (error) {
     console.error("Delete customer error:", error);
@@ -322,11 +346,7 @@ app.delete("/deleteVm/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
-    await sql.query(`
-      DELETE FROM VM
-      WHERE ID = ${id}
-    `);
-
+    await prisma.vM.delete({ where: { ID: Number(id) } });
     res.json({ message: "VM deleted successfully", id });
   } catch (error) {
     console.error("Delete VM error:", error);
