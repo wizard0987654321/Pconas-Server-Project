@@ -25,21 +25,16 @@
     "electricity": "Strom",
     "tor": "TOR",
     "units": "Einheiten",
-    "height": "Höhe"
+    "height": "Höhe",
+    "close": "schließen",
+    "submit": "bestätigen",
+    "goodJob": "Richtig!",
+    "tryAgain": "Falsch. Bitte nochmals versuchen"
   },
   "test": {
     "testWord": "TestWort",
     "secondWord": "Apfel",
     "title": "Dies ist eine Testseite"
-  },
-  "buttons": {
-    "logOut": "abmelden"
-  },
-  "buttons": {
-    "logOut": "abmelden"
-  },
-  "buttons": {
-    "logOut": "abmelden"
   },
   "buttons": {
     "logOut": "abmelden"
@@ -80,7 +75,10 @@
         "area": "Fläche",
         "capacity": "Kapazität",
         "height (cm)": "Höhe (cm)"
-      }
+      },
+      "activateQuestions": "Fragen aktivieren",
+      "answerQuestions": "Fragen beantworten",
+      "noQuestions": "keine Fragen aktiv"
     },
     "racks": {
       "headingText": "Racks",

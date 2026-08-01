@@ -25,21 +25,16 @@
     "electricity": "Electricity",
     "tor": "TOR",
     "units": "Units",
-    "height": "Height"
+    "height": "Height",
+    "close": "close",
+    "submit": "submit",
+    "goodJob": "good job!",
+    "tryAgain": "wrong, please try again"
   },
   "test": {
     "testWord": "testWord",
     "secondWord": "apple",
     "title": "This is a test page"
-  },
-  "buttons": {
-    "logOut": "log out"
-  },
-  "buttons": {
-    "logOut": "log out"
-  },
-  "buttons": {
-    "logOut": "log out"
   },
   "buttons": {
     "logOut": "log out"
@@ -80,7 +75,10 @@
         "capacity": "capacity",
         "name": "name",
         "height (cm)": "height (cm)"
-      }
+      },
+      "activateQuestions": "activate questions",
+      "answerQuestions": "answer Questions",
+      "noQuestions": "no questions to answer"
     },
     "racks": {
       "headingText": "Racks",

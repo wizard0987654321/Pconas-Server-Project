@@ -90,6 +90,16 @@ app.get("/users", async (req, res) => {
   res.json(result.recordset);
 });
 
+app.get("/questions", async (req, res) => {
+  const result = await sql.query("SELECT * FROM Questions");
+  res.json(result.recordset);
+});
+
+app.get("/answers", async (req, res) => {
+  const result = await sql.query("SELECT * FROM Answers");
+  res.json(result.recordset);
+});
+
 app.get("/", (req, res) => {
   res.json({
     message: "API is working giorA",
@@ -339,9 +349,71 @@ app.delete("/deleteVm/:id", async (req, res) => {
   }
 });
 
+
+//put paths
+app.put('/activateQuestions', async (req, res) => {
+  const { ids } = req.body;
+
+  try {
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ error: "No question IDs provided" });
+    }
+
+    const placeholders = ids.map((_, index) => `@id${index}`).join(",");
+
+    const request = new sql.Request();
+
+    ids.forEach((id, index) => {
+      request.input(`id${index}`, sql.Int, id);
+    });
+
+    await request.query(`
+      UPDATE Questions
+      SET IsActive = 1
+      WHERE ID IN (${placeholders})
+    `);
+
+    res.json({ message: "Questions activated successfully" });
+
+  } catch (error) {
+    console.error("Activate questions error:", error);
+    res.status(500).json({ error: "Failed to activate questions" });
+  }
+});
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, async () => {
   console.log(`Server running on port ${PORT}`);
   await connectDB();
+});
+
+app.put('/deactivateQuestions', async (req, res) => {
+  const { ids } = req.body;
+
+  try {
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ error: "No question IDs provided" });
+    }
+
+    const placeholders = ids.map((_, index) => `@id${index}`).join(",");
+
+    const request = new sql.Request();
+
+    ids.forEach((id, index) => {
+      request.input(`id${index}`, sql.Int, id);
+    });
+
+    await request.query(`
+      UPDATE Questions
+      SET IsActive = 0
+      WHERE ID IN (${placeholders})
+    `);
+
+    res.json({ message: "Questions deactivated successfully" });
+
+  } catch (error) {
+    console.error("Deactivate questions error:", error);
+    res.status(500).json({ error: "Failed to deactivate questions" });
+  }
 });
