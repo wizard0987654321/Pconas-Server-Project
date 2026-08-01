@@ -65,7 +65,7 @@ function ActivateQuestionOverlay({ onClose }: Props) {
                 <div className="w-full max-w-md rounded-xl bg-[#F8FAFC] p-6 text-[#111827] shadow-lg dark:bg-[#0F234F] dark:text-[#F9FAFB]">
 
                     <h2 className="mb-4 text-xl font-bold">
-                        {t("questions.chooseQuestions")}
+                        {t("common.chooseQuestions")}
                     </h2>
 
                     <select

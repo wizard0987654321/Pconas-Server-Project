@@ -29,7 +29,8 @@
     "close": "close",
     "submit": "submit",
     "goodJob": "good job!",
-    "tryAgain": "wrong, please try again"
+    "tryAgain": "wrong, please try again",
+    "chooseQuestions": "choose questions"
   },
   "test": {
     "testWord": "testWord",

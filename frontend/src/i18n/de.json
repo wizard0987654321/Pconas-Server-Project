@@ -29,7 +29,8 @@
     "close": "schließen",
     "submit": "bestätigen",
     "goodJob": "Richtig!",
-    "tryAgain": "Falsch. Bitte nochmals versuchen"
+    "tryAgain": "Falsch. Bitte nochmals versuchen",
+    "chooseQuestions": "Fragen aushälen"
   },
   "test": {
     "testWord": "TestWort",
