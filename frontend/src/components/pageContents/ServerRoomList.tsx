@@ -2,7 +2,7 @@ import DataList from "../DataList";
 import { useState, useMemo } from "react";
 import { transformData } from "../../helpers/transformData";
 import { useRooms } from "../../helpers/hooks/roomOperations";
-import DeletingOverlay from "../overlays/DeletingOverlay";
+import DeletingOverlay from "../overlays/generics/DeletingOverlay";
 
 function ServerRoomList() {
 

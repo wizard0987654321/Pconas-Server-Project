@@ -2,7 +2,7 @@ import DataList from "../DataList";
 import { useMemo, useState } from "react";
 import { transformData } from "../../helpers/transformData";
 import { useDevice } from "../../helpers/hooks/deviceOperations";
-import DeletingOverlay from "../overlays/DeletingOverlay";
+import DeletingOverlay from "../overlays/generics/DeletingOverlay";
 
 function ServerDevices() {
 

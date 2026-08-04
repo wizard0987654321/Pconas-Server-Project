@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { activateQuestions, getQuestions } from "../../services/api";
+import LoadingSpinner from "../LoadingSpinner";
 
 type Props = {
     onClose: () => void;
@@ -55,7 +56,7 @@ function ActivateQuestionOverlay({ onClose }: Props) {
     };
 
     if (loading) {
-        return null;
+         return <LoadingSpinner />;
     }
 
     return (

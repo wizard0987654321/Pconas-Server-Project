@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { transformData } from "../../helpers/transformData";
 import { useRacks } from "../../helpers/hooks/rackOperations";
 import { useRooms } from "../../helpers/hooks/roomOperations";
-import DeletingOverlay from "../overlays/DeletingOverlay";
+import DeletingOverlay from "../overlays/generics/DeletingOverlay";
 
 type ServerRacksProps = {
     internalRoomId?: string;

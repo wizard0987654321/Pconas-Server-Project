@@ -1,4 +1,4 @@
-import EditOverlay from "./EditOverlay";
+import EditOverlay from "./generics/EditOverlay";
 import { useRacks } from "../../helpers/hooks/rackOperations";
 import { useDeviceTypes } from "../../helpers/hooks/deviceTypeOperations";
 import { useDevice } from "../../helpers/hooks/deviceOperations";

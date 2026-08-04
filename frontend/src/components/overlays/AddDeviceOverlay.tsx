@@ -1,4 +1,4 @@
-import AddOverlay from "./AddOverlay";
+import AddOverlay from "./generics/AddOverlay";
 import { useRacks } from "../../helpers/hooks/rackOperations";
 import { useDeviceTypes } from "../../helpers/hooks/deviceTypeOperations";
 import { useDevice } from "../../helpers/hooks/deviceOperations";

@@ -8,6 +8,7 @@ import AddDeviceOverlay from "./overlays/AddDeviceOverlay";
 import { useGSAP } from "@gsap/react";
 import { detailedRackAnimation } from "../animations/detailedRackAnimation";
 import EditDeviceOverlay from "./overlays/EditDeviceOverlay";
+import LoadingSpinner from "./LoadingSpinner";
 
 //detailed view for rack, can be opened with "to the rack detailed view" button
 function DetailedRack() {
@@ -72,7 +73,7 @@ function DetailedRack() {
     }, []);
 
     if (loadingRack || loadingDevices) {
-        return <p>{t("common.loading")}</p>;
+        return <LoadingSpinner />;
     }
 
     if (!rack) {
@@ -143,8 +144,8 @@ function DetailedRack() {
                                             <div
                                                 onClick={() => setSelectedDevice(device)}
                                                 className={`w-full cursor-pointer rounded px-2 py-1 text-xs transition-transform duration-150 hover:scale-[1.02] ${device.ElectricityConnected
-                                                        ? "bg-[#6ADBAF] text-white"
-                                                        : "bg-[#6ADBAF]/30 text-white"
+                                                    ? "bg-[#6ADBAF] text-white"
+                                                    : "bg-[#6ADBAF]/30 text-white"
                                                     }`}
                                             >
                                                 {device.InternalID}

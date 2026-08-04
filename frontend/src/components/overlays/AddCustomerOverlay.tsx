@@ -1,4 +1,4 @@
-import AddOverlay from "./AddOverlay";
+import AddOverlay from "./generics/AddOverlay";
 import { useTranslation } from "react-i18next";
 
 type AddCustomerOverlayProps = {

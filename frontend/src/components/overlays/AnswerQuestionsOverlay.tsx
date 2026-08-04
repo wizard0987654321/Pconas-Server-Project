@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import LoadingSpinner from "../LoadingSpinner";
 import {
     getQuestions,
     getAnswers,
@@ -102,7 +103,7 @@ function AnswerQuestionsOverlay({ onClose }: AnswerQuestionsOverlayProps) {
     };
 
     if (loading) {
-        return null;
+         return <LoadingSpinner />;
     }
 
     return (

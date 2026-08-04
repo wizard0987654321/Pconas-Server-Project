@@ -9,7 +9,7 @@ import { getRackData } from "../../services/api";
 import { useState, useEffect, useRef } from "react";
 import type { Room, Rack } from "../../types";
 import DeleteButton from "../buttons/DeleteButton";
-import DeletingOverlay from "../overlays/DeletingOverlay";
+import DeletingOverlay from "../overlays/generics/DeletingOverlay";
 import { useRooms } from "../../helpers/hooks/roomOperations";
 import AddRackOverlay from "../overlays/AddRackOverlay";
 import { useGSAP } from "@gsap/react";
