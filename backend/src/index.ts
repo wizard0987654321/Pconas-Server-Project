@@ -62,8 +62,7 @@ app.get("/devices", async (req, res) => {
       d.TORConnected,
       dt.TypeName,
       dt.Manufacturer,
-      dt.Usage,
-      dt.ID 
+      dt.Usage
     FROM Device d
     JOIN DeviceType dt ON d.TypeID = dt.ID
   `);
@@ -381,13 +380,6 @@ app.put('/activateQuestions', async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, async () => {
-  console.log(`Server running on port ${PORT}`);
-  await connectDB();
-});
-
 app.put('/deactivateQuestions', async (req, res) => {
   const { ids } = req.body;
 
@@ -416,4 +408,53 @@ app.put('/deactivateQuestions', async (req, res) => {
     console.error("Deactivate questions error:", error);
     res.status(500).json({ error: "Failed to deactivate questions" });
   }
+});
+
+app.put('/updateDevice', async (req, res) => {
+  const { updatedDevice } = req.body;
+
+  try {
+    if (!updatedDevice || !updatedDevice.id) {
+      return res.status(400).json({ error: "No device data provided" });
+    }
+
+    const request = new sql.Request();
+
+    await request
+      .input('id', sql.Int, updatedDevice.id)
+      .input('typeId', sql.Int, updatedDevice.typeId)
+      .input('rackId', sql.Int, updatedDevice.rackId)
+      .input('internalId', sql.NVarChar, updatedDevice.internalId)
+      .input('positionFrom', sql.Int, updatedDevice.positionFrom)
+      .input('positionTo', sql.Int, updatedDevice.positionTo)
+      .input('electricityConnected', sql.Bit, updatedDevice.electricityConnected)
+      .input('torConnected', sql.Bit, updatedDevice.torConnected)
+      .query(`
+        UPDATE Device
+        SET
+          TypeID = @typeId,
+          RackID = @rackId,
+          InternalID = @internalId,
+          PositionFrom = @positionFrom,
+          PositionTo = @positionTo,
+          ElectricityConnected = @electricityConnected,
+          TORConnected = @torConnected
+        WHERE ID = @id
+      `);
+
+    res.json({ message: "Device updated successfully" });
+
+  } catch (error) {
+    console.error("Update device error:", error);
+    res.status(500).json({ error: "Failed to update device" });
+  }
+});
+
+
+
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, async () => {
+  console.log(`Server running on port ${PORT}`);
+  await connectDB();
 });

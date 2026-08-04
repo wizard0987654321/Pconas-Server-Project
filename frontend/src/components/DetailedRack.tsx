@@ -7,6 +7,7 @@ import PrimaryButton from "./buttons/PrimaryButton";
 import AddDeviceOverlay from "./overlays/AddDeviceOverlay";
 import { useGSAP } from "@gsap/react";
 import { detailedRackAnimation } from "../animations/detailedRackAnimation";
+import EditDeviceOverlay from "./overlays/EditDeviceOverlay";
 
 //detailed view for rack, can be opened with "to the rack detailed view" button
 function DetailedRack() {
@@ -14,6 +15,7 @@ function DetailedRack() {
     const { t } = useTranslation();
 
     const [selectedRackId, setSelectedRackId] = useState<number | null>(null);
+    const [selectedDevice, setSelectedDevice] = useState<Device | null>(null);
     const [deviceTypes, setDeviceTypes] = useState<any[]>([]);
 
     const handleDeviceAdded = (rackId: number) => {
@@ -85,10 +87,18 @@ function DetailedRack() {
 
     return (
         <>
-        {/*overlay for adding new device*/}
+            {/*overlay for adding new device*/}
             {selectedRackId !== null && (
                 <AddDeviceOverlay
                     onClose={() => setSelectedRackId(null)} rackId={selectedRackId}
+                />
+            )}
+
+            {/*overlay for editing existing device*/}
+            {selectedDevice && (
+                <EditDeviceOverlay
+                    device={selectedDevice}
+                    onClose={() => setSelectedDevice(null)}
                 />
             )}
 
@@ -130,7 +140,13 @@ function DetailedRack() {
                                 <div className="flex-1 flex items-center px-2">
                                     {device ? (
                                         <div className="relative group w-full hover:z-50">
-                                            <div className="w-full cursor-pointer rounded bg-[#6ADBAF] px-2 py-1 text-xs text-white transition-transform duration-150 hover:scale-[1.02]">
+                                            <div
+                                                onClick={() => setSelectedDevice(device)}
+                                                className={`w-full cursor-pointer rounded px-2 py-1 text-xs transition-transform duration-150 hover:scale-[1.02] ${device.ElectricityConnected
+                                                        ? "bg-[#6ADBAF] text-white"
+                                                        : "bg-[#6ADBAF]/30 text-white"
+                                                    }`}
+                                            >
                                                 {device.InternalID}
                                             </div>
                                             {/* hover div */}
@@ -144,9 +160,25 @@ function DetailedRack() {
                                                             type => type.ID === device.TypeID
                                                         )?.TypeName ?? t("common.unknown")
                                                     }
-                                                </p>                                                <p><span className="font-semibold">{t("common.position")}:</span> {device.PositionFrom}U - {device.PositionTo}U</p>
-                                                <p><span className="font-semibold">{t("common.electricity")}:</span> {device.ElectricityConnected ? t("common.yes") : t("common.no")}</p>
-                                                <p><span className="font-semibold">{t("common.tor")}:</span> {device.TORConnected ? t("common.yes") : t("common.no")}</p>
+                                                </p>
+                                                <p><span className="font-semibold">{t("common.position")}:</span> {device.PositionFrom}U - {device.PositionTo}U</p>
+                                                <p>
+                                                    <span className="font-semibold">{t("common.electricity")}:</span>{" "}
+                                                    <span
+                                                        className={!device.ElectricityConnected ? "font-bold text-[#FF6B6B]" : ""}
+                                                    >
+                                                        {device.ElectricityConnected ? t("common.yes") : t("common.no")}
+                                                    </span>
+                                                </p>
+
+                                                <p>
+                                                    <span className="font-semibold">{t("common.tor")}:</span>{" "}
+                                                    <span
+                                                        className={!device.TORConnected ? "font-bold text-[#FF6B6B]" : ""}
+                                                    >
+                                                        {device.TORConnected ? t("common.yes") : t("common.no")}
+                                                    </span>
+                                                </p>
                                             </div>
                                         </div>
                                     ) : (
