@@ -140,7 +140,7 @@ function DetailedRack() {
 
                                 <div className="flex-1 flex items-center px-2">
                                     {device ? (
-                                        <div className="relative group w-full hover:z-50">
+                                        <div className={`relative group w-full ${!selectedDevice ? "hover:z-50" : ""}`}>
                                             <div
                                                 onClick={() => setSelectedDevice(device)}
                                                 className={`w-full cursor-pointer rounded px-2 py-1 text-xs transition-transform duration-150 hover:scale-[1.02] ${device.ElectricityConnected
@@ -151,36 +151,38 @@ function DetailedRack() {
                                                 {device.InternalID}
                                             </div>
                                             {/* hover div */}
-                                            <div className="absolute left-1/2 top-full z-40 mt-2 hidden w-52 -translate-x-1/2 rounded-md border-2 border-[#6ADBAF] bg-[#F8FAFC] p-3 font-mono text-xs text-[#111827] shadow-lg group-hover:block dark:bg-[#0E1F48] dark:text-[#F9FAFB]">
-                                                <p><span className="font-semibold">{t("common.internalId")}:</span> {device.InternalID}</p>
-                                                <p>
-                                                    {/*displaying device name instead of foreign id foreign key*/}
-                                                    <span className="font-semibold">{t("common.type")}:</span>{" "}
-                                                    {
-                                                        deviceTypes.find(
-                                                            type => type.ID === device.TypeID
-                                                        )?.TypeName ?? t("common.unknown")
-                                                    }
-                                                </p>
-                                                <p><span className="font-semibold">{t("common.position")}:</span> {device.PositionFrom}U - {device.PositionTo}U</p>
-                                                <p>
-                                                    <span className="font-semibold">{t("common.electricity")}:</span>{" "}
-                                                    <span
-                                                        className={!device.ElectricityConnected ? "font-bold text-[#FF6B6B]" : ""}
-                                                    >
-                                                        {device.ElectricityConnected ? t("common.yes") : t("common.no")}
-                                                    </span>
-                                                </p>
+                                            {!selectedDevice && (
+                                                <div className="absolute left-1/2 top-full z-40 mt-2 hidden w-52 -translate-x-1/2 rounded-md border-2 border-[#6ADBAF] bg-[#F8FAFC] p-3 font-mono text-xs text-[#111827] shadow-lg group-hover:block dark:bg-[#0E1F48] dark:text-[#F9FAFB]">
+                                                    <p><span className="font-semibold">{t("common.internalId")}:</span> {device.InternalID}</p>
+                                                    <p>
+                                                        {/*displaying device name instead of foreign id foreign key*/}
+                                                        <span className="font-semibold">{t("common.type")}:</span>{" "}
+                                                        {
+                                                            deviceTypes.find(
+                                                                type => type.ID === device.TypeID
+                                                            )?.TypeName ?? t("common.unknown")
+                                                        }
+                                                    </p>
+                                                    <p><span className="font-semibold">{t("common.position")}:</span> {device.PositionFrom}U - {device.PositionTo}U</p>
+                                                    <p>
+                                                        <span className="font-semibold">{t("common.electricity")}:</span>{" "}
+                                                        <span
+                                                            className={!device.ElectricityConnected ? "font-bold text-[#FF6B6B]" : ""}
+                                                        >
+                                                            {device.ElectricityConnected ? t("common.yes") : t("common.no")}
+                                                        </span>
+                                                    </p>
 
-                                                <p>
-                                                    <span className="font-semibold">{t("common.tor")}:</span>{" "}
-                                                    <span
-                                                        className={!device.TORConnected ? "font-bold text-[#FF6B6B]" : ""}
-                                                    >
-                                                        {device.TORConnected ? t("common.yes") : t("common.no")}
-                                                    </span>
-                                                </p>
-                                            </div>
+                                                    <p>
+                                                        <span className="font-semibold">{t("common.tor")}:</span>{" "}
+                                                        <span
+                                                            className={!device.TORConnected ? "font-bold text-[#FF6B6B]" : ""}
+                                                        >
+                                                            {device.TORConnected ? t("common.yes") : t("common.no")}
+                                                        </span>
+                                                    </p>
+                                                </div>
+                                            )}
                                         </div>
                                     ) : (
                                         <div className="w-full h-5 rounded border border-dashed border-[#6ADBAF]/40"></div>

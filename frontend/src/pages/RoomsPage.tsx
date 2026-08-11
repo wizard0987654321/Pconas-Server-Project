@@ -22,21 +22,18 @@ function RoomsPage() {
 
     return (
         <>
-            <div className="flex flex-col items-center p-4 w-full">
+            <div className="flex w-full min-w-0 flex-col items-center overflow-x-hidden p-4">
                 <PageHeading heading="pages.rooms.headingText" />
-
-                <div className="w-full flex justify-between items-center m-4">
-                    <PrimaryButton
-                        label={t("pages.rooms.addButton")}
-                        onClick={handleAddRoom}
-                        margin="m-1"
-                    />
+                <div className="m-4 flex w-full min-w-0 items-center justify-between">                    <PrimaryButton
+                    label={t("pages.rooms.addButton")}
+                    onClick={handleAddRoom}
+                    margin="m-1"
+                />
 
                     {/* two different possible views, list and room visual */}
                     <button
                         onClick={() => setIsListView(!isListView)}
-                        className="p-2 rounded border-2 border-[#6ADBAF]"
-                    >
+                        className="shrink-0 rounded border-2 border-[#6ADBAF] p-2"                    >
                         <img
                             src={isListView ? roomViewIcon : listViewIcon}
                             alt={isListView ? "Room view" : "List view"}
@@ -45,7 +42,7 @@ function RoomsPage() {
                     </button>
                 </div>
 
-                <div className="flex">
+                <div className="w-full min-w-0 max-w-full">
                     {isListView ? <ServerRoomList /> : <ServerRoom />}
                 </div>
                 <QuizQuestions />
