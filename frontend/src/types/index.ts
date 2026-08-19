@@ -10,6 +10,7 @@ export type Room = {
 
 export type Rack = {
     ID: number,
+    RackNumber: number,
     RoomID: number,
     UnitsSize: number,
     HeightCm: number,

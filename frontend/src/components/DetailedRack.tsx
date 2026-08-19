@@ -117,7 +117,7 @@ function DetailedRack() {
                 >
                     <div className="overflow-hidden rounded-t">
                         <div className="bg-[#0E1F48] text-[#F9FAFB] text-center py-2 font-bold">
-                            Rack {rack.ID}
+                            Rack {rack.RackNumber}
                         </div>
                     </div>
 

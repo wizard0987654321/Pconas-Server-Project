@@ -29,6 +29,7 @@ app.get("/rooms", async (req, res) => {
 app.get("/racks", async (req, res) => {
   const result = await sql.query(`SELECT 
     r.ID,
+    ROW_NUMBER() OVER (ORDER BY r.ID) AS RackNumber,
     r.RoomID,
     r.UnitsSize,
     r.HeightCm,
