@@ -1,0 +1,14 @@
+services:
+  backend:
+    image: pconas-server-project-backend:latest
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./backend/.env
+
+  frontend:
+    image: pconas-server-project-frontend:latest
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend

@@ -96,6 +96,37 @@ export async function getDeviceTypesData() {
     return response.json();
 }
 
+export async function getUsers() {
+    const response = await fetch(`${API_URL}/users`);
+
+    if (!response.ok) {
+        throw new Error("Failed Database getUsers Query");
+    }
+
+    return response.json();
+}
+
+export async function getQuestions() {
+    const response = await fetch(`${API_URL}/questions`);
+
+    if (!response.ok) {
+        throw new Error("Failed Database getQuestions Query");
+    }
+
+    return response.json();
+}
+
+export async function getAnswers() {
+    const response = await fetch(`${API_URL}/answers`);
+
+    if (!response.ok) {
+        throw new Error("Failed Database getAnswers Query");
+    }
+
+    return response.json();
+}
+
+
 //delete paths
 
 export async function deleteRoom(id: number) {
@@ -253,3 +284,26 @@ export async function addVm(payload: { newVm: { deviceId: number; serviceId: num
     return response.json();
 }
 
+//update paths 
+
+export async function activateQuestions(ids: number[]) {
+    return fetch(`${API_URL}/activateQuestions`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ids }),
+    });
+}
+
+export async function deactivateQuestions(ids: number[]) {
+    const response = await fetch(`${API_URL}/deactivateQuestions`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ids }),
+    });
+
+    return response.json();
+}

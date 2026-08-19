@@ -34,10 +34,10 @@ function DataList({ data, detailPath, detailLabel, idField = "ID", onDelete }: D
 
     //setting up grid for the right size, dynamic for different sized data
     const columns = Object.keys(data[0]).filter((key) => key !== idField);
-    const columnCount = columns.length + (detailPath ? 1 : 0) + 1; // +1 for delete button
+    const actionColumnWidth = detailPath ? "minmax(14rem, 1fr)" : "minmax(8rem, 1fr)";
 
     const gridStyle = {
-        gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))`,
+        gridTemplateColumns: `repeat(${columns.length}, minmax(0, 1fr)) ${actionColumnWidth}`,
     };
 
 
@@ -57,16 +57,15 @@ function DataList({ data, detailPath, detailLabel, idField = "ID", onDelete }: D
 
             {/* Desktop Header */}
             <div
-                className="hidden xl:grid font-semibold m:text-lg border-b-2 border-[#6ADBAF] pb-4 mb-3"
+                className="hidden xl:grid gap-x-4 font-semibold m:text-lg border-b-2 border-[#6ADBAF] pb-4 mb-3"
                 style={gridStyle}
             >
                 {columns.map((column) => (
-                    <span key={column} className="px-3">
+                    <span key={column} className="px-3 min-w-0">
                         {column === "#" ? "#" : t(column)}
                     </span>
                 ))}
 
-                {detailPath && <span className="px-3" />}
                 <span className="px-3" />
             </div>
 
@@ -109,7 +108,7 @@ function DataList({ data, detailPath, detailLabel, idField = "ID", onDelete }: D
                             )}
 
                             <DeleteButton
-                                label="Delete"
+                                label={t("pages.home.deleteButton")}
                                 onClick={() => handleDelete(row)}
                             />
                         </div>
@@ -117,11 +116,11 @@ function DataList({ data, detailPath, detailLabel, idField = "ID", onDelete }: D
 
                         {/* Desktop */}
                         <div
-                            className="hidden xl:grid py-5 m:text-lg border-b-2 border-[#6ADBAF] items-center"
+                            className="hidden xl:grid gap-x-4 py-5 m:text-lg border-b-2 border-[#6ADBAF] items-center"
                             style={gridStyle}
                         >
                             {columns.map((column) => (
-                                <span className={`p-1 ${typeof row[column] === "boolean" && !row[column]
+                                <span className={`p-1 min-w-0 break-words ${typeof row[column] === "boolean" && !row[column]
                                     ? "text-[#FF6B6B] font-bold" //red for answer no, so it's more visible
                                     : ""
                                     }`} key={column}>
@@ -131,23 +130,21 @@ function DataList({ data, detailPath, detailLabel, idField = "ID", onDelete }: D
                                 </span>
                             ))}
 
-                            {/* view details button visible only when detail path is passed as prop */}
-                            {detailPath && (
-                                <span className="p-1">
+                            <div className="flex w-full items-center justify-end gap-2 lg:gap-3 xl:gap-4 pr-1">
+                                {/* view details button visible only when detail path is passed as prop */}
+                                {detailPath && (
                                     <PrimaryButton
                                         label={detailLabel ? t(detailLabel) : t("common.viewDetails")}
                                         onClick={() => handleViewDetails(row)}
                                         margin="my-0"
                                     />
-                                </span>
-                            )}
+                                )}
 
-                            <span className="p-1">
                                 <DeleteButton
                                     label={t("pages.home.deleteButton")}
                                     onClick={() => handleDelete(row)}
                                 />
-                            </span>
+                            </div>
                         </div>
 
                     </div>

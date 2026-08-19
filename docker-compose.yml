@@ -8,8 +8,6 @@ services:
       - "5000:5000"
     env_file:
       - ./backend/.env
-    environment:
-      DB_HOST: host.docker.internal
 
   frontend:
     build: ./frontend

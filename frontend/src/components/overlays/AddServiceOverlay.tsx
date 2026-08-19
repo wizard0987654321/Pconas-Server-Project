@@ -1,4 +1,4 @@
-import AddOverlay from "./AddOverlay";
+import AddOverlay from "./generics/AddOverlay";
 import { useCustomers } from "../../helpers/hooks/customerOperations";
 import { useTranslation } from "react-i18next";
 

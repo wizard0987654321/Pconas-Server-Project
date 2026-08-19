@@ -1,7 +1,7 @@
 // AddRackOverlay.tsx
 
 import { useRooms } from "../../helpers/hooks/roomOperations";
-import AddOverlay from "./AddOverlay";
+import AddOverlay from "./generics/AddOverlay";
 import { useTranslation } from "react-i18next";
 
 type AddRackOverlayProps = {

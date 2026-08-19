@@ -25,16 +25,36 @@
     "electricity": "Strom",
     "tor": "TOR",
     "units": "Einheiten",
-    "height": "Höhe"
+    "height": "Höhe",
+    "close": "schließen",
+    "submit": "bestätigen",
+    "goodJob": "Richtig!",
+    "tryAgain": "Falsch. Bitte nochmals versuchen",
+    "chooseQuestions": "Fragen aushälen"
   },
   "test": {
     "testWord": "TestWort",
     "secondWord": "Apfel",
     "title": "Dies ist eine Testseite"
   },
+  "buttons": {
+    "logOut": "abmelden"
+  },
   "pages": {
+    "login": {
+      "comment": "Login-Testseite",
+      "username": "Benutzername",
+      "password": "Passwort",
+      "usernamePlaceholder": "Trainer oder Trainee",
+      "passwordPlaceholder": "Dein Passwort",
+      "loginButton": "Anmelden",
+      "checking": "Wird geprüft...",
+      "button": "Anmelden"
+    },
     "home": {
-      "helloText": "Willkommen in deinem Pconas Trainee Portal",
+      "trainerHelloText": "Willkommen in deinem Pconas Trainer Portal",
+      "traineeHelloText": "Willkommen in deinem Pconas Trainee Portal",
+      "helloText": "In Pconas Trainer/Trainee Portal anmelden",
       "button": "Rechenzentrum entdecken",
       "deleteButton": "löschen"
     },
@@ -56,7 +76,10 @@
         "area": "Fläche",
         "capacity": "Kapazität",
         "height (cm)": "Höhe (cm)"
-      }
+      },
+      "activateQuestions": "Fragen aktivieren",
+      "answerQuestions": "Fragen beantworten",
+      "noQuestions": "keine Fragen aktiv"
     },
     "racks": {
       "headingText": "Racks",
@@ -78,7 +101,7 @@
         "size (u)": "Größe (U)",
         "height (cm)": "Höhe (cm)"
       },
-      "button": "Zur Rack-Detailansicht"
+      "button": "Zur Rack Detailansicht"
     },
     "deviceTypes": {
       "headingText": "Gerätetypen",

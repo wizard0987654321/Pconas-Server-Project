@@ -29,6 +29,7 @@ app.get("/rooms", async (req, res) => {
 app.get("/racks", async (req, res) => {
   const result = await sql.query(`SELECT 
     r.ID,
+    ROW_NUMBER() OVER (ORDER BY r.ID) AS RackNumber,
     r.RoomID,
     r.UnitsSize,
     r.HeightCm,
@@ -62,8 +63,7 @@ app.get("/devices", async (req, res) => {
       d.TORConnected,
       dt.TypeName,
       dt.Manufacturer,
-      dt.Usage,
-      dt.ID 
+      dt.Usage
     FROM Device d
     JOIN DeviceType dt ON d.TypeID = dt.ID
   `);
@@ -82,6 +82,21 @@ app.get("/services", async (req, res) => {
 
 app.get("/customers", async (req, res) => {
   const result = await sql.query("SELECT * FROM Customer");
+  res.json(result.recordset);
+});
+
+app.get("/users", async (req, res) => {
+  const result = await sql.query("SELECT * FROM Users");
+  res.json(result.recordset);
+});
+
+app.get("/questions", async (req, res) => {
+  const result = await sql.query("SELECT * FROM Questions");
+  res.json(result.recordset);
+});
+
+app.get("/answers", async (req, res) => {
+  const result = await sql.query("SELECT * FROM Answers");
   res.json(result.recordset);
 });
 
@@ -333,6 +348,110 @@ app.delete("/deleteVm/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to delete VM" });
   }
 });
+
+
+//put paths
+app.put('/activateQuestions', async (req, res) => {
+  const { ids } = req.body;
+
+  try {
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ error: "No question IDs provided" });
+    }
+
+    const placeholders = ids.map((_, index) => `@id${index}`).join(",");
+
+    const request = new sql.Request();
+
+    ids.forEach((id, index) => {
+      request.input(`id${index}`, sql.Int, id);
+    });
+
+    await request.query(`
+      UPDATE Questions
+      SET IsActive = 1
+      WHERE ID IN (${placeholders})
+    `);
+
+    res.json({ message: "Questions activated successfully" });
+
+  } catch (error) {
+    console.error("Activate questions error:", error);
+    res.status(500).json({ error: "Failed to activate questions" });
+  }
+});
+
+app.put('/deactivateQuestions', async (req, res) => {
+  const { ids } = req.body;
+
+  try {
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ error: "No question IDs provided" });
+    }
+
+    const placeholders = ids.map((_, index) => `@id${index}`).join(",");
+
+    const request = new sql.Request();
+
+    ids.forEach((id, index) => {
+      request.input(`id${index}`, sql.Int, id);
+    });
+
+    await request.query(`
+      UPDATE Questions
+      SET IsActive = 0
+      WHERE ID IN (${placeholders})
+    `);
+
+    res.json({ message: "Questions deactivated successfully" });
+
+  } catch (error) {
+    console.error("Deactivate questions error:", error);
+    res.status(500).json({ error: "Failed to deactivate questions" });
+  }
+});
+
+app.put('/updateDevice', async (req, res) => {
+  const { updatedDevice } = req.body;
+
+  try {
+    if (!updatedDevice || !updatedDevice.id) {
+      return res.status(400).json({ error: "No device data provided" });
+    }
+
+    const request = new sql.Request();
+
+    await request
+      .input('id', sql.Int, updatedDevice.id)
+      .input('typeId', sql.Int, updatedDevice.typeId)
+      .input('rackId', sql.Int, updatedDevice.rackId)
+      .input('internalId', sql.NVarChar, updatedDevice.internalId)
+      .input('positionFrom', sql.Int, updatedDevice.positionFrom)
+      .input('positionTo', sql.Int, updatedDevice.positionTo)
+      .input('electricityConnected', sql.Bit, updatedDevice.electricityConnected)
+      .input('torConnected', sql.Bit, updatedDevice.torConnected)
+      .query(`
+        UPDATE Device
+        SET
+          TypeID = @typeId,
+          RackID = @rackId,
+          InternalID = @internalId,
+          PositionFrom = @positionFrom,
+          PositionTo = @positionTo,
+          ElectricityConnected = @electricityConnected,
+          TORConnected = @torConnected
+        WHERE ID = @id
+      `);
+
+    res.json({ message: "Device updated successfully" });
+
+  } catch (error) {
+    console.error("Update device error:", error);
+    res.status(500).json({ error: "Failed to update device" });
+  }
+});
+
+
 
 const PORT = process.env.PORT || 5000;
 

@@ -25,16 +25,36 @@
     "electricity": "Electricity",
     "tor": "TOR",
     "units": "Units",
-    "height": "Height"
+    "height": "Height",
+    "close": "close",
+    "submit": "submit",
+    "goodJob": "good job!",
+    "tryAgain": "wrong, please try again",
+    "chooseQuestions": "choose questions"
   },
   "test": {
     "testWord": "testWord",
     "secondWord": "apple",
     "title": "This is a test page"
   },
+  "buttons": {
+    "logOut": "log out"
+  },
   "pages": {
+    "login": {
+      "comment": "Login Test Screen",
+      "username": "Username",
+      "password": "Password",
+      "usernamePlaceholder": "trainer or trainee",
+      "passwordPlaceholder": "your password",
+      "loginButton": "Log in",
+      "checking": "Checking...",
+      "button": "log in"
+    },
     "home": {
-      "helloText": "Welcome to your Pconas Trainee Portal",
+      "trainerHelloText": "Welcome to your Pconas Trainer Portal",
+      "traineeHelloText": "Welcome to your Pconas Trainee Portal",
+      "helloText": "Log into your Pconas Trainer/Trainee Portal",
       "button": "Discover Server Center",
       "deleteButton": "delete"
     },
@@ -56,7 +76,10 @@
         "capacity": "capacity",
         "name": "name",
         "height (cm)": "height (cm)"
-      }
+      },
+      "activateQuestions": "activate questions",
+      "answerQuestions": "answer Questions",
+      "noQuestions": "no questions to answer"
     },
     "racks": {
       "headingText": "Racks",
