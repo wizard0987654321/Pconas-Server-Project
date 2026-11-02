@@ -40,6 +40,8 @@ function ServerRoomList() {
             {/*passing updated data as prop*/}
             <DataList
                 data={displayData}
+                detailPath="/rooms"
+                detailLabel="mere shevcvli, i18n, open detail room page"
                 onDelete={(id: number) => setRoomToDelete(id)}
             />
         </>

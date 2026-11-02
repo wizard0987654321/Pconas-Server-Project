@@ -9,6 +9,7 @@ import ServicesPage from "./pages/ServicesPage";
 import DetailedRack from "./components/DetailedRack";
 import CustomersPage from "./pages/CustomersPage";
 import DeviceTypesPage from "./pages/DeviceTypesPage";
+import DetailedRoom from "./components/DetailedRoom";
 
 
 const routes = [
@@ -19,6 +20,7 @@ const routes = [
         children: [
             { index: true, element: <Homepage /> },
             { path: 'rooms', element: <RoomsPage /> },
+            { path: 'rooms/:id', element: <DetailedRoom /> }, //for room detailed view
             { path: 'rooms/:roomId/racks', element: <RacksPage /> }, //for filterin RacksPage 
             { path: 'racks', element: <RacksPage /> },
             { path: 'racks/:id', element: <DetailedRack /> }, //for rack detailed view
