@@ -20,7 +20,7 @@ function AddVmOverlay({ onClose }: AddVmOverlayProps) {
             fields={[
                 {
                     name: "name",
-                    label: t("pages.vms.form.vmName"),
+                    label: t("pages.vms.form.title"),
                     type: "text",
                 },
                 {

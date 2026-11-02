@@ -156,6 +156,12 @@
     "vms": {
       "headingText": "Virtual Machines",
       "addButton": "add VM",
+      "form": {
+        "title": "Add New Virtual Machine",
+        "service": "Service",
+        "device": "Host Device",
+        "name": "Name"
+      },
       "data": {
         "#": "#",
         "service": "service name",

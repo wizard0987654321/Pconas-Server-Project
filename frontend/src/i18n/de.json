@@ -154,8 +154,14 @@
       }
     },
     "vms": {
-      "headingText": "virtuelle Maschinen",
+      "headingText": "Virtuelle Maschinen",
       "addButton": "VM hinzufügen",
+      "form": {
+        "title": "Neue virtuelle Maschine hinzufügen",
+        "service": "Service",
+        "device": "Host Gerät",
+        "name": "Name"
+      },
       "data": {
         "#": "#",
         "service": "Service Name",

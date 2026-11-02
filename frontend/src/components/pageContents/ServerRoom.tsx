@@ -122,7 +122,7 @@ function ServerRoom() {
                             </div>
 
                             <PrimaryButton label={t("pages.rooms.button")} onClick={() => navigate(`/rooms/${room.ID}/racks`)} />
-                            <PrimaryButton label={"Room detail muss geändert werden in i18n"} onClick={() => console.log("zdarova kai mchamelebs")} />
+                            <PrimaryButton label={"Room detail muss geändert werden in i18n"} onClick={() => navigate(`/rooms/${room.ID}`)} />
 
                             <DeleteButton label={t("pages.rooms.deleteButton")} onClick={() => setRoomToDelete(room.ID)} />
                         </div>
