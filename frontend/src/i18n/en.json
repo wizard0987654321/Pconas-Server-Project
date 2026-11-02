@@ -76,10 +76,13 @@
         "capacity": "capacity",
         "name": "name",
         "height (cm)": "height (cm)"
+      },"detailedView": {
+        "smallScreen": "Please enlarge your browser window or open this page on a larger screen. The minimum required screen width is 768 px."
       },
       "activateQuestions": "activate questions",
       "answerQuestions": "answer Questions",
-      "noQuestions": "no questions to answer"
+      "noQuestions": "no questions to answer",
+      "detailedButton": "Open detailed virtual Room View"
     },
     "racks": {
       "headingText": "Racks",

@@ -3,9 +3,11 @@ import { useState, useMemo } from "react";
 import { transformData } from "../../helpers/transformData";
 import { useRooms } from "../../helpers/hooks/roomOperations";
 import DeletingOverlay from "../overlays/generics/DeletingOverlay";
+import { useTranslation } from "react-i18next";
 
 function ServerRoomList() {
 
+    const { t } = useTranslation();
     const { roomsData, deleteRoom } = useRooms();
 
     const [roomToDelete, setRoomToDelete] = useState<number | null>(null);
@@ -41,7 +43,7 @@ function ServerRoomList() {
             <DataList
                 data={displayData}
                 detailPath="/rooms"
-                detailLabel="mere shevcvli, i18n, open detail room page"
+                detailLabel={t("pages.rooms.detailedButton")}
                 onDelete={(id: number) => setRoomToDelete(id)}
             />
         </>

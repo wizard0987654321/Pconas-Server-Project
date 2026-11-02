@@ -77,9 +77,13 @@
         "capacity": "Kapazität",
         "height (cm)": "Höhe (cm)"
       },
+      "detailedView": {
+        "smallScreen": "Bitte vergrößern Sie das Browserfenster oder öffnen Sie diese Seite auf einem größeren Bildschirm. Die Mindestbreite beträgt 768 px."
+      },
       "activateQuestions": "Fragen aktivieren",
       "answerQuestions": "Fragen beantworten",
-      "noQuestions": "keine Fragen aktiv"
+      "noQuestions": "keine Fragen aktiv",
+      "detailedButton": "Detaillierte virtuelle Raum Ansicht öffnen"
     },
     "racks": {
       "headingText": "Racks",
