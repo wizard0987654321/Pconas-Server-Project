@@ -66,7 +66,7 @@ model Room {
   ID       Int      @id(map: "PK__Room__3214EC278D3F5492") @default(autoincrement())
   Area     Int?
   Capacity Int?
-  HeightCm Decimal? @db.Decimal(5, 2)
+  HeightCm Decimal? @db.Decimal(8, 2)
   Rack     Rack[]
 }
 
@@ -93,4 +93,12 @@ model VM {
   Name      String?  @db.NVarChar(50)
   Device    Device?  @relation(fields: [DeviceID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_VM_DeviceID")
   Service   Service? @relation(fields: [ServiceID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_VM_ServiceID")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model UPS {
+  ID        Int      @id(map: "PK_UPS") @default(autoincrement())
+  RoomID    Int?
+  UnitsSize Int?
+  HeightCm  Decimal? @db.Decimal(5, 2)
 }

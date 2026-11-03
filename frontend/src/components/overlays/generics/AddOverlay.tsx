@@ -21,6 +21,7 @@ type AddOverlayProps = {
     transformData?: (data: Record<string, string>) => any;
     validate?: (data: Record<string, string>) => string | null;
     initialData?: Record<string, string>;
+    onFieldChange?: (name: string, value: string) => void;
 };
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -34,6 +35,7 @@ function AddOverlay({
     transformData = (data) => data,
     validate,
     initialData,
+    onFieldChange
 }: AddOverlayProps) {
     const { t } = useTranslation();
 
@@ -55,6 +57,8 @@ function AddOverlay({
             ...prev,
             [name]: value,
         }));
+
+        onFieldChange?.(name, value);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {

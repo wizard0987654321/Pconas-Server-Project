@@ -8,7 +8,7 @@ import { useRooms } from "../helpers/hooks/roomOperations";
 import serverIcon from "../assets/ServerIcon.svg";
 import buttonIcon from "../assets/AddButton.svg";
 import RackHoverOverlay from "./RackHoverOverlay";
-import AddRackOverlay from "./overlays/AddRackOverlay";
+import AddEquipmentOverlay from "./overlays/AddEquipmentOverlay";
 
 function DetailedRoom() {
 
@@ -66,7 +66,7 @@ function DetailedRoom() {
     return (
         <>
             {selectedRoomId !== null && (
-                <AddRackOverlay
+                <AddEquipmentOverlay
                     onClose={() => setSelectedRoomId(null)}
                     roomId={selectedRoomId}
                 />

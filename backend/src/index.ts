@@ -212,6 +212,23 @@ app.post("/addRack", async (req: Request, res: Response) => {
   }
 });
 
+app.post("/addUPS", async (req: Request, res: Response) => {
+  const { newUPS } = req.body;
+
+  try {
+    await prisma.uPS.create({
+      data: {
+        RoomID: toNumber(newUPS.roomId),
+        UnitsSize: toNumber(newUPS.unitsSize),
+        HeightCm: toNumber(newUPS.heightcm),
+      },
+    });
+    res.json({ message: "new UPS added" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to add new UPS" });
+  }
+});
+
 app.post("/addDeviceType", async (req: Request, res: Response) => {
   const { newDeviceType } = req.body;
 
