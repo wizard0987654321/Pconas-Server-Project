@@ -17,6 +17,14 @@ export type Rack = {
     RoomNumber: number
 };
 
+export type Ups = {
+    ID: number;
+    UPSNumber: number;
+    RoomID: number | null;
+    UnitsSize: number | null;
+    HeightCm: number | null;
+}
+
 export type Device = {
     ID: number,
     DeviceNumber:number,

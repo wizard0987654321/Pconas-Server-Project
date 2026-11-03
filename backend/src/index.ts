@@ -74,6 +74,38 @@ app.get("/racks", async (req: Request, res: Response) => {
   res.json(result);
 });
 
+app.get("/ups", async (req: Request, res: Response) => {
+  const [rooms, allUps] = await Promise.all([
+    prisma.room.findMany({
+      orderBy: { ID: "asc" },
+      select: { ID: true },
+    }),
+    prisma.uPS.findMany({
+      orderBy: { ID: "asc" },
+    }),
+  ]);
+
+  const roomNumberByRoomId = new Map(
+    rooms.map((room, index) => [room.ID, index + 1])
+  );
+
+  // Replicate the INNER JOIN behavior
+  const joinedUps = allUps.filter(
+    (ups) => ups.RoomID !== null && roomNumberByRoomId.has(ups.RoomID)
+  );
+
+  const result = joinedUps.map((ups, index) => ({
+    ID: ups.ID,
+    UPSNumber: index + 1,
+    RoomID: ups.RoomID,
+    UnitsSize: ups.UnitsSize,
+    HeightCm: ups.HeightCm !== null ? Number(ups.HeightCm) : ups.HeightCm,
+    RoomNumber: roomNumberByRoomId.get(ups.RoomID as number),
+  }));
+
+  res.json(result);
+});
+
 app.get("/deviceTypes", async (req: Request, res: Response) => {
   const deviceTypes = await prisma.deviceType.findMany();
   res.json(deviceTypes);

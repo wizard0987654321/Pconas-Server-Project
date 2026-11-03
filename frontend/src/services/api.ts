@@ -46,6 +46,16 @@ export async function getRackData() {
     return response.json();
 }
 
+export async function getUpsData() {
+    const response = await fetch(`${API_URL}/ups`);
+
+    if (!response.ok) {
+        throw new Error("Failed Database Test Query");
+    }
+
+    return response.json();
+}
+
 export async function getDevicesData() {
     const response = await fetch(`${API_URL}/devices`);
 

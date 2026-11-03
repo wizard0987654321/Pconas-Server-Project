@@ -17,6 +17,7 @@
     "deleteTitle": "Are you sure you want to delete?",
     "deleteWarning": "This action cannot be undone.",
     "rack": "Rack",
+    "ups": "UPS",
     "room": "Room",
     "device": "Device",
     "internalId": "Internal ID",
