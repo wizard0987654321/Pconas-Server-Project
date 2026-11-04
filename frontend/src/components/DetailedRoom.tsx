@@ -12,6 +12,7 @@ import buttonIcon from "../assets/AddButton.svg";
 import RackHoverOverlay from "./RackHoverOverlay";
 import UpsHoverOverlay from "./UpsHoverOverlay";
 import AddEquipmentOverlay from "./overlays/AddEquipmentOverlay";
+import DisplayedRoomData from "./DisplayedRoomData";
 
 function DetailedRoom() {
 
@@ -103,6 +104,9 @@ function DetailedRoom() {
 
                 <div className="my-15 flex w-full flex-wrap items-center justify-around gap-4 rounded-[0.5rem] border-[1rem] border-[#6ADBAF] p-6">
 
+                    <DisplayedRoomData />
+                    
+                    <div className="flex flex-wrap justify-center gap-4">
                     {/* Existing racks */}
                     {roomRacks.map(rack => (
                         <div key={rack.ID} className="relative group flex justify-center">
@@ -136,6 +140,7 @@ function DetailedRoom() {
 
                     {/* Empty places */}
                     {renderFreePlaces()}
+                    </div>
 
                 </div>
             </div>
