@@ -8,6 +8,7 @@ import { getRackData, getUpsData } from "../services/api";
 import { useRooms } from "../helpers/hooks/roomOperations";
 import serverIcon from "../assets/ServerIcon.svg";
 import upsIcon from "../assets/upsIcon.svg";
+import pduIcon from "../assets/PDU.svg";
 import buttonIcon from "../assets/AddButton.svg";
 import RackHoverOverlay from "./RackHoverOverlay";
 import UpsHoverOverlay from "./UpsHoverOverlay";
@@ -102,44 +103,68 @@ function DetailedRoom() {
 
                 <PageHeading heading={`${t("pages.rooms.cardHeading")} ${id}`} />
 
-                <div className="my-15 flex w-full flex-wrap items-center justify-around gap-4 rounded-[0.5rem] border-[1rem] border-[#6ADBAF] p-6">
+
+                <div className="my-15 flex w-full flex-col gap-6 rounded-[0.5rem] border-[1rem] border-[#6ADBAF] p-6">
 
                     <DisplayedRoomData />
-                    
+
+                    {/* UPS devices - First row */}
                     <div className="flex flex-wrap justify-center gap-4">
-                    {/* Existing racks */}
-                    {roomRacks.map(rack => (
-                        <div key={rack.ID} className="relative group flex justify-center">
 
-                            <img
-                                src={serverIcon}
-                                alt="Server Icon"
-                                onClick={() => handleRackClick(rack.ID)}
-                                className="rack-item cursor-pointer transition-transform duration-150 hover:scale-110"
-                            />
+                        {roomUps.map(ups => (
+                            <div key={ups.ID} className="relative group flex justify-center">
 
-                            <RackHoverOverlay rack={rack} t={t} />
+                                <img
+                                    src={upsIcon}
+                                    alt="UPS Icon"
+                                    className="rack-item cursor-pointer max-w-[120px] transition-transform duration-150 hover:scale-110"
+                                />
 
-                        </div>
-                    ))}
+                                <UpsHoverOverlay ups={ups} t={t} />
 
-                    {/* Existing UPS devices */}
-                    {roomUps.map(ups => (
-                        <div key={ups.ID} className="relative group flex justify-center">
+                            </div>
+                        ))}
 
-                            <img
-                                src={upsIcon}
-                                alt="UPS Icon"
-                                className="rack-item cursor-pointer max-w-[120px] transition-transform duration-150 hover:scale-110"
-                            />
+                    </div>
+                    {/* PDUs - Between UPS and racks */}
+                    <div className="flex w-full items-center justify-between px-4">
 
-                            <UpsHoverOverlay ups={ups} t={t} />
+                        <img
+                            src={pduIcon}
+                            alt="PDU"
+                            className="rack-item"
+                        />
 
-                        </div>
-                    ))}
+                        <img
+                            src={pduIcon}
+                            alt="PDU"
+                            className="rack-item"
+                        />
 
-                    {/* Empty places */}
-                    {renderFreePlaces()}
+                    </div>
+
+                    {/* Racks and free places - third row */}
+                    <div className="flex flex-wrap justify-center gap-4">
+
+                        {/* Existing racks */}
+                        {roomRacks.map(rack => (
+                            <div key={rack.ID} className="relative group flex justify-center">
+
+                                <img
+                                    src={serverIcon}
+                                    alt="Server Icon"
+                                    onClick={() => handleRackClick(rack.ID)}
+                                    className="rack-item cursor-pointer transition-transform duration-150 hover:scale-110"
+                                />
+
+                                <RackHoverOverlay rack={rack} t={t} />
+
+                            </div>
+                        ))}
+
+                        {/* Empty places */}
+                        {renderFreePlaces()}
+
                     </div>
 
                 </div>
