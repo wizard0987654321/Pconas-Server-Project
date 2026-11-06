@@ -136,7 +136,7 @@ function ServerRoom() {
                             <div className="flex flex-col items-center border-4 border-solid border-[#6ADBAF] rounded-[10px] bg-[#F8FAFC] text-[#111827] dark:bg-[#0F234F] dark:text-[#F9FAFB]">
 
                                 <div
-                                    className="grid grid-rows-2"
+                                    className="grid grid-rows-2 gap-3 my-2"
                                     style={{
                                         gridTemplateColumns: `repeat(${Math.ceil(room.Capacity / 2)}, minmax(0, 1fr))`
                                     }}
