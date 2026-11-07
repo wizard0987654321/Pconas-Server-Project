@@ -2,7 +2,7 @@
 import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
 import PageHeading from "./PageHeading";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { Rack, Ups } from "../types";
 import { getRackData, getUpsData } from "../services/api";
 import { useRooms } from "../helpers/hooks/roomOperations";
@@ -85,6 +85,28 @@ function DetailedRoom() {
         ));
     };
 
+    //TESTTESTTEST
+
+    const firstImageRef = useRef<HTMLImageElement | null>(null);
+    const secondImageRef = useRef<HTMLImageElement | null>(null);
+
+    useEffect(() => {
+        const logCoordinates = () => {
+            console.log("First PDU:", firstImageRef.current?.getBoundingClientRect());
+            console.log("Second PDU:", secondImageRef.current?.getBoundingClientRect());
+        };
+
+        logCoordinates();
+
+        window.addEventListener("resize", logCoordinates);
+
+        return () => {
+            window.removeEventListener("resize", logCoordinates);
+        };
+    }, []);
+
+    //TESTETSTEST
+
     return (
         <>
             {selectedRoomId !== null && (
@@ -105,12 +127,12 @@ function DetailedRoom() {
                 <PageHeading heading={`${t("pages.rooms.cardHeading")} ${id}`} />
 
 
-                <div className="my-15 flex w-full flex-col gap-6 rounded-[0.5rem] border-[1rem] border-[#6ADBAF] p-6">
+                <div className="my-15 flex w-full flex-col rounded-[0.5rem] border-[1rem] border-[#6ADBAF] p-6">
 
                     <DisplayedRoomData />
 
                     {/* UPS devices - First row */}
-                    <div className="flex flex-wrap justify-center gap-4">
+                    <div className="flex flex-wrap justify-center my-6 gap-4">
 
                         {roomUps.map(ups => (
                             <div key={ups.ID} className="relative group flex justify-center">
@@ -131,12 +153,14 @@ function DetailedRoom() {
                     <div className="flex w-full items-center justify-between px-4">
 
                         <img
+                            ref={firstImageRef}
                             src={pduIcon}
                             alt="PDU"
                             className="rack-item"
                         />
 
                         <img
+                            ref={secondImageRef}
                             src={pduIcon}
                             alt="PDU"
                             className="rack-item"
@@ -144,6 +168,7 @@ function DetailedRoom() {
 
                     </div>
 
+                    {/* Two Test Lines */}
                     <div className="flex ">
                         <ConnectionLine
                             x1={0}
