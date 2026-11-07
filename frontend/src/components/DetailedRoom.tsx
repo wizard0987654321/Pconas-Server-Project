@@ -1,7 +1,8 @@
+
 import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
 import PageHeading from "./PageHeading";
-import { useState, useEffect, useLayoutEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import type { Rack, Ups } from "../types";
 import { getRackData, getUpsData } from "../services/api";
 import { useRooms } from "../helpers/hooks/roomOperations";
@@ -13,8 +14,7 @@ import RackHoverOverlay from "./RackHoverOverlay";
 import UpsHoverOverlay from "./UpsHoverOverlay";
 import AddEquipmentOverlay from "./overlays/AddEquipmentOverlay";
 import DisplayedRoomData from "./DisplayedRoomData";
-
-type Line = { id: number; x1: number; y1: number; x2: number; y2: number };
+import ConnectionLine from "./ConnectionLine";
 
 function DetailedRoom() {
 
@@ -27,12 +27,6 @@ function DetailedRoom() {
     const [racksData, setRacksData] = useState<Rack[]>([]);
     const [upsData, setUpsData] = useState<Ups[]>([]);
     const [selectedRoomId, setSelectedRoomId] = useState<number | null>(null);
-
-    // Refs and state for the PDU -> rack connection lines
-    const frameRef = useRef<HTMLDivElement>(null);
-    const leftPduRef = useRef<HTMLImageElement>(null);
-    const rackRefs = useRef<Map<number, HTMLImageElement>>(new Map());
-    const [lines, setLines] = useState<Line[]>([]);
 
     // Fetch racks and UPS data
     useEffect(() => {
@@ -67,44 +61,6 @@ function DetailedRoom() {
     const roomUps = upsData.filter(
         ups => ups.RoomID === Number(id)
     );
-
-    // Measure left PDU and rack icons, compute line coordinates
-    useLayoutEffect(() => {
-        const frame = frameRef.current;
-        if (!frame) return;
-
-        const measure = () => {
-            const pdu = leftPduRef.current;
-            if (!pdu) return;
-
-            const f = frame.getBoundingClientRect();
-            // absolute children are positioned relative to the padding box (inside the border)
-            const originX = f.left + frame.clientLeft;
-            const originY = f.top + frame.clientTop;
-            const p = pdu.getBoundingClientRect();
-
-            const x1 = p.left + p.width / 2 - originX;
-            const y1 = p.bottom - originY;
-
-            const next: Line[] = [];
-            rackRefs.current.forEach((el, rackId) => {
-                const r = el.getBoundingClientRect();
-                next.push({
-                    id: rackId,
-                    x1,
-                    y1,
-                    x2: r.left + r.width / 2 - originX,
-                    y2: r.top - originY,
-                });
-            });
-            setLines(next);
-        };
-
-        measure();
-        const observer = new ResizeObserver(measure);
-        observer.observe(frame);
-        return () => observer.disconnect();
-    }, [racksData, upsData, roomsData, id]);
 
     // Navigate to rack details
     const handleRackClick = (rackId: number) => {
@@ -149,25 +105,7 @@ function DetailedRoom() {
                 <PageHeading heading={`${t("pages.rooms.cardHeading")} ${id}`} />
 
 
-                <div
-                    ref={frameRef}
-                    className="relative my-15 flex w-full flex-col gap-6 rounded-[0.5rem] border-[1rem] border-[#6ADBAF] p-6"
-                >
-
-                    {/* PDU -> rack connection lines */}
-                    <svg className="pointer-events-none absolute inset-0 h-full w-full">
-                        {lines.map(l => (
-                            <line
-                                key={l.id}
-                                x1={l.x1}
-                                y1={l.y1}
-                                x2={l.x2}
-                                y2={l.y2}
-                                stroke="#6ADBAF"
-                                strokeWidth={3}
-                            />
-                        ))}
-                    </svg>
+                <div className="my-15 flex w-full flex-col gap-6 rounded-[0.5rem] border-[1rem] border-[#6ADBAF] p-6">
 
                     <DisplayedRoomData />
 
@@ -193,7 +131,6 @@ function DetailedRoom() {
                     <div className="flex w-full items-center justify-between px-4">
 
                         <img
-                            ref={leftPduRef}
                             src={pduIcon}
                             alt="PDU"
                             className="rack-item"
@@ -207,18 +144,34 @@ function DetailedRoom() {
 
                     </div>
 
+                    <div className="flex ">
+                        <ConnectionLine
+                            x1={0}
+                            y1={0}
+                            x2={20}
+                            y2={30}
+                            color="red"
+                            strokeWidth={3}
+                        />
+
+                        <ConnectionLine
+                            x1={0}
+                            y1={0}
+                            x2={250}
+                            y2={150}
+                            color="red"
+                            strokeWidth={3}
+                        />
+                    </div>
+
                     {/* Racks and free places - third row */}
-                    <div className="relative flex flex-wrap justify-between gap-4">
+                    <div className="flex flex-wrap justify-center gap-4">
 
                         {/* Existing racks */}
                         {roomRacks.map(rack => (
                             <div key={rack.ID} className="relative group flex justify-center">
 
                                 <img
-                                    ref={el => {
-                                        if (el) rackRefs.current.set(rack.ID, el);
-                                        else rackRefs.current.delete(rack.ID);
-                                    }}
                                     src={serverIcon}
                                     alt="Server Icon"
                                     onClick={() => handleRackClick(rack.ID)}
