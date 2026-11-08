@@ -1,4 +1,3 @@
-
 import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
 import PageHeading from "./PageHeading";
@@ -15,6 +14,7 @@ import UpsHoverOverlay from "./UpsHoverOverlay";
 import AddEquipmentOverlay from "./overlays/AddEquipmentOverlay";
 import DisplayedRoomData from "./DisplayedRoomData";
 import ConnectionLine from "./ConnectionLine";
+import CableChangeOverlay from "./CableChangeOverlay";
 
 function DetailedRoom() {
 
@@ -27,6 +27,7 @@ function DetailedRoom() {
     const [racksData, setRacksData] = useState<Rack[]>([]);
     const [upsData, setUpsData] = useState<Ups[]>([]);
     const [selectedRoomId, setSelectedRoomId] = useState<number | null>(null);
+    const [showCableOverlay, setShowCableOverlay] = useState(false);
 
     // Fetch racks and UPS data
     useEffect(() => {
@@ -91,10 +92,20 @@ function DetailedRoom() {
     const secondImageRef = useRef<HTMLImageElement | null>(null);
     const roomContainerRef = useRef<HTMLDivElement | null>(null);
 
+    // Refs for all rack icons, keyed by rack ID
+    const rackRefs = useRef<Map<number, HTMLImageElement>>(new Map());
 
     const [firstLineX, setFirstLineX] = useState(0);
     const [secondLineX, setSecondLineX] = useState(0);
 
+    // Center X of every rack icon (relative to the line container),
+    // same order as roomRacks
+    const [rackCenters, setRackCenters] = useState<number[]>([]);
+
+    const rack1CenterX = rackCenters[0] ?? 0;
+    const rack2CenterX = rackCenters[1] ?? 0;
+
+    // PDU coordinates
     useEffect(() => {
         const calculateCoordinates = () => {
             const firstPDU = firstImageRef.current?.getBoundingClientRect();
@@ -108,7 +119,7 @@ function DetailedRoom() {
             }
 
             if (secondPDU) {
-                setSecondLineX(300 - secondPDU.width / 2 - (container.right - secondPDU.right));
+                setSecondLineX(secondPDU.x + secondPDU.width / 2 - container.left);
             }
 
             console.log("First PDU:", firstPDU)
@@ -125,6 +136,37 @@ function DetailedRoom() {
         };
     }, []);
 
+    // Rack coordinates (re-runs once racks have loaded)
+    useEffect(() => {
+        const calculateRackCenters = () => {
+            const container = roomContainerRef.current?.getBoundingClientRect();
+            if (!container) return;
+
+            const centers = roomRacks.map(rack => {
+                const img = rackRefs.current.get(rack.ID);
+                if (!img) return 0;
+
+                const rect = img.getBoundingClientRect();
+                const centerX = rect.x + rect.width / 2 - container.left;
+
+                console.log(`Rack ${rack.ID}:`, rect);
+                console.log(`Rack ${rack.ID} center X:`, centerX);
+
+                return centerX;
+            });
+
+            setRackCenters(centers);
+        };
+
+        calculateRackCenters();
+
+        window.addEventListener("resize", calculateRackCenters);
+
+        return () => {
+            window.removeEventListener("resize", calculateRackCenters);
+        };
+    }, [roomRacks.length]);
+
     //TESTETSTEST
 
     return (
@@ -133,6 +175,19 @@ function DetailedRoom() {
                 <AddEquipmentOverlay
                     onClose={() => setSelectedRoomId(null)}
                     roomId={selectedRoomId}
+                />
+            )}
+
+            {showCableOverlay && (
+                <CableChangeOverlay
+                    onClose={() => setShowCableOverlay(false)}
+                    heading={`${t("pages.rooms.cardHeading")} ${id}`}
+                    roomRacks={roomRacks}
+                    roomUps={roomUps}
+                    freePlaces={Math.max(
+                        0,
+                        (currentRoom?.Capacity ?? 0) - roomRacks.length - roomUps.length
+                    )}
                 />
             )}
 
@@ -145,6 +200,13 @@ function DetailedRoom() {
                 </div>
 
                 <PageHeading heading={`${t("pages.rooms.cardHeading")} ${id}`} />
+
+                <button
+                    onClick={() => setShowCableOverlay(true)}
+                    className="mt-4 w-fit cursor-pointer rounded-[0.5rem] bg-[#6ADBAF] px-4 py-2 font-semibold"
+                >
+                    Rearrange cables, mere unda shevucvalo
+                </button>
 
 
                 <div className="my-15 flex w-full flex-col rounded-[0.5rem] border-[1rem] border-[#6ADBAF] p-6">
@@ -189,24 +251,26 @@ function DetailedRoom() {
                     </div>
 
                     {/* Two Test Lines */}
-                    <div ref={roomContainerRef} className="flex justify-between">
-                        <ConnectionLine
-                            x1={firstLineX}
-                            y1={0}
-                            x2={90}
-                            y2={150}
-                            color="red"
-                            strokeWidth={3}
-                        />
+                    <div ref={roomContainerRef} className="w-full">
+                        <svg className="h-[150px] w-full overflow-visible">
+                            <ConnectionLine
+                                x1={firstLineX}
+                                y1={0}
+                                x2={rack1CenterX}
+                                y2={150}
+                                color="red"
+                                strokeWidth={3}
+                            />
 
-                        <ConnectionLine
-                            x1={secondLineX}
-                            y1={0}
-                            x2={250}
-                            y2={150}
-                            color="red"
-                            strokeWidth={3}
-                        />
+                            <ConnectionLine
+                                x1={secondLineX}
+                                y1={0}
+                                x2={rack2CenterX}
+                                y2={150}
+                                color="red"
+                                strokeWidth={3}
+                            />
+                        </svg>
                     </div>
 
                     {/* Racks and free places - third row */}
@@ -217,6 +281,10 @@ function DetailedRoom() {
                             <div key={rack.ID} className="relative group flex justify-center">
 
                                 <img
+                                    ref={(el) => {
+                                        if (el) rackRefs.current.set(rack.ID, el);
+                                        else rackRefs.current.delete(rack.ID);
+                                    }}
                                     src={serverIcon}
                                     alt="Server Icon"
                                     onClick={() => handleRackClick(rack.ID)}

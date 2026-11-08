@@ -9,6 +9,7 @@ interface ConnectionLineProps {
   strokeWidth?: number;
 }
 
+// Must be rendered inside an <svg>
 const ConnectionLine: React.FC<ConnectionLineProps> = ({
   x1,
   y1,
@@ -18,16 +19,14 @@ const ConnectionLine: React.FC<ConnectionLineProps> = ({
   strokeWidth = 2,
 }) => {
   return (
-    <svg className="overflow-visible">
-      <line
-        x1={x1}
-        y1={y1}
-        x2={x2}
-        y2={y2}
-        stroke={color}
-        strokeWidth={strokeWidth}
-      />
-    </svg>
+    <line
+      x1={x1}
+      y1={y1}
+      x2={x2}
+      y2={y2}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   );
 };
 
