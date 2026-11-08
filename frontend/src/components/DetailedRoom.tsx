@@ -1,14 +1,25 @@
+//imports
+
+//react imports
 import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
-import PageHeading from "./PageHeading";
 import { useState, useEffect, useRef } from "react";
+
+//types
 import type { Rack, Ups } from "../types";
+
+//Helper functions
 import { getRackData, getUpsData } from "../services/api";
 import { useRooms } from "../helpers/hooks/roomOperations";
+
+//icons
 import serverIcon from "../assets/ServerIcon.svg";
 import upsIcon from "../assets/upsIcon.svg";
 import pduIcon from "../assets/PDU.svg";
 import buttonIcon from "../assets/AddButton.svg";
+
+//components
+import PageHeading from "./PageHeading";
 import RackHoverOverlay from "./RackHoverOverlay";
 import UpsHoverOverlay from "./UpsHoverOverlay";
 import AddEquipmentOverlay from "./overlays/AddEquipmentOverlay";
@@ -24,9 +35,14 @@ function DetailedRoom() {
 
     const { roomsData } = useRooms();
 
+    // For Service calls
     const [racksData, setRacksData] = useState<Rack[]>([]);
     const [upsData, setUpsData] = useState<Ups[]>([]);
+
+    // For adding new rack, without explicitly choosing room ID
     const [selectedRoomId, setSelectedRoomId] = useState<number | null>(null);
+
+    // For showing Cable Rearrange Overlay
     const [showCableOverlay, setShowCableOverlay] = useState(false);
 
     // Fetch racks and UPS data
@@ -86,8 +102,8 @@ function DetailedRoom() {
         ));
     };
 
-    //TESTTESTTEST
 
+    // Get refs for first PDU, second PDU, ConnectionLines parent div
     const firstImageRef = useRef<HTMLImageElement | null>(null);
     const secondImageRef = useRef<HTMLImageElement | null>(null);
     const roomContainerRef = useRef<HTMLDivElement | null>(null);
@@ -95,6 +111,7 @@ function DetailedRoom() {
     // Refs for all rack icons, keyed by rack ID
     const rackRefs = useRef<Map<number, HTMLImageElement>>(new Map());
 
+    // Hardcoded for only two lines, gonna be adjusted later for data from db
     const [firstLineX, setFirstLineX] = useState(0);
     const [secondLineX, setSecondLineX] = useState(0);
 
@@ -108,12 +125,14 @@ function DetailedRoom() {
     // PDU coordinates
     useEffect(() => {
         const calculateCoordinates = () => {
+            //Getting data about 3 refs, that were declared above
             const firstPDU = firstImageRef.current?.getBoundingClientRect();
             const secondPDU = secondImageRef.current?.getBoundingClientRect();
             const container = roomContainerRef.current?.getBoundingClientRect();
 
             if (!firstPDU || !secondPDU || !container) return;
 
+            // Harrdcoded calculation of PDU Centers
             if (firstPDU) {
                 setFirstLineX(firstPDU.x + firstPDU.width / 2 - container.left);
             }
@@ -127,8 +146,10 @@ function DetailedRoom() {
             console.log("container:", container)
         };
 
+        // Function call
         calculateCoordinates();
 
+        // To reclaculate everything on screen resize
         window.addEventListener("resize", calculateCoordinates);
 
         return () => {
@@ -142,6 +163,7 @@ function DetailedRoom() {
             const container = roomContainerRef.current?.getBoundingClientRect();
             if (!container) return;
 
+            // Mapping through racks and calculating center for each
             const centers = roomRacks.map(rack => {
                 const img = rackRefs.current.get(rack.ID);
                 if (!img) return 0;
@@ -167,10 +189,10 @@ function DetailedRoom() {
         };
     }, [roomRacks.length]);
 
-    //TESTETSTEST
 
     return (
         <>
+            {/* Two overlays, Adding Equipment with + Button and cable rearrange*/}
             {selectedRoomId !== null && (
                 <AddEquipmentOverlay
                     onClose={() => setSelectedRoomId(null)}
@@ -191,6 +213,7 @@ function DetailedRoom() {
                 />
             )}
 
+            {/* Heading and cable setup change button*/}
             <div className="flex min-h-screen w-full flex-col p-10">
 
                 <div className="hidden max-m:flex min-h-screen items-center justify-center p-6 text-center">
@@ -211,6 +234,7 @@ function DetailedRoom() {
 
                 <div className="my-15 flex w-full flex-col rounded-[0.5rem] border-[1rem] border-[#6ADBAF] p-6">
 
+                    {/* Room Data - Temperature, Humidity, etc. */}
                     <DisplayedRoomData />
 
                     {/* UPS devices - First row */}
@@ -280,6 +304,7 @@ function DetailedRoom() {
                         {roomRacks.map(rack => (
                             <div key={rack.ID} className="relative group flex justify-center">
 
+                                {/* Passing function as ref, in order to give every rack unique ref, only for server icons */}
                                 <img
                                     ref={(el) => {
                                         if (el) rackRefs.current.set(rack.ID, el);

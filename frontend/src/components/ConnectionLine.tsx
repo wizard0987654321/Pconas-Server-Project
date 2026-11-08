@@ -9,7 +9,6 @@ interface ConnectionLineProps {
   strokeWidth?: number;
 }
 
-// Must be rendered inside an <svg>
 const ConnectionLine: React.FC<ConnectionLineProps> = ({
   x1,
   y1,
