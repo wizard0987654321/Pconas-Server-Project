@@ -89,19 +89,39 @@ function DetailedRoom() {
 
     const firstImageRef = useRef<HTMLImageElement | null>(null);
     const secondImageRef = useRef<HTMLImageElement | null>(null);
+    const roomContainerRef = useRef<HTMLDivElement | null>(null);
+
+
+    const [firstLineX, setFirstLineX] = useState(0);
+    const [secondLineX, setSecondLineX] = useState(0);
 
     useEffect(() => {
-        const logCoordinates = () => {
-            console.log("First PDU:", firstImageRef.current?.getBoundingClientRect());
-            console.log("Second PDU:", secondImageRef.current?.getBoundingClientRect());
+        const calculateCoordinates = () => {
+            const firstPDU = firstImageRef.current?.getBoundingClientRect();
+            const secondPDU = secondImageRef.current?.getBoundingClientRect();
+            const container = roomContainerRef.current?.getBoundingClientRect();
+
+            if (!firstPDU || !secondPDU || !container) return;
+
+            if (firstPDU) {
+                setFirstLineX(firstPDU.x + firstPDU.width / 2 - container.left);
+            }
+
+            if (secondPDU) {
+                setSecondLineX(300 - secondPDU.width / 2 - (container.right - secondPDU.right));
+            }
+
+            console.log("First PDU:", firstPDU)
+            console.log("Second PDU", secondPDU)
+            console.log("container:", container)
         };
 
-        logCoordinates();
+        calculateCoordinates();
 
-        window.addEventListener("resize", logCoordinates);
+        window.addEventListener("resize", calculateCoordinates);
 
         return () => {
-            window.removeEventListener("resize", logCoordinates);
+            window.removeEventListener("resize", calculateCoordinates);
         };
     }, []);
 
@@ -169,18 +189,18 @@ function DetailedRoom() {
                     </div>
 
                     {/* Two Test Lines */}
-                    <div className="flex ">
+                    <div ref={roomContainerRef} className="flex justify-between">
                         <ConnectionLine
-                            x1={0}
+                            x1={firstLineX}
                             y1={0}
-                            x2={20}
-                            y2={30}
+                            x2={90}
+                            y2={150}
                             color="red"
                             strokeWidth={3}
                         />
 
                         <ConnectionLine
-                            x1={0}
+                            x1={secondLineX}
                             y1={0}
                             x2={250}
                             y2={150}
