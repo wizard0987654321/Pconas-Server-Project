@@ -56,6 +56,26 @@ export async function getUpsData() {
     return response.json();
 }
 
+export async function getPduData() {
+    const response = await fetch(`${API_URL}/pdus`);
+
+    if (!response.ok) {
+        throw new Error("Failed Database getPduData Query");
+    }
+
+    return response.json();
+}
+
+export async function getConnectionsData() {
+    const response = await fetch(`${API_URL}/connections`);
+
+    if (!response.ok) {
+        throw new Error("Failed Database getConnectionsData Query");
+    }
+
+    return response.json();
+}
+
 export async function getDevicesData() {
     const response = await fetch(`${API_URL}/devices`);
 

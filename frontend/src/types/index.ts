@@ -25,6 +25,28 @@ export type Ups = {
     HeightCm: number | null;
 }
 
+export type Pdu = {
+    ID: number;
+    PDUNumber: number;
+    RoomID: number;
+    OutletCount: number | null;
+    RoomNumber: number;
+}
+
+// Cable between two pieces of equipment (rack / ups / pdu), IDs are Equipment IDs
+export type Connection = {
+    ID: number;
+    RoomID: number;
+    FromEquipmentID: number;
+    FromType: "rack" | "ups" | "pdu";
+    ToEquipmentID: number;
+    ToType: "rack" | "ups" | "pdu";
+    TypeID: number;
+    TypeNameEN: string;
+    TypeNameDE: string;
+    Color: string;
+}
+
 export type Device = {
     ID: number,
     DeviceNumber:number,

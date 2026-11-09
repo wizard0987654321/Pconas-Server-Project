@@ -63,11 +63,12 @@ model Rack {
 }
 
 model Room {
-  ID       Int      @id(map: "PK__Room__3214EC278D3F5492") @default(autoincrement())
-  Area     Int?
-  Capacity Int?
-  HeightCm Decimal? @db.Decimal(8, 2)
-  Rack     Rack[]
+  ID        Int         @id(map: "PK__Room__3214EC278D3F5492") @default(autoincrement())
+  Area      Int?
+  Capacity  Int?
+  HeightCm  Decimal?    @db.Decimal(8, 2)
+  Equipment Equipment[]
+  Rack      Rack[]
 }
 
 model Service {
@@ -95,10 +96,49 @@ model VM {
   Service   Service? @relation(fields: [ServiceID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_VM_ServiceID")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model UPS {
-  ID        Int      @id(map: "PK_UPS") @default(autoincrement())
-  RoomID    Int?
+  ID        Int       @id(map: "PK_UPS_Equipment")
   UnitsSize Int?
-  HeightCm  Decimal? @db.Decimal(5, 2)
+  HeightCm  Decimal?  @db.Decimal(5, 2)
+  Equipment Equipment @relation(fields: [ID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_UPS_Equipment")
+}
+
+model Connection {
+  ID              Int            @id(map: "PK_Connection") @default(autoincrement())
+  FromEquipmentID Int
+  ToEquipmentID   Int
+  TypeID          Int
+  FromEquipment   Equipment      @relation("CableFrom", fields: [FromEquipmentID], references: [ID], onUpdate: NoAction, map: "FK_Connection_FromEquipment")
+  ToEquipment     Equipment      @relation("CableTo", fields: [ToEquipmentID], references: [ID], onUpdate: NoAction, map: "FK_Connection_ToEquipment")
+  ConnectionType  ConnectionType @relation(fields: [TypeID], references: [ID], onUpdate: NoAction, map: "FK_Connection_Type")
+
+  @@unique([FromEquipmentID, ToEquipmentID, TypeID], map: "UQ_Connection")
+  @@index([ToEquipmentID], map: "IX_Connection_ToEquipmentID")
+}
+
+model ConnectionType {
+  ID         Int          @id(map: "PK_ConnectionType") @default(autoincrement())
+  NameEN     String       @unique(map: "UQ_ConnectionType_NameEN") @db.NVarChar(50)
+  NameDE     String       @db.NVarChar(50)
+  Color      String       @db.NVarChar(20)
+  Connection Connection[]
+}
+
+model Equipment {
+  ID         Int          @id(map: "PK_Equipment") @default(autoincrement())
+  RoomID     Int
+  Type       String       @db.NVarChar(10) // 'rack' | 'ups' | 'pdu'
+  CablesFrom Connection[] @relation("CableFrom")
+  CablesTo   Connection[] @relation("CableTo")
+  Room       Room         @relation(fields: [RoomID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_Equipment_Room")
+  PDU        PDU?
+  UPS        UPS?
+
+  @@index([RoomID], map: "IX_Equipment_RoomID")
+}
+
+model PDU {
+  ID          Int       @id(map: "PK_PDU")
+  OutletCount Int?
+  Equipment Equipment @relation(fields: [ID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_PDU_Equipment")
 }

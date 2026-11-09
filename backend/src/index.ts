@@ -75,35 +75,84 @@ app.get("/racks", async (req: Request, res: Response) => {
 });
 
 app.get("/ups", async (req: Request, res: Response) => {
-  const [rooms, allUps] = await Promise.all([
-    prisma.room.findMany({
-      orderBy: { ID: "asc" },
-      select: { ID: true },
-    }),
-    prisma.uPS.findMany({
+  // UPS has no RoomID anymore, it lives on the parent Equipment row (same ID)
+  const [rooms, upsEquipment] = await Promise.all([
+    prisma.room.findMany({ orderBy: { ID: "asc" }, select: { ID: true } }),
+    prisma.equipment.findMany({
+      where: { Type: "ups", UPS: { isNot: null } },
+      include: { UPS: true },
       orderBy: { ID: "asc" },
     }),
   ]);
 
-  const roomNumberByRoomId = new Map(
-    rooms.map((room, index) => [room.ID, index + 1])
-  );
+  const roomNumberByRoomId = new Map(rooms.map((room, index) => [room.ID, index + 1]));
 
-  // Replicate the INNER JOIN behavior
-  const joinedUps = allUps.filter(
-    (ups) => ups.RoomID !== null && roomNumberByRoomId.has(ups.RoomID)
-  );
-
-  const result = joinedUps.map((ups, index) => ({
-    ID: ups.ID,
+  const result = upsEquipment.map((equipment, index) => ({
+    ID: equipment.ID,
     UPSNumber: index + 1,
-    RoomID: ups.RoomID,
-    UnitsSize: ups.UnitsSize,
-    HeightCm: ups.HeightCm !== null ? Number(ups.HeightCm) : ups.HeightCm,
-    RoomNumber: roomNumberByRoomId.get(ups.RoomID as number),
+    RoomID: equipment.RoomID,
+    UnitsSize: equipment.UPS!.UnitsSize,
+    HeightCm: equipment.UPS!.HeightCm !== null ? Number(equipment.UPS!.HeightCm) : null,
+    RoomNumber: roomNumberByRoomId.get(equipment.RoomID),
   }));
 
   res.json(result);
+});
+
+app.get("/pdus", async (req: Request, res: Response) => {
+  const [rooms, pduEquipment] = await Promise.all([
+    prisma.room.findMany({ orderBy: { ID: "asc" }, select: { ID: true } }),
+    prisma.equipment.findMany({
+      where: { Type: "pdu", PDU: { isNot: null } },
+      include: { PDU: true },
+      orderBy: { ID: "asc" },
+    }),
+  ]);
+
+  const roomNumberByRoomId = new Map(rooms.map((room, index) => [room.ID, index + 1]));
+
+  const result = pduEquipment.map((equipment, index) => ({
+    ID: equipment.ID,
+    PDUNumber: index + 1,
+    RoomID: equipment.RoomID,
+    OutletCount: equipment.PDU!.OutletCount,
+    RoomNumber: roomNumberByRoomId.get(equipment.RoomID),
+  }));
+
+  res.json(result);
+});
+
+// Cables between two pieces of Equipment (rack / ups / pdu), flattened for the frontend.
+// RoomID is taken from the "from" side, both ends are expected to be in the same room.
+app.get("/connections", async (req: Request, res: Response) => {
+  try {
+    const connections = await prisma.connection.findMany({
+      orderBy: { ID: "asc" },
+      include: {
+        FromEquipment: true,
+        ToEquipment: true,
+        ConnectionType: true,
+      },
+    });
+
+    const result = connections.map((c) => ({
+      ID: c.ID,
+      RoomID: c.FromEquipment.RoomID,
+      FromEquipmentID: c.FromEquipmentID,
+      FromType: c.FromEquipment.Type,
+      ToEquipmentID: c.ToEquipmentID,
+      ToType: c.ToEquipment.Type,
+      TypeID: c.TypeID,
+      TypeNameEN: c.ConnectionType.NameEN,
+      TypeNameDE: c.ConnectionType.NameDE,
+      Color: c.ConnectionType.Color,
+    }));
+
+    res.json(result);
+  } catch (error) {
+    console.error("Get connections error:", error);
+    res.status(500).json({ error: "Failed to get connections" });
+  }
 });
 
 app.get("/deviceTypes", async (req: Request, res: Response) => {
@@ -248,11 +297,17 @@ app.post("/addUPS", async (req: Request, res: Response) => {
   const { newUPS } = req.body;
 
   try {
-    await prisma.uPS.create({
+    // Parent Equipment row + UPS child row are created together (atomic)
+    await prisma.equipment.create({
       data: {
-        RoomID: toNumber(newUPS.roomId),
-        UnitsSize: toNumber(newUPS.unitsSize),
-        HeightCm: toNumber(newUPS.heightcm),
+        RoomID: toNumber(newUPS.roomId) as number,
+        Type: "ups",
+        UPS: {
+          create: {
+            UnitsSize: toNumber(newUPS.unitsSize),
+            HeightCm: toNumber(newUPS.heightcm),
+          },
+        },
       },
     });
     res.json({ message: "new UPS added" });
@@ -354,7 +409,18 @@ app.delete("/deleteRoom/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
-    await prisma.room.delete({ where: { ID: Number(id) } });
+    // Connection FKs are NO ACTION (SQL Server forbids two cascading FKs to Equipment),
+    // so the room's cables must be removed first, otherwise the cascade to Equipment fails
+    const roomEquipment = { RoomID: Number(id) };
+
+    await prisma.$transaction([
+      prisma.connection.deleteMany({
+        where: {
+          OR: [{ FromEquipment: roomEquipment }, { ToEquipment: roomEquipment }],
+        },
+      }),
+      prisma.room.delete({ where: { ID: Number(id) } }),
+    ]);
     res.json({ message: "Room deleted successfully", id });
   } catch (error) {
     console.error("Delete room error:", error);

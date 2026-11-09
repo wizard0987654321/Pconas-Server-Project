@@ -3,13 +3,13 @@
 //react imports
 import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 
 //types
-import type { Rack, Ups } from "../types";
+import type { Rack, Ups, Pdu, Connection } from "../types";
 
 //Helper functions
-import { getRackData, getUpsData } from "../services/api";
+import { getRackData, getUpsData, getPduData, getConnectionsData } from "../services/api";
 import { useRooms } from "../helpers/hooks/roomOperations";
 
 //icons
@@ -27,17 +27,30 @@ import DisplayedRoomData from "./DisplayedRoomData";
 import ConnectionLine from "./ConnectionLine";
 import CableChangeOverlay from "./CableChangeOverlay";
 
+// Coordinates of one drawn cable, relative to the lines container
+type LineCoordinates = {
+    id: number;
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+    color: string;
+};
+
 function DetailedRoom() {
 
     const { t } = useTranslation();
     const { id } = useParams();
     const navigate = useNavigate();
+    const roomId = Number(id);
 
     const { roomsData } = useRooms();
 
     // For Service calls
     const [racksData, setRacksData] = useState<Rack[]>([]);
     const [upsData, setUpsData] = useState<Ups[]>([]);
+    const [pduData, setPduData] = useState<Pdu[]>([]);
+    const [connectionsData, setConnectionsData] = useState<Connection[]>([]);
 
     // For adding new rack, without explicitly choosing room ID
     const [selectedRoomId, setSelectedRoomId] = useState<number | null>(null);
@@ -45,38 +58,36 @@ function DetailedRoom() {
     // For showing Cable Rearrange Overlay
     const [showCableOverlay, setShowCableOverlay] = useState(false);
 
-    // Fetch racks and UPS data
+    // Fetch racks, UPS, PDUs and connections
     useEffect(() => {
         getRackData()
-            .then((data) => {
-                setRacksData(data);
-            })
-            .catch((err) => {
-                console.error("Rack API error", err);
-            });
+            .then(setRacksData)
+            .catch((err) => console.error("Rack API error", err));
 
         getUpsData()
-            .then((data) => {
-                setUpsData(data);
-            })
-            .catch((err) => {
-                console.error("UPS API error", err);
-            });
+            .then(setUpsData)
+            .catch((err) => console.error("UPS API error", err));
+
+        getPduData()
+            .then(setPduData)
+            .catch((err) => console.error("PDU API error", err));
+
+        getConnectionsData()
+            .then(setConnectionsData)
+            .catch((err) => console.error("Connections API error", err));
     }, []);
 
     // Get current room
-    const currentRoom = roomsData.find(
-        room => room.ID === Number(id)
-    );
+    const currentRoom = roomsData.find(room => room.ID === roomId);
 
-    // Get racks belonging to current room
-    const roomRacks = racksData.filter(
-        rack => rack.RoomID === Number(id)
-    );
-
-    // Get UPS devices belonging to current room
-    const roomUps = upsData.filter(
-        ups => ups.RoomID === Number(id)
+    // Equipment and cables belonging to current room
+    // (memoized, so the line calculation below only re-runs when data really changes)
+    const roomRacks = useMemo(() => racksData.filter(rack => rack.RoomID === roomId), [racksData, roomId]);
+    const roomUps = useMemo(() => upsData.filter(ups => ups.RoomID === roomId), [upsData, roomId]);
+    const roomPdus = useMemo(() => pduData.filter(pdu => pdu.RoomID === roomId), [pduData, roomId]);
+    const roomConnections = useMemo(
+        () => connectionsData.filter(connection => connection.RoomID === roomId),
+        [connectionsData, roomId]
     );
 
     // Navigate to rack details
@@ -103,91 +114,65 @@ function DetailedRoom() {
     };
 
 
-    // Get refs for first PDU, second PDU, ConnectionLines parent div
-    const firstImageRef = useRef<HTMLImageElement | null>(null);
-    const secondImageRef = useRef<HTMLImageElement | null>(null);
-    const roomContainerRef = useRef<HTMLDivElement | null>(null);
+    // Refs of every equipment icon (racks, UPS, PDUs), keyed by Equipment ID.
+    // Rack/UPS/PDU IDs are Equipment IDs, so a connection's From/To ID points straight into this map
+    const equipmentRefs = useRef<Map<number, HTMLElement>>(new Map());
 
-    // Refs for all rack icons, keyed by rack ID
-    const rackRefs = useRef<Map<number, HTMLImageElement>>(new Map());
+    const setEquipmentRef = (equipmentId: number) => (el: HTMLElement | null) => {
+        if (el) equipmentRefs.current.set(equipmentId, el);
+        else equipmentRefs.current.delete(equipmentId);
+    };
 
-    // Hardcoded for only two lines, gonna be adjusted later for data from db
-    const [firstLineX, setFirstLineX] = useState(0);
-    const [secondLineX, setSecondLineX] = useState(0);
+    // Parent of all equipment rows, the svg with the lines covers this whole div
+    const linesContainerRef = useRef<HTMLDivElement | null>(null);
 
-    // Center X of every rack icon (relative to the line container),
-    // same order as roomRacks
-    const [rackCenters, setRackCenters] = useState<number[]>([]);
+    const [lines, setLines] = useState<LineCoordinates[]>([]);
 
-    const rack1CenterX = rackCenters[0] ?? 0;
-    const rack2CenterX = rackCenters[1] ?? 0;
+    // Calculate line coordinates from the real positions of the icons
+    useLayoutEffect(() => {
+        const container = linesContainerRef.current;
+        if (!container) return;
 
-    // PDU coordinates
-    useEffect(() => {
-        const calculateCoordinates = () => {
-            //Getting data about 3 refs, that were declared above
-            const firstPDU = firstImageRef.current?.getBoundingClientRect();
-            const secondPDU = secondImageRef.current?.getBoundingClientRect();
-            const container = roomContainerRef.current?.getBoundingClientRect();
+        const calculateLines = () => {
+            const box = container.getBoundingClientRect();
 
-            if (!firstPDU || !secondPDU || !container) return;
+            const newLines: LineCoordinates[] = [];
 
-            // Harrdcoded calculation of PDU Centers
-            if (firstPDU) {
-                setFirstLineX(firstPDU.x + firstPDU.width / 2 - container.left);
-            }
+            roomConnections.forEach(connection => {
+                const from = equipmentRefs.current.get(connection.FromEquipmentID)?.getBoundingClientRect();
+                const to = equipmentRefs.current.get(connection.ToEquipmentID)?.getBoundingClientRect();
 
-            if (secondPDU) {
-                setSecondLineX(secondPDU.x + secondPDU.width / 2 - container.left);
-            }
+                // Equipment not rendered (yet), skip that cable
+                if (!from || !to) return;
 
-            console.log("First PDU:", firstPDU)
-            console.log("Second PDU", secondPDU)
-            console.log("container:", container)
-        };
+                // Line goes from the edge of one icon to the facing edge of the other one
+                const fromIsAbove = from.top + from.height / 2 <= to.top + to.height / 2;
 
-        // Function call
-        calculateCoordinates();
-
-        // To reclaculate everything on screen resize
-        window.addEventListener("resize", calculateCoordinates);
-
-        return () => {
-            window.removeEventListener("resize", calculateCoordinates);
-        };
-    }, []);
-
-    // Rack coordinates (re-runs once racks have loaded)
-    useEffect(() => {
-        const calculateRackCenters = () => {
-            const container = roomContainerRef.current?.getBoundingClientRect();
-            if (!container) return;
-
-            // Mapping through racks and calculating center for each
-            const centers = roomRacks.map(rack => {
-                const img = rackRefs.current.get(rack.ID);
-                if (!img) return 0;
-
-                const rect = img.getBoundingClientRect();
-                const centerX = rect.x + rect.width / 2 - container.left;
-
-                console.log(`Rack ${rack.ID}:`, rect);
-                console.log(`Rack ${rack.ID} center X:`, centerX);
-
-                return centerX;
+                newLines.push({
+                    id: connection.ID,
+                    x1: from.left + from.width / 2 - box.left,
+                    y1: (fromIsAbove ? from.bottom : from.top) - box.top,
+                    x2: to.left + to.width / 2 - box.left,
+                    y2: (fromIsAbove ? to.top : to.bottom) - box.top,
+                    color: connection.Color,
+                });
             });
 
-            setRackCenters(centers);
+            setLines(newLines);
         };
 
-        calculateRackCenters();
+        calculateLines();
 
-        window.addEventListener("resize", calculateRackCenters);
+        // Recalculate when the layout changes (window resize, images finishing loading, rows wrapping)
+        const resizeObserver = new ResizeObserver(calculateLines);
+        resizeObserver.observe(container);
+        window.addEventListener("resize", calculateLines);
 
         return () => {
-            window.removeEventListener("resize", calculateRackCenters);
+            resizeObserver.disconnect();
+            window.removeEventListener("resize", calculateLines);
         };
-    }, [roomRacks.length]);
+    }, [roomConnections, roomRacks, roomUps, roomPdus]);
 
 
     return (
@@ -237,92 +222,77 @@ function DetailedRoom() {
                     {/* Room Data - Temperature, Humidity, etc. */}
                     <DisplayedRoomData />
 
-                    {/* UPS devices - First row */}
-                    <div className="flex flex-wrap justify-center my-6 gap-4">
+                    {/* All equipment rows, lines are drawn on top of this container */}
+                    <div ref={linesContainerRef} className="relative mt-6 flex flex-col gap-8">
 
-                        {roomUps.map(ups => (
-                            <div key={ups.ID} className="relative group flex justify-center">
-
-                                <img
-                                    src={upsIcon}
-                                    alt="UPS Icon"
-                                    className="rack-item cursor-pointer max-w-[120px] transition-transform duration-150 hover:scale-110"
+                        {/* Cables from the DB, svg covers the whole container, clicks pass through it */}
+                        <svg className="pointer-events-none absolute inset-0 h-full w-full overflow-visible">
+                            {lines.map(line => (
+                                <ConnectionLine
+                                    key={line.id}
+                                    x1={line.x1}
+                                    y1={line.y1}
+                                    x2={line.x2}
+                                    y2={line.y2}
+                                    color={line.color}
+                                    strokeWidth={3}
                                 />
-
-                                <UpsHoverOverlay ups={ups} t={t} />
-
-                            </div>
-                        ))}
-
-                    </div>
-                    {/* PDUs - Between UPS and racks */}
-                    <div className="flex w-full items-center justify-between px-4">
-
-                        <img
-                            ref={firstImageRef}
-                            src={pduIcon}
-                            alt="PDU"
-                            className="rack-item"
-                        />
-
-                        <img
-                            ref={secondImageRef}
-                            src={pduIcon}
-                            alt="PDU"
-                            className="rack-item"
-                        />
-
-                    </div>
-
-                    {/* Two Test Lines */}
-                    <div ref={roomContainerRef} className="w-full">
-                        <svg className="h-[150px] w-full overflow-visible">
-                            <ConnectionLine
-                                x1={firstLineX}
-                                y1={0}
-                                x2={rack1CenterX}
-                                y2={150}
-                                color="red"
-                                strokeWidth={3}
-                            />
-
-                            <ConnectionLine
-                                x1={secondLineX}
-                                y1={0}
-                                x2={rack2CenterX}
-                                y2={150}
-                                color="red"
-                                strokeWidth={3}
-                            />
+                            ))}
                         </svg>
-                    </div>
 
-                    {/* Racks and free places - third row */}
-                    <div className="flex flex-wrap justify-center gap-4">
+                        {/* UPS devices - First row */}
+                        <div className="flex flex-wrap justify-center gap-4">
+                            {roomUps.map(ups => (
+                                <div key={ups.ID} className="relative group flex justify-center">
+                                    <img
+                                        ref={setEquipmentRef(ups.ID)}
+                                        src={upsIcon}
+                                        alt="UPS Icon"
+                                        className="rack-item cursor-pointer max-w-[120px] transition-transform duration-150 hover:scale-110"
+                                    />
 
-                        {/* Existing racks */}
-                        {roomRacks.map(rack => (
-                            <div key={rack.ID} className="relative group flex justify-center">
+                                    <UpsHoverOverlay ups={ups} t={t} />
+                                </div>
+                            ))}
+                        </div>
 
-                                {/* Passing function as ref, in order to give every rack unique ref, only for server icons */}
-                                <img
-                                    ref={(el) => {
-                                        if (el) rackRefs.current.set(rack.ID, el);
-                                        else rackRefs.current.delete(rack.ID);
-                                    }}
-                                    src={serverIcon}
-                                    alt="Server Icon"
-                                    onClick={() => handleRackClick(rack.ID)}
-                                    className="rack-item cursor-pointer transition-transform duration-150 hover:scale-110"
-                                />
-
-                                <RackHoverOverlay rack={rack} t={t} />
-
+                        {/* PDUs - Between UPS and racks, only shown when the room has some */}
+                        {roomPdus.length > 0 && (
+                            <div className="flex w-full items-center justify-between px-4">
+                                {roomPdus.map(pdu => (
+                                    <img
+                                        key={pdu.ID}
+                                        ref={setEquipmentRef(pdu.ID)}
+                                        src={pduIcon}
+                                        alt="PDU"
+                                        className="rack-item"
+                                    />
+                                ))}
                             </div>
-                        ))}
+                        )}
 
-                        {/* Empty places */}
-                        {renderFreePlaces()}
+                        {/* Racks and free places - last row */}
+                        <div className="flex flex-wrap justify-center gap-4">
+
+                            {/* Existing racks */}
+                            {roomRacks.map(rack => (
+                                <div key={rack.ID} className="relative group flex justify-center">
+                                    <img
+                                        ref={setEquipmentRef(rack.ID)}
+                                        src={serverIcon}
+                                        alt="Server Icon"
+                                        onClick={() => handleRackClick(rack.ID)}
+                                        className="rack-item cursor-pointer transition-transform duration-150 hover:scale-110"
+                                    />
+
+                                    <RackHoverOverlay rack={rack} t={t} />
+                                </div>
+                            ))}
+
+                            {/* Empty places */}
+                            {renderFreePlaces()}
+
+                        </div>
 
                     </div>
 
