@@ -7,6 +7,7 @@ interface ConnectionLineProps {
   y2: number;
   color?: string;
   strokeWidth?: number;
+  dashed?: boolean; // e.g. for cables that are not saved yet
 }
 
 const ConnectionLine: React.FC<ConnectionLineProps> = ({
@@ -16,6 +17,7 @@ const ConnectionLine: React.FC<ConnectionLineProps> = ({
   y2,
   color = "black",
   strokeWidth = 2,
+  dashed = false,
 }) => {
   return (
     <line
@@ -25,6 +27,8 @@ const ConnectionLine: React.FC<ConnectionLineProps> = ({
       y2={y2}
       stroke={color}
       strokeWidth={strokeWidth}
+      strokeDasharray={dashed ? "8 6" : undefined}
+      strokeLinecap="round"
     />
   );
 };

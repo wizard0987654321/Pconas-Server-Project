@@ -79,7 +79,10 @@
         "height (cm)": "Höhe (cm)"
       },
       "detailedView": {
-        "smallScreen": "Bitte vergrößern Sie das Browserfenster oder öffnen Sie diese Seite auf einem größeren Bildschirm. Die Mindestbreite beträgt 768 px."
+        "smallScreen": "Bitte vergrößern Sie das Browserfenster oder öffnen Sie diese Seite auf einem größeren Bildschirm. Die Mindestbreite beträgt 768 px.",
+        "cables": {
+          "openButton": "Kabel ändern"
+        }
       },
       "activateQuestions": "Fragen aktivieren",
       "answerQuestions": "Fragen beantworten",

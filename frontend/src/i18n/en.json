@@ -78,7 +78,10 @@
         "name": "name",
         "height (cm)": "height (cm)"
       },"detailedView": {
-        "smallScreen": "Please enlarge your browser window or open this page on a larger screen. The minimum required screen width is 768 px."
+        "smallScreen": "Please enlarge your browser window or open this page on a larger screen. The minimum required screen width is 768 px.",
+        "cables": {
+          "openButton": "Change cables"
+        }
       },
       "activateQuestions": "activate questions",
       "answerQuestions": "answer Questions",

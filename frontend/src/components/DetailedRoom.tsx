@@ -3,7 +3,7 @@
 //react imports
 import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect, useLayoutEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 
 //types
 import type { Rack, Ups, Pdu, Connection } from "../types";
@@ -11,6 +11,7 @@ import type { Rack, Ups, Pdu, Connection } from "../types";
 //Helper functions
 import { getRackData, getUpsData, getPduData, getConnectionsData } from "../services/api";
 import { useRooms } from "../helpers/hooks/roomOperations";
+import { useEquipmentRefs, useConnectionLines, type LineInput } from "../helpers/hooks/connectionLines";
 
 //icons
 import serverIcon from "../assets/ServerIcon.svg";
@@ -26,16 +27,6 @@ import AddEquipmentOverlay from "./overlays/AddEquipmentOverlay";
 import DisplayedRoomData from "./DisplayedRoomData";
 import ConnectionLine from "./ConnectionLine";
 import CableChangeOverlay from "./CableChangeOverlay";
-
-// Coordinates of one drawn cable, relative to the lines container
-type LineCoordinates = {
-    id: number;
-    x1: number;
-    y1: number;
-    x2: number;
-    y2: number;
-    color: string;
-};
 
 function DetailedRoom() {
 
@@ -72,10 +63,14 @@ function DetailedRoom() {
             .then(setPduData)
             .catch((err) => console.error("PDU API error", err));
 
+        reloadConnections();
+    }, []);
+
+    // Also called by the cable overlay after saving new cables
+    const reloadConnections = () =>
         getConnectionsData()
             .then(setConnectionsData)
             .catch((err) => console.error("Connections API error", err));
-    }, []);
 
     // Get current room
     const currentRoom = roomsData.find(room => room.ID === roomId);
@@ -85,10 +80,7 @@ function DetailedRoom() {
     const roomRacks = useMemo(() => racksData.filter(rack => rack.RoomID === roomId), [racksData, roomId]);
     const roomUps = useMemo(() => upsData.filter(ups => ups.RoomID === roomId), [upsData, roomId]);
     const roomPdus = useMemo(() => pduData.filter(pdu => pdu.RoomID === roomId), [pduData, roomId]);
-    const roomConnections = useMemo(
-        () => connectionsData.filter(connection => connection.RoomID === roomId),
-        [connectionsData, roomId]
-    );
+    const roomConnections = useMemo(() => connectionsData.filter(connection => connection.RoomID === roomId), [connectionsData, roomId]);
 
     // Navigate to rack details
     const handleRackClick = (rackId: number) => {
@@ -116,63 +108,23 @@ function DetailedRoom() {
 
     // Refs of every equipment icon (racks, UPS, PDUs), keyed by Equipment ID.
     // Rack/UPS/PDU IDs are Equipment IDs, so a connection's From/To ID points straight into this map
-    const equipmentRefs = useRef<Map<number, HTMLElement>>(new Map());
-
-    const setEquipmentRef = (equipmentId: number) => (el: HTMLElement | null) => {
-        if (el) equipmentRefs.current.set(equipmentId, el);
-        else equipmentRefs.current.delete(equipmentId);
-    };
+    const { equipmentRefs, setEquipmentRef } = useEquipmentRefs();
 
     // Parent of all equipment rows, the svg with the lines covers this whole div
     const linesContainerRef = useRef<HTMLDivElement | null>(null);
 
-    const [lines, setLines] = useState<LineCoordinates[]>([]);
+    const lineInputs = useMemo<LineInput[]>(
+        () => roomConnections.map(connection => ({
+            key: String(connection.ID),
+            fromId: connection.FromEquipmentID,
+            toId: connection.ToEquipmentID,
+            color: connection.Color,
+        })),
+        [roomConnections]
+    );
 
-    // Calculate line coordinates from the real positions of the icons
-    useLayoutEffect(() => {
-        const container = linesContainerRef.current;
-        if (!container) return;
-
-        const calculateLines = () => {
-            const box = container.getBoundingClientRect();
-
-            const newLines: LineCoordinates[] = [];
-
-            roomConnections.forEach(connection => {
-                const from = equipmentRefs.current.get(connection.FromEquipmentID)?.getBoundingClientRect();
-                const to = equipmentRefs.current.get(connection.ToEquipmentID)?.getBoundingClientRect();
-
-                // Equipment not rendered (yet), skip that cable
-                if (!from || !to) return;
-
-                // Line goes from the edge of one icon to the facing edge of the other one
-                const fromIsAbove = from.top + from.height / 2 <= to.top + to.height / 2;
-
-                newLines.push({
-                    id: connection.ID,
-                    x1: from.left + from.width / 2 - box.left,
-                    y1: (fromIsAbove ? from.bottom : from.top) - box.top,
-                    x2: to.left + to.width / 2 - box.left,
-                    y2: (fromIsAbove ? to.top : to.bottom) - box.top,
-                    color: connection.Color,
-                });
-            });
-
-            setLines(newLines);
-        };
-
-        calculateLines();
-
-        // Recalculate when the layout changes (window resize, images finishing loading, rows wrapping)
-        const resizeObserver = new ResizeObserver(calculateLines);
-        resizeObserver.observe(container);
-        window.addEventListener("resize", calculateLines);
-
-        return () => {
-            resizeObserver.disconnect();
-            window.removeEventListener("resize", calculateLines);
-        };
-    }, [roomConnections, roomRacks, roomUps, roomPdus]);
+    // Line coordinates calculated from the real positions of the icons
+    const lines = useConnectionLines(linesContainerRef, equipmentRefs, lineInputs, [roomRacks, roomUps, roomPdus]);
 
 
     return (
@@ -188,13 +140,12 @@ function DetailedRoom() {
             {showCableOverlay && (
                 <CableChangeOverlay
                     onClose={() => setShowCableOverlay(false)}
+                    onSaved={reloadConnections}
                     heading={`${t("pages.rooms.cardHeading")} ${id}`}
                     roomRacks={roomRacks}
                     roomUps={roomUps}
-                    freePlaces={Math.max(
-                        0,
-                        (currentRoom?.Capacity ?? 0) - roomRacks.length - roomUps.length
-                    )}
+                    roomPdus={roomPdus}
+                    roomConnections={roomConnections}
                 />
             )}
 
@@ -213,7 +164,7 @@ function DetailedRoom() {
                     onClick={() => setShowCableOverlay(true)}
                     className="mt-4 w-fit cursor-pointer rounded-[0.5rem] bg-[#6ADBAF] px-4 py-2 font-semibold"
                 >
-                    Rearrange cables, mere unda shevucvalo
+                    {t("pages.rooms.detailedView.cables.openButton")}
                 </button>
 
 
@@ -229,7 +180,7 @@ function DetailedRoom() {
                         <svg className="pointer-events-none absolute inset-0 h-full w-full overflow-visible">
                             {lines.map(line => (
                                 <ConnectionLine
-                                    key={line.id}
+                                    key={line.key}
                                     x1={line.x1}
                                     y1={line.y1}
                                     x2={line.x2}

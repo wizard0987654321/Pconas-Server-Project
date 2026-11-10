@@ -1,139 +1,216 @@
-import { useEffect, useRef, useState } from "react";
-import type { Rack, Ups } from "../types";
+//react imports 
+import { useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+
+//types
+import type { Rack, Ups, Pdu, Connection } from "../types";
+
+//helpers
+import { addConnections } from "../services/api";
+import { useEquipmentRefs, useConnectionLines, type LineInput } from "../helpers/hooks/connectionLines";
+
+//icons
 import serverIcon from "../assets/ServerIcon.svg";
 import upsIcon from "../assets/upsIcon.svg";
 import pduIcon from "../assets/PDU.svg";
-import buttonIcon from "../assets/AddButton.svg";
+
+//components
 import ConnectionLine from "./ConnectionLine";
 
-interface CableChangeOverlayProps {
+type EquipmentType = "ups" | "pdu" | "rack";
+
+// Selected equipment: its Equipment ID and type
+type SelectedEquipment = {
+    id: number;
+    type: EquipmentType;
+};
+
+// Cable chosen by the user, not saved in the DB yet
+type NewConnection = {
+    fromId: number;
+    toId: number;
+};
+
+// Power flows UPS -> PDU -> Rack, so the "higher" equipment is always the From side
+const POWER_LEVEL: Record<EquipmentType, number> = { ups: 0, pdu: 1, rack: 2 };
+
+type CableChangeOverlayProps = {
     onClose: () => void;
+    onSaved: () => void;
     heading: string;
     roomRacks: Rack[];
     roomUps: Ups[];
-    freePlaces: number;
-}
+    roomPdus: Pdu[];
+    roomConnections: Connection[];
+};
 
 function CableChangeOverlay({
     onClose,
+    onSaved,
     heading,
     roomRacks,
     roomUps,
-    freePlaces,
+    roomPdus,
+    roomConnections,
 }: CableChangeOverlayProps) {
 
-    const firstPduRef = useRef<HTMLImageElement | null>(null);
-    const secondPduRef = useRef<HTMLImageElement | null>(null);
-    const containerRef = useRef<HTMLDivElement | null>(null);
-    const rackRefs = useRef<(HTMLImageElement | null)[]>([]);
+    const { t } = useTranslation();
 
-    const [firstLineX, setFirstLineX] = useState(0);
-    const [secondLineX, setSecondLineX] = useState(0);
-    const [rack1CenterX, setRack1CenterX] = useState(0);
-    const [rack2CenterX, setRack2CenterX] = useState(0);
+    // First clicked equipment, waiting for the second one
+    const [selected, setSelected] = useState<SelectedEquipment | null>(null);
 
-    useEffect(() => {
-        const calculate = () => {
-            const container = containerRef.current?.getBoundingClientRect();
-            const firstPDU = firstPduRef.current?.getBoundingClientRect();
-            const secondPDU = secondPduRef.current?.getBoundingClientRect();
-            if (!container || !firstPDU || !secondPDU) return;
+    // Cables created in this overlay, only saved on submit
+    const [newConnections, setNewConnections] = useState<NewConnection[]>([]);
 
-            setFirstLineX(firstPDU.x + firstPDU.width / 2 - container.left);
-            setSecondLineX(secondPDU.x + secondPDU.width / 2 - container.left);
+    const [error, setError] = useState<string | null>(null);
 
-            const rack1 = rackRefs.current[0]?.getBoundingClientRect();
-            const rack2 = rackRefs.current[1]?.getBoundingClientRect();
-            if (rack1) setRack1CenterX(rack1.x + rack1.width / 2 - container.left);
-            if (rack2) setRack2CenterX(rack2.x + rack2.width / 2 - container.left);
-        };
+    const handleEquipmentClick = (id: number, type: EquipmentType) => {
+        // nothing selected yet, or same type clicked -> reselect
+        if (!selected || (selected.type === type && selected.id !== id)) {
+            setSelected({ id, type });
+            return;
+        }
 
-        calculate();
-        window.addEventListener("resize", calculate);
-        return () => window.removeEventListener("resize", calculate);
-    }, [roomRacks.length]);
+        // same equipment clicked again -> unselect
+        if (selected.id === id) {
+            setSelected(null);
+            return;
+        }
+
+        // different type -> new cable, From is always the higher one (UPS -> PDU -> Rack)
+        const [fromId, toId] = POWER_LEVEL[selected.type] < POWER_LEVEL[type]
+            ? [selected.id, id]
+            : [id, selected.id];
+
+        // skip cables that already exist (saved in DB or already drawn here), otherwise Save fails with 409
+        const alreadyExists =
+            roomConnections.some(c => c.FromEquipmentID === fromId && c.ToEquipmentID === toId) ||
+            newConnections.some(c => c.fromId === fromId && c.toId === toId);
+
+        if (!alreadyExists) {
+            setNewConnections(prev => [...prev, { fromId, toId }]);
+        }
+
+        setSelected(null);
+    };
+
+    // saving into database
+    const handleSubmit = async () => {
+        try {
+            await addConnections(
+                newConnections.map(c => ({ fromEquipmentId: c.fromId, toEquipmentId: c.toId }))
+            );
+            onSaved();
+            onClose();
+        } catch (err) {
+            console.error(err);
+            setError(err instanceof Error ? err.message : "Failed to save cables");
+        }
+    };
+
+
+    //Lines design: saved cables solid, new cables dashed
+    const { equipmentRefs, setEquipmentRef } = useEquipmentRefs();
+    const linesContainerRef = useRef<HTMLDivElement | null>(null);
+
+    const lineInputs = useMemo<LineInput[]>(() => [
+        ...roomConnections.map(c => ({
+            key: `saved-${c.ID}`,
+            fromId: c.FromEquipmentID,
+            toId: c.ToEquipmentID,
+            color: c.Color,
+        })),
+        ...newConnections.map((c, index) => ({
+            key: `new-${index}`,
+            fromId: c.fromId,
+            toId: c.toId,
+            color: "#FF6B6B",
+            dashed: true,
+        })),
+    ], [roomConnections, newConnections]);
+
+    const lines = useConnectionLines(linesContainerRef, equipmentRefs, lineInputs, [roomRacks, roomUps, roomPdus]);
+
+
+    // Clickable equipment icon, selected one gets a green ring around
+    const renderEquipment = (id: number, type: EquipmentType, icon: string, iconClassName = "") => (
+        <img
+            key={id}
+            ref={setEquipmentRef(id)}
+            src={icon}
+            alt={type}
+            onClick={() => handleEquipmentClick(id, type)}
+            className={`rack-item cursor-pointer rounded-lg p-1 ${iconClassName} ${selected?.id === id ? "ring-4 ring-[#6ADBAF]" : ""}`}
+        />
+    );
+
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-6">
             <div className="relative max-h-full w-full max-w-[90rem] overflow-auto rounded-[0.5rem] bg-white p-10">
 
-                <button
-                    onClick={onClose}
-                    className="absolute right-4 top-4 cursor-pointer text-2xl font-bold"
-                    aria-label="Close"
-                >
-                    ✕
-                </button>
-
                 <h2 className="mb-6 text-2xl font-bold">{heading}</h2>
 
+                {error && <p className="mb-4 text-red-600">{error}</p>}
+
                 <div className="flex w-full flex-col rounded-[0.5rem] border-[1rem] border-[#6ADBAF] p-6">
+                    <div ref={linesContainerRef} className="relative flex flex-col gap-24">
 
-                    {/* UPS devices - first row */}
-                    <div className="my-6 flex flex-wrap justify-center gap-4">
-                        {roomUps.map(ups => (
-                            <div key={ups.ID} className="flex justify-center">
-                                <img
-                                    src={upsIcon}
-                                    alt="UPS Icon"
-                                    className="rack-item max-w-[120px]"
+                {/* map through connection lines and display them one by one */}
+                        <svg className="pointer-events-none absolute inset-0 h-full w-full overflow-visible">
+                            {lines.map(line => (
+                                <ConnectionLine
+                                    key={line.key}
+                                    x1={line.x1}
+                                    y1={line.y1}
+                                    x2={line.x2}
+                                    y2={line.y2}
+                                    color={line.color}
+                                    strokeWidth={3}
+                                    dashed={line.dashed}
                                 />
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* PDUs */}
-                    <div className="flex w-full items-center justify-between px-4">
-                        <img ref={firstPduRef} src={pduIcon} alt="PDU" className="rack-item" />
-                        <img ref={secondPduRef} src={pduIcon} alt="PDU" className="rack-item" />
-                    </div>
-
-                    {/* Lines */}
-                    <div ref={containerRef} className="w-full">
-                        <svg className="h-[150px] w-full overflow-visible">
-                            <ConnectionLine
-                                x1={firstLineX}
-                                y1={0}
-                                x2={rack1CenterX}
-                                y2={150}
-                                color="red"
-                                strokeWidth={3}
-                            />
-                            <ConnectionLine
-                                x1={secondLineX}
-                                y1={0}
-                                x2={rack2CenterX}
-                                y2={150}
-                                color="red"
-                                strokeWidth={3}
-                            />
+                            ))}
                         </svg>
-                    </div>
 
-                    {/* Racks and free places */}
-                    <div className="flex flex-wrap justify-center gap-4">
-                        {roomRacks.map((rack, index) => (
-                            <div key={rack.ID} className="flex justify-center">
-                                <img
-                                    ref={(el) => { rackRefs.current[index] = el; }}
-                                    src={serverIcon}
-                                    alt="Server Icon"
-                                    className="rack-item"
-                                />
+                        {/* UPS */}
+                        <div className="flex flex-wrap justify-center gap-4">
+                            {roomUps.map(ups => renderEquipment(ups.ID, "ups", upsIcon, "max-w-[120px]"))}
+                        </div>
+
+                        {/* PDUs */}
+                        {roomPdus.length > 0 && (
+                            <div className="flex w-full items-center justify-between px-4">
+                                {roomPdus.map(pdu => renderEquipment(pdu.ID, "pdu", pduIcon))}
                             </div>
-                        ))}
+                        )}
 
-                        {Array.from({ length: freePlaces }, (_, index) => (
-                            <img
-                                key={`free-${index}`}
-                                src={buttonIcon}
-                                alt="Free place"
-                                className="rack-item"
-                            />
-                        ))}
+                        {/* Racks */}
+                        <div className="flex flex-wrap justify-center gap-4">
+                            {roomRacks.map(rack => renderEquipment(rack.ID, "rack", serverIcon))}
+                        </div>
                     </div>
-
                 </div>
+
+                {/* Cancel discards new cables, Save writes them to the DB */}
+                <div className="mt-6 flex justify-end gap-3">
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        className="cursor-pointer rounded border border-[#6ADBAF] px-4 py-2"
+                    >
+                        {t("common.cancel")}
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={handleSubmit}
+                        disabled={newConnections.length === 0}
+                        className="cursor-pointer rounded bg-[#6ADBAF] px-4 py-2 text-white disabled:opacity-50"
+                    >
+                        {t("common.save")}
+                    </button>
+                </div>
+
             </div>
         </div>
     );

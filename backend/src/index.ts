@@ -403,6 +403,65 @@ app.post("/addVm", async (req: Request, res: Response) => {
   }
 });
 
+// Saves several new cables at once (all or nothing).
+// Body: { connections: [{ fromEquipmentId, toEquipmentId, typeId? }] }, typeId defaults to "Power"
+app.post("/addConnections", async (req: Request, res: Response) => {
+  const { connections } = req.body;
+
+  if (!Array.isArray(connections) || connections.length === 0) {
+    res.status(400).json({ error: "No connections provided" });
+    return;
+  }
+
+  try {
+    const powerType = await prisma.connectionType.findUnique({ where: { NameEN: "Power" } });
+
+    const newConnections = connections.map((c: any) => ({
+      FromEquipmentID: toNumber(c.fromEquipmentId) as number,
+      ToEquipmentID: toNumber(c.toEquipmentId) as number,
+      TypeID: (toNumber(c.typeId) ?? powerType?.ID) as number,
+    }));
+
+    // Load every equipment piece involved, to validate the cables
+    const equipmentIds = [...new Set(newConnections.flatMap((c) => [c.FromEquipmentID, c.ToEquipmentID]))];
+    const equipment = await prisma.equipment.findMany({ where: { ID: { in: equipmentIds } } });
+    const equipmentById = new Map(equipment.map((e) => [e.ID, e]));
+
+    for (const c of newConnections) {
+      const from = equipmentById.get(c.FromEquipmentID);
+      const to = equipmentById.get(c.ToEquipmentID);
+
+      if (!from || !to || !c.TypeID) {
+        res.status(400).json({ error: "Unknown equipment or connection type" });
+        return;
+      }
+      if (from.RoomID !== to.RoomID) {
+        res.status(400).json({ error: "Both ends of a cable must be in the same room" });
+        return;
+      }
+      // Also covers connecting something to itself
+      if (from.Type === to.Type) {
+        res.status(400).json({ error: "A cable must connect two different equipment types" });
+        return;
+      }
+    }
+
+    await prisma.$transaction(
+      newConnections.map((data) => prisma.connection.create({ data }))
+    );
+
+    res.json({ message: "Connections added", count: newConnections.length });
+  } catch (error: any) {
+    // P2002 = unique constraint UQ_Connection (same cable already exists)
+    if (error?.code === "P2002") {
+      res.status(409).json({ error: "Connection already exists" });
+      return;
+    }
+    console.error("Add connections error:", error);
+    res.status(500).json({ error: "Failed to add connections" });
+  }
+});
+
 // delete operations
 
 app.delete("/deleteRoom/:id", async (req: Request, res: Response) => {

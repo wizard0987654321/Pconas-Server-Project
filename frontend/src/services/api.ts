@@ -314,7 +314,26 @@ export async function addVm(payload: { newVm: { deviceId: number; serviceId: num
     return response.json();
 }
 
-//update paths 
+export async function addConnections(
+    connections: { fromEquipmentId: number; toEquipmentId: number; typeId?: number }[]
+) {
+    const response = await fetch(`${API_URL}/addConnections`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ connections }),
+    });
+
+    if (!response.ok) {
+        const body = await response.json().catch(() => null);
+        throw new Error(body?.error ?? "Failed to add connections");
+    }
+
+    return response.json();
+}
+
+//update paths
 
 export async function activateQuestions(ids: number[]) {
     return fetch(`${API_URL}/activateQuestions`, {
