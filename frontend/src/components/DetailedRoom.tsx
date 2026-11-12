@@ -23,6 +23,8 @@ import buttonIcon from "../assets/AddButton.svg";
 import PageHeading from "./PageHeading";
 import RackHoverOverlay from "./RackHoverOverlay";
 import UpsHoverOverlay from "./UpsHoverOverlay";
+import PduHoverOverlay from "./PduHoverOverlay";
+import ConnectionHoverOverlay from "./ConnectionHoverOverlay";
 import AddEquipmentOverlay from "./overlays/AddEquipmentOverlay";
 import DisplayedRoomData from "./DisplayedRoomData";
 import ConnectionLine from "./ConnectionLine";
@@ -30,7 +32,7 @@ import CableChangeOverlay from "./CableChangeOverlay";
 
 function DetailedRoom() {
 
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { id } = useParams();
     const navigate = useNavigate();
     const roomId = Number(id);
@@ -100,7 +102,7 @@ function DetailedRoom() {
                 src={buttonIcon}
                 alt="Add Equipment"
                 onClick={() => setSelectedRoomId(currentRoom.ID)}
-                className="rack-item cursor-pointer transition-transform duration-150 hover:scale-110 active:scale-95"
+                className="pointer-events-auto rack-item cursor-pointer transition-transform duration-150 hover:scale-110 active:scale-95"
             />
         ));
     };
@@ -125,6 +127,21 @@ function DetailedRoom() {
 
     // Line coordinates calculated from the real positions of the icons
     const lines = useConnectionLines(linesContainerRef, equipmentRefs, lineInputs, [roomRacks, roomUps, roomPdus]);
+
+    // Currently hovered cable (line key = connection ID)
+    const [hoveredLineKey, setHoveredLineKey] = useState<string | null>(null);
+
+    // Equipment ID -> readable name ("Rack 3", "UPS 1", "PDU 2"), used in the cable hover div
+    const equipmentLabels = useMemo(() => {
+        const labels = new Map<number, string>();
+        roomRacks.forEach(rack => labels.set(rack.ID, `${t("common.rack")} ${rack.RackNumber}`));
+        roomUps.forEach(ups => labels.set(ups.ID, `${t("common.ups")} ${ups.UPSNumber}`));
+        roomPdus.forEach(pdu => labels.set(pdu.ID, `${t("common.pdu")} ${pdu.PDUNumber}`));
+        return labels;
+    }, [roomRacks, roomUps, roomPdus, t]);
+
+    const hoveredLine = lines.find(line => line.key === hoveredLineKey);
+    const hoveredConnection = roomConnections.find(connection => String(connection.ID) === hoveredLineKey);
 
 
     return (
@@ -187,14 +204,32 @@ function DetailedRoom() {
                                     y2={line.y2}
                                     color={line.color}
                                     strokeWidth={3}
+                                    hovered={line.key === hoveredLineKey}
+                                    onMouseEnter={() => setHoveredLineKey(line.key)}
+                                    onMouseLeave={() => setHoveredLineKey(null)}
                                 />
                             ))}
                         </svg>
 
+                        {/* Info div of the hovered cable, shown at the middle of the line */}
+                        {hoveredLine && hoveredConnection && (
+                            <ConnectionHoverOverlay
+                                connection={hoveredConnection}
+                                fromLabel={equipmentLabels.get(hoveredConnection.FromEquipmentID) ?? t("common.unknown")}
+                                toLabel={equipmentLabels.get(hoveredConnection.ToEquipmentID) ?? t("common.unknown")}
+                                language={i18n.language}
+                                x={(hoveredLine.x1 + hoveredLine.x2) / 2}
+                                y={(hoveredLine.y1 + hoveredLine.y2) / 2}
+                                t={t}
+                            />
+                        )}
+
+                        {/* Rows don't catch the mouse (only their items do), so lines behind the empty row space stay hoverable */}
+
                         {/* UPS devices - First row */}
-                        <div className="flex flex-wrap justify-center gap-4">
+                        <div className="pointer-events-none flex flex-wrap justify-center gap-4">
                             {roomUps.map(ups => (
-                                <div key={ups.ID} className="relative group flex justify-center">
+                                <div key={ups.ID} className="pointer-events-auto relative group flex justify-center">
                                     <img
                                         ref={setEquipmentRef(ups.ID)}
                                         src={upsIcon}
@@ -209,25 +244,28 @@ function DetailedRoom() {
 
                         {/* PDUs - Between UPS and racks, only shown when the room has some */}
                         {roomPdus.length > 0 && (
-                            <div className="flex w-full items-center justify-between px-4">
+                            <div className="pointer-events-none flex w-full items-center justify-between px-4">
                                 {roomPdus.map(pdu => (
-                                    <img
-                                        key={pdu.ID}
-                                        ref={setEquipmentRef(pdu.ID)}
-                                        src={pduIcon}
-                                        alt="PDU"
-                                        className="rack-item"
-                                    />
+                                    <div key={pdu.ID} className="pointer-events-auto relative group flex justify-center">
+                                        <img
+                                            ref={setEquipmentRef(pdu.ID)}
+                                            src={pduIcon}
+                                            alt="PDU"
+                                            className="rack-item cursor-pointer transition-transform duration-150 hover:scale-110"
+                                        />
+
+                                        <PduHoverOverlay pdu={pdu} t={t} />
+                                    </div>
                                 ))}
                             </div>
                         )}
 
                         {/* Racks and free places - last row */}
-                        <div className="flex flex-wrap justify-center gap-4">
+                        <div className="pointer-events-none flex flex-wrap justify-center gap-4">
 
                             {/* Existing racks */}
                             {roomRacks.map(rack => (
-                                <div key={rack.ID} className="relative group flex justify-center">
+                                <div key={rack.ID} className="pointer-events-auto relative group flex justify-center">
                                     <img
                                         ref={setEquipmentRef(rack.ID)}
                                         src={serverIcon}
