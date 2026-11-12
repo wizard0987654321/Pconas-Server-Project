@@ -83,13 +83,14 @@ function ServerRoom() {
 
         for (let i = 0; i < free; i++) {
             addButtonElements.push(
-                <img
-                    key={`free-${i}`}
-                    src={buttonIcon}
-                    alt="Add Equipment"
-                    onClick={() => handleAddButtonClick(room.ID)}
-                    className="rack-item cursor-pointer transition-transform duration-150 hover:scale-110 active:scale-95"
-                />
+                <div key={`free-${i}`} className="rack-item flex items-center justify-center">
+                    <img
+                        src={buttonIcon}
+                        alt="Add Equipment"
+                        onClick={() => handleAddButtonClick(room.ID)}
+                        className="cursor-pointer transition-transform duration-150 hover:scale-110 active:scale-95"
+                    />
+                </div>
             );
         }
 
@@ -133,7 +134,7 @@ function ServerRoom() {
                                 {t("pages.rooms.cardHeading")} {index + 1}
                             </h1>
 
-                            <div className="flex flex-col items-center border-4 border-solid border-[#6ADBAF] rounded-[10px] bg-[#F8FAFC] text-[#111827] dark:bg-[#0F234F] dark:text-[#F9FAFB]">
+                            <div className="flex flex-col p-2 items-center border-4 border-solid border-[#6ADBAF] rounded-[10px] bg-[#F8FAFC] text-[#111827] dark:bg-[#0F234F] dark:text-[#F9FAFB]">
 
                                 <div
                                     className="grid grid-rows-2 gap-3 my-2"
@@ -144,13 +145,13 @@ function ServerRoom() {
 
                                     {/* Existing racks */}
                                     {roomRacks.map(rack => (
-                                        <div key={`rack-${rack.ID}`} className="relative group">
+                                        <div key={`rack-${rack.ID}`} className="rack-item relative group flex items-center justify-center hover:z-20">
 
                                             <img
                                                 src={serverIcon}
                                                 alt="Server Icon"
                                                 onClick={() => handleRackClick(rack.ID)}
-                                                className="rack-item cursor-pointer transition-transform duration-150 hover:scale-110"
+                                                className="cursor-pointer transition-transform duration-150 hover:scale-110"
                                             />
 
                                             <RackHoverOverlay rack={rack} t={t} />
@@ -160,12 +161,12 @@ function ServerRoom() {
 
                                     {/* Existing UPS devices */}
                                     {roomUps.map(ups => (
-                                        <div key={`ups-${ups.ID}`} className="relative group">
+                                        <div key={`ups-${ups.ID}`} className="rack-item relative group flex items-center justify-center hover:z-20">
 
                                             <img
                                                 src={upsIcon}
                                                 alt="UPS Icon"
-                                                className="rack-item max-w-[120px] cursor-pointer transition-transform duration-150 hover:scale-110"
+                                                className="max-w-[120px] cursor-pointer transition-transform duration-150 hover:scale-110"
                                             />
 
                                             <UpsHoverOverlay ups={ups} t={t} />

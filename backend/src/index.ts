@@ -48,27 +48,25 @@ app.get("/rooms", async (req: Request, res: Response) => {
 });
 
 app.get("/racks", async (req: Request, res: Response) => {
-  const [rooms, allRacks] = await Promise.all([
+  // Rack has no RoomID anymore, it lives on the parent Equipment row (same ID), same as UPS
+  const [rooms, rackEquipment] = await Promise.all([
     prisma.room.findMany({ orderBy: { ID: "asc" }, select: { ID: true } }),
-    prisma.rack.findMany({ orderBy: { ID: "asc" } }),
+    prisma.equipment.findMany({
+      where: { Type: "rack", Rack: { isNot: null } },
+      include: { Rack: true },
+      orderBy: { ID: "asc" },
+    }),
   ]);
 
   const roomNumberByRoomId = new Map(rooms.map((room, index) => [room.ID, index + 1]));
 
-  // Original query used an INNER JOIN, so a rack whose RoomID doesn't match
-  // any room gets dropped entirely — replicated here before numbering, since
-  // RackNumber in the original SQL is numbered over the already-joined rows.
-  const joinedRacks = allRacks.filter(
-    (rack) => rack.RoomID !== null && roomNumberByRoomId.has(rack.RoomID)
-  );
-
-  const result = joinedRacks.map((rack, index) => ({
-    ID: rack.ID,
+  const result = rackEquipment.map((equipment, index) => ({
+    ID: equipment.ID,
     RackNumber: index + 1,
-    RoomID: rack.RoomID,
-    UnitsSize: rack.UnitsSize,
-    HeightCm: rack.HeightCm !== null ? Number(rack.HeightCm) : rack.HeightCm,
-    RoomNumber: roomNumberByRoomId.get(rack.RoomID as number),
+    RoomID: equipment.RoomID,
+    UnitsSize: equipment.Rack!.UnitsSize,
+    HeightCm: equipment.Rack!.HeightCm !== null ? Number(equipment.Rack!.HeightCm) : null,
+    RoomNumber: roomNumberByRoomId.get(equipment.RoomID),
   }));
 
   res.json(result);
@@ -280,11 +278,17 @@ app.post("/addRack", async (req: Request, res: Response) => {
   const { newRack } = req.body;
 
   try {
-    await prisma.rack.create({
+    // Parent Equipment row + Rack child row are created together (atomic), same as UPS
+    await prisma.equipment.create({
       data: {
-        RoomID: toNumber(newRack.roomId),
-        UnitsSize: toNumber(newRack.unitsSize),
-        HeightCm: toNumber(newRack.heightcm),
+        RoomID: toNumber(newRack.roomId) as number,
+        Type: "rack",
+        Rack: {
+          create: {
+            UnitsSize: toNumber(newRack.unitsSize),
+            HeightCm: toNumber(newRack.heightcm),
+          },
+        },
       },
     });
     res.json({ message: "new Rack added" });
@@ -491,7 +495,16 @@ app.delete("/deleteRack/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
-    await prisma.rack.delete({ where: { ID: Number(id) } });
+    const rackId = Number(id);
+
+    // Cables first (Connection FKs are NO ACTION), then the Equipment row.
+    // Deleting Equipment cascades to Rack -> its Devices -> their VMs
+    await prisma.$transaction([
+      prisma.connection.deleteMany({
+        where: { OR: [{ FromEquipmentID: rackId }, { ToEquipmentID: rackId }] },
+      }),
+      prisma.equipment.delete({ where: { ID: rackId } }),
+    ]);
     res.json({ message: "Rack deleted successfully", id });
   } catch (error) {
     console.error("Delete rack error:", error);

@@ -84,6 +84,13 @@ function DetailedRoom() {
     const roomPdus = useMemo(() => pduData.filter(pdu => pdu.RoomID === roomId), [pduData, roomId]);
     const roomConnections = useMemo(() => connectionsData.filter(connection => connection.RoomID === roomId), [connectionsData, roomId]);
 
+    // Equipment IDs that have at least one cable (as From or To), others are shown half transparent
+    const connectedIds = useMemo(
+        () => new Set(roomConnections.flatMap(c => [c.FromEquipmentID, c.ToEquipmentID])),
+        [roomConnections]
+    );
+    const opacityClass = (equipmentId: number) => connectedIds.has(equipmentId) ? "" : "opacity-50";
+
     // Navigate to rack details
     const handleRackClick = (rackId: number) => {
         navigate(`/racks/${rackId}`);
@@ -234,7 +241,7 @@ function DetailedRoom() {
                                         ref={setEquipmentRef(ups.ID)}
                                         src={upsIcon}
                                         alt="UPS Icon"
-                                        className="rack-item cursor-pointer max-w-[120px] transition-transform duration-150 hover:scale-110"
+                                        className={`rack-item cursor-pointer max-w-[120px] transition-transform duration-150 hover:scale-110 ${opacityClass(ups.ID)}`}
                                     />
 
                                     <UpsHoverOverlay ups={ups} t={t} />
@@ -251,7 +258,7 @@ function DetailedRoom() {
                                             ref={setEquipmentRef(pdu.ID)}
                                             src={pduIcon}
                                             alt="PDU"
-                                            className="rack-item cursor-pointer transition-transform duration-150 hover:scale-110"
+                                            className={`rack-item cursor-pointer transition-transform duration-150 hover:scale-110 ${opacityClass(pdu.ID)}`}
                                         />
 
                                         <PduHoverOverlay pdu={pdu} t={t} />
@@ -271,7 +278,7 @@ function DetailedRoom() {
                                         src={serverIcon}
                                         alt="Server Icon"
                                         onClick={() => handleRackClick(rack.ID)}
-                                        className="rack-item cursor-pointer transition-transform duration-150 hover:scale-110"
+                                        className={`rack-item cursor-pointer transition-transform duration-150 hover:scale-110 ${opacityClass(rack.ID)}`}
                                     />
 
                                     <RackHoverOverlay rack={rack} t={t} />

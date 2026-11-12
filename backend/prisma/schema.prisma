@@ -54,12 +54,11 @@ model Questions {
 }
 
 model Rack {
-  ID        Int      @id(map: "PK__Rack__3214EC2711A61F92") @default(autoincrement())
-  RoomID    Int?
+  ID        Int       @id(map: "PK_Rack")
   UnitsSize Int?
-  HeightCm  Decimal? @db.Decimal(5, 2)
+  HeightCm  Decimal?  @db.Decimal(5, 2)
   Device    Device[]
-  Room      Room?    @relation(fields: [RoomID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_Rack_Room")
+  Equipment Equipment @relation(fields: [ID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_Rack_Equipment")
 }
 
 model Room {
@@ -68,7 +67,6 @@ model Room {
   Capacity  Int?
   HeightCm  Decimal?    @db.Decimal(8, 2)
   Equipment Equipment[]
-  Rack      Rack[]
 }
 
 model Service {
@@ -132,6 +130,7 @@ model Equipment {
   CablesTo   Connection[] @relation("CableTo")
   Room       Room         @relation(fields: [RoomID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_Equipment_Room")
   PDU        PDU?
+  Rack       Rack?
   UPS        UPS?
 
   @@index([RoomID], map: "IX_Equipment_RoomID")
@@ -140,5 +139,5 @@ model Equipment {
 model PDU {
   ID          Int       @id(map: "PK_PDU")
   OutletCount Int?
-  Equipment Equipment @relation(fields: [ID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_PDU_Equipment")
+  Equipment   Equipment @relation(fields: [ID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_PDU_Equipment")
 }
