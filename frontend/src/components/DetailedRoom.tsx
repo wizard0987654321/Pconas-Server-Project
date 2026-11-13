@@ -74,10 +74,10 @@ function DetailedRoom() {
             .then(setConnectionsData)
             .catch((err) => console.error("Connections API error", err));
 
-    // Get current room
+    // Get current room object with parameters
     const currentRoom = roomsData.find(room => room.ID === roomId);
 
-    // Equipment and cables belonging to current room
+    // Equipment and cables belonging to current room, filtering with current room id
     // (memoized, so the line calculation below only re-runs when data really changes)
     const roomRacks = useMemo(() => racksData.filter(rack => rack.RoomID === roomId), [racksData, roomId]);
     const roomUps = useMemo(() => upsData.filter(ups => ups.RoomID === roomId), [upsData, roomId]);
@@ -85,6 +85,7 @@ function DetailedRoom() {
     const roomConnections = useMemo(() => connectionsData.filter(connection => connection.RoomID === roomId), [connectionsData, roomId]);
 
     // Equipment IDs that have at least one cable (as From or To), others are shown half transparent
+    // flatMap for saving all values as one single array and Set for deleting duplicates
     const connectedIds = useMemo(
         () => new Set(roomConnections.flatMap(c => [c.FromEquipmentID, c.ToEquipmentID])),
         [roomConnections]

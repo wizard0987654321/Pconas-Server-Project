@@ -1,6 +1,6 @@
 import React from "react";
 
-interface ConnectionLineProps {
+type ConnectionLineProps = {
   x1: number;
   y1: number;
   x2: number;
