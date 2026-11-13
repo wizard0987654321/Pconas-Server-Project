@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { apiFetch } from "../../../services/api";
 
 type FieldConfig = {
     name: string;
@@ -22,8 +23,6 @@ type EditOverlayProps = {
     transformData?: (data: Record<string, string>) => any;
     validate?: (data: Record<string, string>) => string | null;
 };
-
-const API_URL = import.meta.env.VITE_API_URL;
 
 function EditOverlay({
     title,
@@ -71,7 +70,8 @@ function EditOverlay({
         const data = transformData(formData);
 
         try {
-            const response = await fetch(`${API_URL}${endpoint}`, {
+            // apiFetch sends the login cookie along
+            const response = await apiFetch(endpoint, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",

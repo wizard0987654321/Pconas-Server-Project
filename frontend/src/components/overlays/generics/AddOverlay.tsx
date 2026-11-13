@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { apiFetch } from "../../../services/api";
 
 type FieldConfig = {
     name: string;
@@ -23,8 +24,6 @@ type AddOverlayProps = {
     initialData?: Record<string, string>;
     onFieldChange?: (name: string, value: string) => void;
 };
-
-const API_URL = import.meta.env.VITE_API_URL;
 
 //general overlay that display received data, alongside input fields
 function AddOverlay({
@@ -79,7 +78,8 @@ function AddOverlay({
 
         //post request, corresponding to the endpoint received
         try {
-            const response = await fetch(`${API_URL}${endpoint}`, {
+            // apiFetch sends the login cookie along
+            const response = await apiFetch(endpoint, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

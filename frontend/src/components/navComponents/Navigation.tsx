@@ -10,7 +10,14 @@ import LoginScreen from "../auth/LoginScreen";
 //import and using both, mobile and desktop sidebars responsively
 function Navigation() {
     const [isOpen, setIsOpen] = useState(false);
-    const { user } = useAuth();
+    const { user, isCheckingSession } = useAuth();
+
+    // Still waiting for the server to say whether we are logged in (GET /me)
+    if (isCheckingSession) {
+        return (
+            <div className="min-h-screen bg-gradient-to-b from-[#F8FAFC] to-[#DBDDDF] dark:from-gray-900 dark:to-gray-950" />
+        );
+    }
 
     if (!user) {
         return (

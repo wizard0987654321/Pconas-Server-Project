@@ -1,14 +1,24 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 import { connectDB, prisma } from "./db";
+import { login, logout, me, requireAuth, requireRole } from "./auth";
 
 dotenv.config();
 
 const app = express();
 
-app.use(cors());
+// Cookies are only sent cross-origin (5173 -> 5000) when CORS names the exact
+// frontend origin and allows credentials, "*" is not allowed together with cookies
+app.use(
+  cors({
+    origin: process.env.FRONTEND_ORIGIN || "http://localhost:5173",
+    credentials: true,
+  })
+);
 app.use(express.json());
+app.use(cookieParser());
 
 // Prisma validates argument types strictly at runtime (unlike the old raw
 // SQL, which just interpolated values as literal text and let SQL Server
@@ -30,9 +40,32 @@ const toBoolean = (value: unknown): boolean | undefined => {
   return Boolean(value);
 };
 
+// public routes (no login needed)
+
+app.get("/", (req, res) => {
+  res.json({
+    message: "API is working giorA",
+  });
+});
+
+app.get("/testUrl", (req, res) => {
+  res.json({
+    message: "Testi Mushavobs da gvixarian",
+  });
+});
+
+app.post("/login", login);
+app.post("/logout", logout);
+
+// Everything registered BELOW this line requires a valid login cookie.
+// Express runs middleware in the order it is registered, so the position matters.
+app.use(requireAuth);
+
+app.get("/me", me);
+
 // backend communication with database
 
-app.get("/rooms", async (req: Request, res: Response) => {
+app.get("/rooms",async (req: Request, res: Response) => {
   const rooms = await prisma.room.findMany({ orderBy: { ID: "asc" } });
 
   // RoomNumber was ROW_NUMBER() OVER (ORDER BY ID) in the raw SQL — computed here instead.
@@ -228,10 +261,8 @@ app.get("/customers", async (req: Request, res: Response) => {
   res.json(customers);
 });
 
-app.get("/users", async (req: Request, res: Response) => {
-  const users = await prisma.users.findMany();
-  res.json(users);
-});
+// GET /users was removed: it sent every user including passwords to the browser.
+// Login is checked on the server now (POST /login in auth.ts).
 
 app.get("/questions", async (req: Request, res: Response) => {
   const questions = await prisma.questions.findMany();
@@ -241,18 +272,6 @@ app.get("/questions", async (req: Request, res: Response) => {
 app.get("/answers", async (req: Request, res: Response) => {
   const answers = await prisma.answers.findMany();
   res.json(answers);
-});
-
-app.get("/", (req, res) => {
-  res.json({
-    message: "API is working giorA",
-  });
-});
-
-app.get("/testUrl", (req, res) => {
-  res.json({
-    message: "Testi Mushavobs da gvixarian",
-  });
 });
 
 // post operations
@@ -574,7 +593,8 @@ app.delete("/deleteVm/:id", async (req: Request, res: Response) => {
 
 // put paths
 
-app.put("/activateQuestions", async (req: Request, res: Response) => {
+// Only trainers may activate questions, enforced here, not only by hiding the button
+app.put("/activateQuestions", requireRole("trainer"), async (req: Request, res: Response) => {
   const { ids } = req.body;
 
   try {
