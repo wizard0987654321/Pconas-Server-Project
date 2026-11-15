@@ -14,6 +14,7 @@ import { useRooms } from "../helpers/hooks/roomOperations";
 import { useAuth } from "../contexts/AuthProvider";
 import { useEquipmentRefs, useConnectionLines, type LineInput } from "../helpers/hooks/connectionLines";
 import { usePowerFlow } from "../helpers/hooks/usePowerFlow";
+import { usePolling, keepIfUnchanged } from "../helpers/hooks/usePolling";
 import { isPowerCable } from "../helpers/powerFlow";
 
 //icons
@@ -37,6 +38,9 @@ import PowerLegend from "./simulation/PowerLegend";
 import DamagedMark from "./simulation/DamagedMark";
 import TrainerPanel, { type TrainerTarget } from "./simulation/TrainerPanel";
 import { POWER_STATE_ICON_CLASS, DAMAGED_COLOR } from "./simulation/powerStyles";
+
+// How often faults and cables are reloaded (live sync between trainer and trainee)
+const POLL_INTERVAL_MS = 3000;
 
 function DetailedRoom() {
 
@@ -62,7 +66,7 @@ function DetailedRoom() {
     // For showing Cable Rearrange Overlay
     const [showCableOverlay, setShowCableOverlay] = useState(false);
 
-    // Fetch racks, UPS, PDUs, power sources and connections
+    // Fetch racks, UPS, PDUs and power sources once (they don't change during training)
     useEffect(() => {
         getRackData()
             .then(setRacksData)
@@ -79,22 +83,26 @@ function DetailedRoom() {
         getPowerSourceData()
             .then(setPowerSourceData)
             .catch((err) => console.error("Power source API error", err));
-
-        reloadFaults();
-        reloadConnections();
     }, []);
 
     // Also called by the trainer panel after damaging / repairing
     const reloadFaults = () =>
         getFaultsData()
-            .then(setFaultsData)
+            .then(faults => setFaultsData(keepIfUnchanged(faults)))
             .catch((err) => console.error("Faults API error", err));
 
     // Also called by the cable overlay after saving new cables
     const reloadConnections = () =>
         getConnectionsData()
-            .then(setConnectionsData)
+            .then(connections => setConnectionsData(keepIfUnchanged(connections)))
             .catch((err) => console.error("Connections API error", err));
+
+    // Live sync: faults and cables change during training (trainer damages, trainee rewires),
+    // so they are reloaded every few seconds
+    usePolling(() => {
+        reloadFaults();
+        reloadConnections();
+    }, POLL_INTERVAL_MS);
 
     // Get current room object with parameters
     const currentRoom = roomsData.find(room => room.ID === roomId);
