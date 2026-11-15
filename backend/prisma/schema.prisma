@@ -109,6 +109,7 @@ model Connection {
   FromEquipment   Equipment      @relation("CableFrom", fields: [FromEquipmentID], references: [ID], onUpdate: NoAction, map: "FK_Connection_FromEquipment")
   ToEquipment     Equipment      @relation("CableTo", fields: [ToEquipmentID], references: [ID], onUpdate: NoAction, map: "FK_Connection_ToEquipment")
   ConnectionType  ConnectionType @relation(fields: [TypeID], references: [ID], onUpdate: NoAction, map: "FK_Connection_Type")
+  Fault           Fault[]
 
   @@unique([FromEquipmentID, ToEquipmentID, TypeID], map: "UQ_Connection")
   @@index([ToEquipmentID], map: "IX_Connection_ToEquipmentID")
@@ -132,8 +133,26 @@ model Equipment {
   PDU        PDU?
   Rack       Rack?
   UPS        UPS?
+  Fault      Fault[]
 
   @@index([RoomID], map: "IX_Equipment_RoomID")
+}
+
+// Fault caused by the trainer (sql/005_fault.sql). The damaged row itself is never changed.
+// - exactly one of EquipmentID / ConnectionID is set (CK_Fault_Target)
+// - FaultType: 'damaged' for now (CK_Fault_Type)
+// - active = ResolvedAt is null, max one active fault per target + type
+//   (filtered unique indexes UQ_Fault_ActiveEquipment / UQ_Fault_ActiveConnection, Prisma can't express them)
+// - times are UTC
+model Fault {
+  ID           Int         @id(map: "PK_Fault") @default(autoincrement())
+  EquipmentID  Int?
+  ConnectionID Int?
+  FaultType    String      @db.NVarChar(30)
+  StartedAt    DateTime    @default(dbgenerated("sysutcdatetime()"), map: "DF_Fault_StartedAt") @db.DateTime2
+  ResolvedAt   DateTime?   @db.DateTime2
+  Equipment    Equipment?  @relation(fields: [EquipmentID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_Fault_Equipment")
+  Connection   Connection? @relation(fields: [ConnectionID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_Fault_Connection")
 }
 
 model PDU {

@@ -48,7 +48,13 @@ function ActivateQuestionOverlay({ onClose }: Props) {
     const handleActivate = async () => {
         const ids = selectedQuestions.map((q) => q.ID);
 
-        await activateQuestions(ids);
+        try {
+            await activateQuestions(ids);
+        } catch (error) {
+            // e.g. 403 if not logged in as trainer, overlay stays open
+            console.error("Failed to activate questions", error);
+            return;
+        }
 
         onClose();
 

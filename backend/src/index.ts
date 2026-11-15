@@ -12,6 +12,7 @@ import connectionsRouter from "./routes/connections";
 import devicesRouter from "./routes/devices";
 import servicesRouter from "./routes/services";
 import quizRouter from "./routes/quiz";
+import faultsRouter from "./routes/faults";
 
 dotenv.config();
 
@@ -60,6 +61,7 @@ app.use(connectionsRouter);
 app.use(devicesRouter);
 app.use(servicesRouter);
 app.use(quizRouter);
+app.use(faultsRouter);
 
 const PORT = process.env.PORT || 5000;
 

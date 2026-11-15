@@ -42,6 +42,21 @@ export type PowerSource = {
     RoomID: number;
 }
 
+// Kinds of faults the trainer can cause (grows step by step, same list as CK_Fault_Type in the DB)
+export type FaultType = "damaged";
+
+// Fault caused by the trainer, on exactly one piece of equipment OR one cable.
+// GET /faults only returns active ones (ResolvedAt null). Times are UTC ISO strings.
+export type Fault = {
+    ID: number;
+    RoomID: number;
+    EquipmentID: number | null;
+    ConnectionID: number | null;
+    FaultType: FaultType;
+    StartedAt: string;
+    ResolvedAt: string | null;
+}
+
 // Cable between two pieces of equipment, IDs are Equipment IDs
 export type Connection = {
     ID: number;
