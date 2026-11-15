@@ -252,14 +252,15 @@ function DetailedRoom() {
                 />
             )}
 
-            {/* Heading and cable setup change button*/}
-            <div className="flex min-h-screen w-full flex-col p-10">
+            {/* Screens below 768px (breakpoint "m"): only this message is shown */}
+            <div className="hidden max-m:flex min-h-screen items-center justify-center p-6 text-center">
+                <h1 className="text-2xl font-bold">
+                    {t("pages.rooms.detailedView.smallScreen")}
+                </h1>
+            </div>
 
-                <div className="hidden max-m:flex min-h-screen items-center justify-center p-6 text-center">
-                    <h1 className="text-2xl font-bold">
-                        {t("pages.rooms.detailedView.smallScreen")}
-                    </h1>
-                </div>
+            {/* Everything else, hidden below 768px, Heading and cable setup change button */}
+            <div className="flex min-h-screen w-full flex-col p-10 max-m:hidden">
 
                 <PageHeading heading={`${t("pages.rooms.cardHeading")} ${id}`} />
 
