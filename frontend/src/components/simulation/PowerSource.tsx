@@ -12,18 +12,22 @@ interface PowerSourceProps {
     faultType?: FaultType;
     // Registers the icon for the cable line calculation (setEquipmentRef(powerSource.ID))
     iconRef: (el: HTMLElement | null) => void;
+    // Extra classes for the icon (e.g. selection ring) and click handler (trainer selection)
+    iconClassName?: string;
+    onClick?: () => void;
     t: (key: string) => string;
 }
 
 // Fixed outer power source (utility grid) of the room, drawn above the room border
-function PowerSource({ state, faultType, iconRef, t }: PowerSourceProps) {
+function PowerSource({ state, faultType, iconRef, iconClassName = "", onClick, t }: PowerSourceProps) {
     return (
         <div className="pointer-events-auto relative group flex justify-center">
             <img
                 ref={iconRef}
                 src={powerIcon}
                 alt={t("pages.rooms.detailedView.power.grid")}
-                className={`w-20 transition-transform duration-150 hover:scale-110 ${POWER_STATE_ICON_CLASS[state]}`}
+                onClick={onClick}
+                className={`w-20 transition-transform duration-150 hover:scale-110 ${POWER_STATE_ICON_CLASS[state]} ${iconClassName}`}
             />
 
             {faultType === "damaged" && <DamagedMark />}

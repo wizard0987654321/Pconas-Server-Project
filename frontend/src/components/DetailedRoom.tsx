@@ -11,6 +11,7 @@ import type { Rack, Ups, Pdu, Connection, Fault, PowerSource as PowerSourceData 
 //Helper functions
 import { getRackData, getUpsData, getPduData, getPowerSourceData, getConnectionsData, getFaultsData } from "../services/api";
 import { useRooms } from "../helpers/hooks/roomOperations";
+import { useAuth } from "../contexts/AuthProvider";
 import { useEquipmentRefs, useConnectionLines, type LineInput } from "../helpers/hooks/connectionLines";
 import { usePowerFlow } from "../helpers/hooks/usePowerFlow";
 import { isPowerCable } from "../helpers/powerFlow";
@@ -34,6 +35,7 @@ import CableChangeOverlay from "./CableChangeOverlay";
 import PowerSource from "./simulation/PowerSource";
 import PowerLegend from "./simulation/PowerLegend";
 import DamagedMark from "./simulation/DamagedMark";
+import TrainerPanel, { type TrainerTarget } from "./simulation/TrainerPanel";
 import { POWER_STATE_ICON_CLASS, DAMAGED_COLOR } from "./simulation/powerStyles";
 
 function DetailedRoom() {
@@ -44,6 +46,7 @@ function DetailedRoom() {
     const roomId = Number(id);
 
     const { roomsData } = useRooms();
+    const { isTrainer } = useAuth();
 
     // For Service calls
     const [racksData, setRacksData] = useState<Rack[]>([]);
@@ -77,12 +80,15 @@ function DetailedRoom() {
             .then(setPowerSourceData)
             .catch((err) => console.error("Power source API error", err));
 
+        reloadFaults();
+        reloadConnections();
+    }, []);
+
+    // Also called by the trainer panel after damaging / repairing
+    const reloadFaults = () =>
         getFaultsData()
             .then(setFaultsData)
             .catch((err) => console.error("Faults API error", err));
-
-        reloadConnections();
-    }, []);
 
     // Also called by the cable overlay after saving new cables
     const reloadConnections = () =>
@@ -181,6 +187,39 @@ function DetailedRoom() {
     const hoveredLine = lines.find(line => line.key === hoveredLineKey);
     const hoveredConnection = roomConnections.find(connection => String(connection.ID) === hoveredLineKey);
 
+    // Trainer selection: while select mode is on, a click selects the equipment / cable
+    // (instead of its normal action, e.g. opening the rack)
+    const [selectMode, setSelectMode] = useState(false);
+    const [selectedTarget, setSelectedTarget] = useState<TrainerTarget | null>(null);
+
+    const handleSelectModeChange = (on: boolean) => {
+        setSelectMode(on);
+        setSelectedTarget(null);
+    };
+
+    const equipmentLabel = (equipmentId: number) => equipmentLabels.get(equipmentId) ?? t("common.unknown");
+
+    const selectCable = (connectionId: number) => {
+        const connection = roomConnections.find(c => c.ID === connectionId);
+        if (!connection) return;
+        setSelectedTarget({
+            kind: "cable",
+            id: connectionId,
+            label: `${equipmentLabel(connection.FromEquipmentID)} → ${equipmentLabel(connection.ToEquipmentID)}`,
+        });
+    };
+
+    // Click on an equipment icon: select it in select mode, otherwise its normal action (if any)
+    const handleEquipmentClick = (equipmentId: number, normalAction?: () => void) => () => {
+        if (selectMode) setSelectedTarget({ kind: "equipment", id: equipmentId, label: equipmentLabel(equipmentId) });
+        else normalAction?.();
+    };
+
+    const isSelected = (kind: TrainerTarget["kind"], targetId: number) =>
+        selectMode && selectedTarget?.kind === kind && selectedTarget.id === targetId;
+
+    const selectionClass = (equipmentId: number) => isSelected("equipment", equipmentId) ? "rounded-lg ring-4 ring-[#DC2626]" : "";
+
 
     return (
         <>
@@ -223,6 +262,20 @@ function DetailedRoom() {
                     {t("pages.rooms.detailedView.cables.openButton")}
                 </button>
 
+                {isTrainer && (
+                    <div className="mt-4">
+                        <TrainerPanel
+                            roomId={roomId}
+                            roomFaults={roomFaults}
+                            selectMode={selectMode}
+                            onSelectModeChange={handleSelectModeChange}
+                            selected={selectedTarget}
+                            onChanged={reloadFaults}
+                            t={t}
+                        />
+                    </div>
+                )}
+
 
                 <div className="my-15 flex w-full flex-col gap-6">
 
@@ -248,9 +301,10 @@ function DetailedRoom() {
                                     strokeWidth={3}
                                     dashed={line.dashed}
                                     damaged={line.damaged}
-                                    hovered={line.key === hoveredLineKey}
+                                    hovered={line.key === hoveredLineKey || isSelected("cable", Number(line.key))}
                                     onMouseEnter={() => setHoveredLineKey(line.key)}
                                     onMouseLeave={() => setHoveredLineKey(null)}
+                                    onClick={selectMode ? () => selectCable(Number(line.key)) : undefined}
                                 />
                             ))}
                         </svg>
@@ -279,6 +333,8 @@ function DetailedRoom() {
                                     state={powerStateOf(roomPowerSource.ID)}
                                     faultType={faultOfEquipment(roomPowerSource.ID)}
                                     iconRef={setEquipmentRef(roomPowerSource.ID)}
+                                    iconClassName={selectionClass(roomPowerSource.ID)}
+                                    onClick={handleEquipmentClick(roomPowerSource.ID)}
                                     t={t}
                                 />
                             </div>
@@ -295,7 +351,8 @@ function DetailedRoom() {
                                             ref={setEquipmentRef(ups.ID)}
                                             src={upsIcon}
                                             alt="UPS Icon"
-                                            className={`rack-item cursor-pointer max-w-[120px] transition-transform duration-150 hover:scale-110 ${powerClass(ups.ID)}`}
+                                            onClick={handleEquipmentClick(ups.ID)}
+                                            className={`rack-item cursor-pointer max-w-[120px] transition-transform duration-150 hover:scale-110 ${powerClass(ups.ID)} ${selectionClass(ups.ID)}`}
                                         />
 
                                         {isDamaged(ups.ID) && <DamagedMark />}
@@ -314,7 +371,8 @@ function DetailedRoom() {
                                                 ref={setEquipmentRef(pdu.ID)}
                                                 src={pduIcon}
                                                 alt="PDU"
-                                                className={`rack-item cursor-pointer transition-transform duration-150 hover:scale-110 ${powerClass(pdu.ID)}`}
+                                                onClick={handleEquipmentClick(pdu.ID)}
+                                                className={`rack-item cursor-pointer transition-transform duration-150 hover:scale-110 ${powerClass(pdu.ID)} ${selectionClass(pdu.ID)}`}
                                             />
 
                                             {isDamaged(pdu.ID) && <DamagedMark />}
@@ -335,8 +393,8 @@ function DetailedRoom() {
                                             ref={setEquipmentRef(rack.ID)}
                                             src={serverIcon}
                                             alt="Server Icon"
-                                            onClick={() => handleRackClick(rack.ID)}
-                                            className={`rack-item cursor-pointer transition-transform duration-150 hover:scale-110 ${powerClass(rack.ID)}`}
+                                            onClick={handleEquipmentClick(rack.ID, () => handleRackClick(rack.ID))}
+                                            className={`rack-item cursor-pointer transition-transform duration-150 hover:scale-110 ${powerClass(rack.ID)} ${selectionClass(rack.ID)}`}
                                         />
 
                                         {isDamaged(rack.ID) && <DamagedMark />}

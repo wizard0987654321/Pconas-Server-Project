@@ -101,6 +101,16 @@
           "cableDead": "No power",
           "deadCable": "Cable without power"
         },
+        "trainer": {
+          "title": "Trainer panel",
+          "selectModeOn": "Select equipment / cable",
+          "selectModeOff": "Stop selecting",
+          "hint": "Click a piece of equipment or a cable.",
+          "selected": "Selected",
+          "damage": "Damage",
+          "repair": "Repair",
+          "resetAll": "Repair everything"
+        },
         "faults": {
           "label": "Fault",
           "types": {

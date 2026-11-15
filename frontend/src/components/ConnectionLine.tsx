@@ -13,6 +13,7 @@ type ConnectionLineProps = {
   hovered?: boolean;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
+  onClick?: () => void;
 }
 
 const ConnectionLine: React.FC<ConnectionLineProps> = ({
@@ -27,6 +28,7 @@ const ConnectionLine: React.FC<ConnectionLineProps> = ({
   hovered = false,
   onMouseEnter,
   onMouseLeave,
+  onClick,
 }) => {
   const hoverable = !!(onMouseEnter || onMouseLeave);
 
@@ -74,6 +76,7 @@ const ConnectionLine: React.FC<ConnectionLineProps> = ({
           style={{ pointerEvents: "stroke" }}
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
+          onClick={onClick}
         />
       )}
     </g>

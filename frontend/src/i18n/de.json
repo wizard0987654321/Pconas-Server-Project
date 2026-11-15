@@ -102,6 +102,16 @@
           "cableDead": "Kein Strom",
           "deadCable": "Kabel ohne Strom"
         },
+        "trainer": {
+          "title": "Trainer-Bereich",
+          "selectModeOn": "Gerät / Kabel auswählen",
+          "selectModeOff": "Auswahl beenden",
+          "hint": "Klicke auf ein Gerät oder ein Kabel.",
+          "selected": "Ausgewählt",
+          "damage": "Beschädigen",
+          "repair": "Reparieren",
+          "resetAll": "Alles reparieren"
+        },
         "faults": {
           "label": "Störung",
           "types": {
