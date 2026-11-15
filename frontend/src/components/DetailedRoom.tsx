@@ -6,10 +6,10 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useMemo, useRef } from "react";
 
 //types
-import type { Rack, Ups, Pdu, Connection, PowerSource as PowerSourceData } from "../types";
+import type { Rack, Ups, Pdu, Connection, Fault, PowerSource as PowerSourceData } from "../types";
 
 //Helper functions
-import { getRackData, getUpsData, getPduData, getPowerSourceData, getConnectionsData } from "../services/api";
+import { getRackData, getUpsData, getPduData, getPowerSourceData, getConnectionsData, getFaultsData } from "../services/api";
 import { useRooms } from "../helpers/hooks/roomOperations";
 import { useEquipmentRefs, useConnectionLines, type LineInput } from "../helpers/hooks/connectionLines";
 import { usePowerFlow } from "../helpers/hooks/usePowerFlow";
@@ -33,7 +33,8 @@ import ConnectionLine from "./ConnectionLine";
 import CableChangeOverlay from "./CableChangeOverlay";
 import PowerSource from "./simulation/PowerSource";
 import PowerLegend from "./simulation/PowerLegend";
-import { POWER_STATE_ICON_CLASS } from "./simulation/powerStyles";
+import DamagedMark from "./simulation/DamagedMark";
+import { POWER_STATE_ICON_CLASS, DAMAGED_COLOR } from "./simulation/powerStyles";
 
 function DetailedRoom() {
 
@@ -50,6 +51,7 @@ function DetailedRoom() {
     const [pduData, setPduData] = useState<Pdu[]>([]);
     const [powerSourceData, setPowerSourceData] = useState<PowerSourceData[]>([]);
     const [connectionsData, setConnectionsData] = useState<Connection[]>([]);
+    const [faultsData, setFaultsData] = useState<Fault[]>([]);
 
     // For adding new rack, without explicitly choosing room ID
     const [selectedRoomId, setSelectedRoomId] = useState<number | null>(null);
@@ -75,6 +77,10 @@ function DetailedRoom() {
             .then(setPowerSourceData)
             .catch((err) => console.error("Power source API error", err));
 
+        getFaultsData()
+            .then(setFaultsData)
+            .catch((err) => console.error("Faults API error", err));
+
         reloadConnections();
     }, []);
 
@@ -94,15 +100,18 @@ function DetailedRoom() {
     const roomPdus = useMemo(() => pduData.filter(pdu => pdu.RoomID === roomId), [pduData, roomId]);
     const roomConnections = useMemo(() => connectionsData.filter(connection => connection.RoomID === roomId), [connectionsData, roomId]);
     const roomPowerSource = useMemo(() => powerSourceData.find(source => source.RoomID === roomId) ?? null, [powerSourceData, roomId]);
+    const roomFaults = useMemo(() => faultsData.filter(fault => fault.RoomID === roomId), [faultsData, roomId]);
 
-    // Which equipment has power and which cables are dead
-    const { deadCableIds, powerStateOf } = usePowerFlow({
+    // Which equipment has power, which cables are dead, and what is damaged
+    const { deadCableIds, powerStateOf, faultOfEquipment, faultOfCable } = usePowerFlow({
         powerSource: roomPowerSource,
         ups: roomUps,
         pdus: roomPdus,
         racks: roomRacks,
         connections: roomConnections,
+        faults: roomFaults,
     });
+    const isDamaged = (equipmentId: number) => faultOfEquipment(equipmentId) === "damaged";
     const powerClass = (equipmentId: number) => POWER_STATE_ICON_CLASS[powerStateOf(equipmentId)];
 
     // Navigate to rack details
@@ -136,16 +145,21 @@ function DetailedRoom() {
     // Parent of the power source and the room, the svg with the lines covers this whole div
     const linesContainerRef = useRef<HTMLDivElement | null>(null);
 
-    // Power cables without power are drawn dashed
+    // Power cables without power are drawn dashed, damaged cables red + dashed with an X
     const lineInputs = useMemo<LineInput[]>(
-        () => roomConnections.map(connection => ({
-            key: String(connection.ID),
-            fromId: connection.FromEquipmentID,
-            toId: connection.ToEquipmentID,
-            color: connection.Color,
-            dashed: deadCableIds.has(connection.ID),
-        })),
-        [roomConnections, deadCableIds]
+        () => roomConnections.map(connection => {
+            const damaged = faultOfCable(connection.ID) === "damaged";
+
+            return {
+                key: String(connection.ID),
+                fromId: connection.FromEquipmentID,
+                toId: connection.ToEquipmentID,
+                color: damaged ? DAMAGED_COLOR : connection.Color,
+                dashed: damaged || deadCableIds.has(connection.ID),
+                damaged,
+            };
+        }),
+        [roomConnections, deadCableIds, faultOfCable]
     );
 
     // Line coordinates calculated from the real positions of the icons
@@ -233,6 +247,7 @@ function DetailedRoom() {
                                     color={line.color}
                                     strokeWidth={3}
                                     dashed={line.dashed}
+                                    damaged={line.damaged}
                                     hovered={line.key === hoveredLineKey}
                                     onMouseEnter={() => setHoveredLineKey(line.key)}
                                     onMouseLeave={() => setHoveredLineKey(null)}
@@ -245,6 +260,7 @@ function DetailedRoom() {
                             <ConnectionHoverOverlay
                                 connection={hoveredConnection}
                                 dead={isPowerCable(hoveredConnection) ? deadCableIds.has(hoveredConnection.ID) : undefined}
+                                faultType={faultOfCable(hoveredConnection.ID)}
                                 fromLabel={equipmentLabels.get(hoveredConnection.FromEquipmentID) ?? t("common.unknown")}
                                 toLabel={equipmentLabels.get(hoveredConnection.ToEquipmentID) ?? t("common.unknown")}
                                 language={i18n.language}
@@ -261,6 +277,7 @@ function DetailedRoom() {
                             <div className="pointer-events-none mb-12 flex justify-center">
                                 <PowerSource
                                     state={powerStateOf(roomPowerSource.ID)}
+                                    faultType={faultOfEquipment(roomPowerSource.ID)}
                                     iconRef={setEquipmentRef(roomPowerSource.ID)}
                                     t={t}
                                 />
@@ -281,7 +298,9 @@ function DetailedRoom() {
                                             className={`rack-item cursor-pointer max-w-[120px] transition-transform duration-150 hover:scale-110 ${powerClass(ups.ID)}`}
                                         />
 
-                                        <UpsHoverOverlay ups={ups} powerState={powerStateOf(ups.ID)} t={t} />
+                                        {isDamaged(ups.ID) && <DamagedMark />}
+
+                                        <UpsHoverOverlay ups={ups} powerState={powerStateOf(ups.ID)} faultType={faultOfEquipment(ups.ID)} t={t} />
                                     </div>
                                 ))}
                             </div>
@@ -298,7 +317,9 @@ function DetailedRoom() {
                                                 className={`rack-item cursor-pointer transition-transform duration-150 hover:scale-110 ${powerClass(pdu.ID)}`}
                                             />
 
-                                            <PduHoverOverlay pdu={pdu} powerState={powerStateOf(pdu.ID)} t={t} />
+                                            {isDamaged(pdu.ID) && <DamagedMark />}
+
+                                            <PduHoverOverlay pdu={pdu} powerState={powerStateOf(pdu.ID)} faultType={faultOfEquipment(pdu.ID)} t={t} />
                                         </div>
                                     ))}
                                 </div>
@@ -318,7 +339,9 @@ function DetailedRoom() {
                                             className={`rack-item cursor-pointer transition-transform duration-150 hover:scale-110 ${powerClass(rack.ID)}`}
                                         />
 
-                                        <RackHoverOverlay rack={rack} powerState={powerStateOf(rack.ID)} t={t} />
+                                        {isDamaged(rack.ID) && <DamagedMark />}
+
+                                        <RackHoverOverlay rack={rack} powerState={powerStateOf(rack.ID)} faultType={faultOfEquipment(rack.ID)} t={t} />
                                     </div>
                                 ))}
 

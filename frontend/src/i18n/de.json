@@ -101,6 +101,12 @@
           "cableLive": "Unter Spannung",
           "cableDead": "Kein Strom",
           "deadCable": "Kabel ohne Strom"
+        },
+        "faults": {
+          "label": "Störung",
+          "types": {
+            "damaged": "Beschädigt"
+          }
         }
       },
       "activateQuestions": "Fragen aktivieren",

@@ -1,10 +1,12 @@
 
-import type { Connection } from "../types";
+import type { Connection, FaultType } from "../types";
+import FaultText from "./simulation/FaultText";
 
 interface ConnectionHoverOverlayProps {
     connection: Connection;
     // Only set for power cables: true = nothing flows through it
     dead?: boolean;
+    faultType?: FaultType;
     fromLabel: string;
     toLabel: string;
     language: string;
@@ -16,7 +18,7 @@ interface ConnectionHoverOverlayProps {
 
 // Same look as Rack/UPS hover overlays, but positioned manually at the middle of the line,
 // because svg lines can't use the tailwind "group-hover" trick
-function ConnectionHoverOverlay({ connection, dead, fromLabel, toLabel, language, x, y, t }: ConnectionHoverOverlayProps) {
+function ConnectionHoverOverlay({ connection, dead, faultType, fromLabel, toLabel, language, x, y, t }: ConnectionHoverOverlayProps) {
     const typeName = language.startsWith("de") ? connection.TypeNameDE : connection.TypeNameEN;
 
     return (
@@ -66,6 +68,8 @@ function ConnectionHoverOverlay({ connection, dead, fromLabel, toLabel, language
                     </span>
                 </p>
             )}
+
+            {faultType && <FaultText faultType={faultType} t={t} />}
 
         </div>
     );

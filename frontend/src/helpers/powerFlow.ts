@@ -8,6 +8,7 @@ import type { Connection, EquipmentType } from "../types";
 // - A UPS that gets no power from the grid still feeds its cables from its battery.
 //   Battery runtime is unlimited for now (time simulation comes in a later step).
 // - Only "Power" cables carry electricity, network cables are ignored here.
+// - Damaged equipment and damaged cables don't pass power on (damaged equipment is itself unpowered).
 
 export type PowerState = "powered" | "battery" | "unpowered";
 
@@ -30,10 +31,16 @@ export type PowerNode = {
     type: EquipmentType;
 };
 
+// IDs of damaged equipment and damaged cables
+export type Damage = {
+    equipmentIds: Set<number>;
+    cableIds: Set<number>;
+};
+
 export type PowerFlow = {
     // State of every equipment piece, keyed by Equipment ID
     states: Map<number, PowerState>;
-    // Power cables whose source has no power (drawn dashed)
+    // Power cables that carry no power: damaged, or their source has no power (drawn dashed)
     deadCableIds: Set<number>;
 };
 
@@ -41,12 +48,16 @@ export function isPowerCable(connection: Connection) {
     return connection.TypeNameEN === POWER_CONNECTION_TYPE;
 }
 
-export function computePowerFlow(nodes: PowerNode[], connections: Connection[]): PowerFlow {
+export function computePowerFlow(
+    nodes: PowerNode[],
+    connections: Connection[],
+    damage: Damage = { equipmentIds: new Set(), cableIds: new Set() }
+): PowerFlow {
     const powerCables = connections.filter(isPowerCable);
 
-    // Equipment ID -> IDs of the equipment it feeds
+    // Equipment ID -> IDs of the equipment it feeds (damaged cables feed nothing)
     const feeds = new Map<number, number[]>();
-    powerCables.forEach(cable => {
+    powerCables.filter(cable => !damage.cableIds.has(cable.ID)).forEach(cable => {
         const targets = feeds.get(cable.FromEquipmentID) ?? [];
         targets.push(cable.ToEquipmentID);
         feeds.set(cable.FromEquipmentID, targets);
@@ -60,11 +71,14 @@ export function computePowerFlow(nodes: PowerNode[], connections: Connection[]):
     // - grid power (first pass) is never overwritten by battery power (second pass)
     // - cable loops can't cause an endless loop
     // - cables to equipment that is not in `nodes` are ignored
+    // Damaged equipment never gets power, so it also never passes power on.
+    const canReceivePower = (id: number) => states.get(id) === "unpowered" && !damage.equipmentIds.has(id);
+
     const spreadPower = (sourceIds: number[], state: PowerState) => {
         const queue: number[] = [];
 
         sourceIds.forEach(id => {
-            if (states.get(id) !== "unpowered") return;
+            if (!canReceivePower(id)) return;
             states.set(id, state);
             queue.push(id);
         });
@@ -73,7 +87,7 @@ export function computePowerFlow(nodes: PowerNode[], connections: Connection[]):
             const current = queue.shift()!;
 
             (feeds.get(current) ?? []).forEach(next => {
-                if (states.get(next) !== "unpowered") return;
+                if (!canReceivePower(next)) return;
                 states.set(next, state);
                 queue.push(next);
             });
@@ -88,10 +102,13 @@ export function computePowerFlow(nodes: PowerNode[], connections: Connection[]):
     // 2. UPS units that the grid didn't reach run on battery
     spreadPower(idsOfType("ups"), "battery");
 
-    // A power cable is dead when nothing flows into it
+    // A power cable is dead when it is damaged or nothing flows into it
     const deadCableIds = new Set(
         powerCables
-            .filter(cable => (states.get(cable.FromEquipmentID) ?? "unpowered") === "unpowered")
+            .filter(cable =>
+                damage.cableIds.has(cable.ID) ||
+                (states.get(cable.FromEquipmentID) ?? "unpowered") === "unpowered"
+            )
             .map(cable => cable.ID)
     );
 

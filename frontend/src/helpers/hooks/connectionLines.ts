@@ -9,6 +9,7 @@ export type LineInput = {
     toId: number;
     color: string;
     dashed?: boolean;
+    damaged?: boolean;
 };
 
 // Same cable with calculated coordinates, relative to the lines container
@@ -20,6 +21,7 @@ export type LineCoordinates = {
     y2: number;
     color: string;
     dashed?: boolean;
+    damaged?: boolean;
 };
 
 // Refs of every equipment icon, keyed by Equipment ID.
@@ -75,6 +77,7 @@ export function useConnectionLines(
                     y2: (fromIsAbove ? to.top : to.bottom) - box.top,
                     color: connection.color,
                     dashed: connection.dashed,
+                    damaged: connection.damaged,
                 });
             });
 

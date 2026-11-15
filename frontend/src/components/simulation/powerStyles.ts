@@ -27,4 +27,7 @@ export const POWER_STATE_DOT_CLASS: Record<(typeof LEGEND_STATES)[number], strin
     unpowered: "bg-gray-400",
 };
 
+// Color of damaged cables and of the red X on damaged equipment
+export const DAMAGED_COLOR = "#DC2626";
+
 export const powerStateKey = (state: PowerState) => `pages.rooms.detailedView.power.states.${state}`;

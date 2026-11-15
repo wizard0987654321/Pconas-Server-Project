@@ -100,6 +100,12 @@
           "cableLive": "Live",
           "cableDead": "No power",
           "deadCable": "Cable without power"
+        },
+        "faults": {
+          "label": "Fault",
+          "types": {
+            "damaged": "Damaged"
+          }
         }
       },
       "activateQuestions": "activate questions",
