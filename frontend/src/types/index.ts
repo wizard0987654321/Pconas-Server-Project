@@ -33,14 +33,23 @@ export type Pdu = {
     RoomNumber: number;
 }
 
-// Cable between two pieces of equipment (rack / ups / pdu), IDs are Equipment IDs
+// Every row of the Equipment table is one of these ('grid' = fixed outer power source of a room)
+export type EquipmentType = "grid" | "ups" | "pdu" | "rack";
+
+// Fixed outer power source (utility grid), exactly one per room
+export type PowerSource = {
+    ID: number;
+    RoomID: number;
+}
+
+// Cable between two pieces of equipment, IDs are Equipment IDs
 export type Connection = {
     ID: number;
     RoomID: number;
     FromEquipmentID: number;
-    FromType: "rack" | "ups" | "pdu";
+    FromType: EquipmentType;
     ToEquipmentID: number;
-    ToType: "rack" | "ups" | "pdu";
+    ToType: EquipmentType;
     TypeID: number;
     TypeNameEN: string;
     TypeNameDE: string;

@@ -3,6 +3,8 @@ import type { Connection } from "../types";
 
 interface ConnectionHoverOverlayProps {
     connection: Connection;
+    // Only set for power cables: true = nothing flows through it
+    dead?: boolean;
     fromLabel: string;
     toLabel: string;
     language: string;
@@ -14,7 +16,7 @@ interface ConnectionHoverOverlayProps {
 
 // Same look as Rack/UPS hover overlays, but positioned manually at the middle of the line,
 // because svg lines can't use the tailwind "group-hover" trick
-function ConnectionHoverOverlay({ connection, fromLabel, toLabel, language, x, y, t }: ConnectionHoverOverlayProps) {
+function ConnectionHoverOverlay({ connection, dead, fromLabel, toLabel, language, x, y, t }: ConnectionHoverOverlayProps) {
     const typeName = language.startsWith("de") ? connection.TypeNameDE : connection.TypeNameEN;
 
     return (
@@ -53,6 +55,17 @@ function ConnectionHoverOverlay({ connection, fromLabel, toLabel, language, x, y
                     style={{ backgroundColor: connection.Color }}
                 />
             </p>
+
+            {dead !== undefined && (
+                <p>
+                    <span className="font-semibold">
+                        {t("pages.rooms.detailedView.power.status")}:
+                    </span>{" "}
+                    <span className={`font-semibold ${dead ? "text-[#DC2626] dark:text-[#F87171]" : "text-[#16A34A] dark:text-[#6ADBAF]"}`}>
+                        {t(dead ? "pages.rooms.detailedView.power.cableDead" : "pages.rooms.detailedView.power.cableLive")}
+                    </span>
+                </p>
+            )}
 
         </div>
     );

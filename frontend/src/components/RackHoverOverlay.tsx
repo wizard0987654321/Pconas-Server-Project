@@ -1,12 +1,15 @@
 
 import type { Rack } from "../types";
+import type { PowerState } from "../helpers/powerFlow";
+import PowerStatusText from "./simulation/PowerStatusText";
 
 interface RackHoverOverlayProps {
     rack: Rack;
+    powerState?: PowerState;
     t: (key: string) => string;
 }
 
-function RackHoverOverlay({ rack, t }: RackHoverOverlayProps) {
+function RackHoverOverlay({ rack, powerState, t }: RackHoverOverlayProps) {
     return (
         <div className="font-mono absolute left-1/2 top-full z-10 mt-2 hidden w-40 -translate-x-1/2 rounded-md border-3 border-[#6ADBAF] bg-[#F8FAFC] p-2 text-xs text-[#111827] shadow-lg group-hover:block dark:bg-[#0E1F48] dark:text-[#F9FAFB]">
             <p>
@@ -29,6 +32,8 @@ function RackHoverOverlay({ rack, t }: RackHoverOverlayProps) {
                 </span>{" "}
                 {rack.HeightCm} cm
             </p>
+
+            {powerState && <PowerStatusText state={powerState} t={t} />}
         </div>
     );
 }

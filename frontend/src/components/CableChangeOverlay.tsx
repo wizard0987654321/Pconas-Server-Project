@@ -3,21 +3,21 @@ import { useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 //types
-import type { Rack, Ups, Pdu, Connection } from "../types";
+import type { Rack, Ups, Pdu, Connection, EquipmentType, PowerSource } from "../types";
 
 //helpers
 import { addConnections } from "../services/api";
 import { useEquipmentRefs, useConnectionLines, type LineInput } from "../helpers/hooks/connectionLines";
+import { POWER_LEVEL, isAllowedCable } from "../helpers/powerFlow";
 
 //icons
 import serverIcon from "../assets/ServerIcon.svg";
 import upsIcon from "../assets/upsIcon.svg";
 import pduIcon from "../assets/PDU.svg";
+import powerIcon from "../assets/powerIcon.svg";
 
 //components
 import ConnectionLine from "./ConnectionLine";
-
-type EquipmentType = "ups" | "pdu" | "rack";
 
 // Selected equipment: its Equipment ID and type
 type SelectedEquipment = {
@@ -31,13 +31,11 @@ type NewConnection = {
     toId: number;
 };
 
-// Power flows UPS -> PDU -> Rack, so the "higher" equipment is always the From side
-const POWER_LEVEL: Record<EquipmentType, number> = { ups: 0, pdu: 1, rack: 2 };
-
 type CableChangeOverlayProps = {
     onClose: () => void;
     onSaved: () => void;
     heading: string;
+    roomPowerSource: PowerSource | null;
     roomRacks: Rack[];
     roomUps: Ups[];
     roomPdus: Pdu[];
@@ -48,6 +46,7 @@ function CableChangeOverlay({
     onClose,
     onSaved,
     heading,
+    roomPowerSource,
     roomRacks,
     roomUps,
     roomPdus,
@@ -77,7 +76,15 @@ function CableChangeOverlay({
             return;
         }
 
-        // different type -> new cable, From is always the higher one (UPS -> PDU -> Rack)
+        // forbidden pair (grid <-> rack) -> no cable, explain why
+        if (!isAllowedCable(selected.type, type)) {
+            setError(t("pages.rooms.detailedView.cables.gridToRackNotAllowed"));
+            setSelected(null);
+            return;
+        }
+        setError(null);
+
+        // different type -> new cable, From is always the higher one (Grid -> UPS -> PDU -> Rack)
         const [fromId, toId] = POWER_LEVEL[selected.type] < POWER_LEVEL[type]
             ? [selected.id, id]
             : [id, selected.id];
@@ -129,7 +136,7 @@ function CableChangeOverlay({
         })),
     ], [roomConnections, newConnections]);
 
-    const lines = useConnectionLines(linesContainerRef, equipmentRefs, lineInputs, [roomRacks, roomUps, roomPdus]);
+    const lines = useConnectionLines(linesContainerRef, equipmentRefs, lineInputs, [roomPowerSource, roomRacks, roomUps, roomPdus]);
 
 
     // Clickable equipment icon, selected one gets a green ring around
@@ -171,6 +178,13 @@ function CableChangeOverlay({
                                 />
                             ))}
                         </svg>
+
+                        {/* Fixed outer power source */}
+                        {roomPowerSource && (
+                            <div className="flex justify-center">
+                                {renderEquipment(roomPowerSource.ID, "grid", powerIcon, "w-20")}
+                            </div>
+                        )}
 
                         {/* UPS */}
                         <div className="flex flex-wrap justify-center gap-4">

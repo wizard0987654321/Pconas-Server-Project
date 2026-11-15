@@ -153,7 +153,23 @@ app.get("/pdus", async (req: Request, res: Response) => {
   res.json(result);
 });
 
-// Cables between two pieces of Equipment (rack / ups / pdu), flattened for the frontend.
+// Fixed outer power source (utility grid) of every room: one Equipment row with Type 'grid' per room.
+// Has no child table, only the ID is needed so cables can start from it.
+app.get("/powerSources", async (req: Request, res: Response) => {
+  try {
+    const powerSources = await prisma.equipment.findMany({
+      where: { Type: "grid" },
+      select: { ID: true, RoomID: true },
+      orderBy: { ID: "asc" },
+    });
+    res.json(powerSources);
+  } catch (error) {
+    console.error("Get power sources error:", error);
+    res.status(500).json({ error: "Failed to get power sources" });
+  }
+});
+
+// Cables between two pieces of Equipment (grid / rack / ups / pdu), flattened for the frontend.
 // RoomID is taken from the "from" side, both ends are expected to be in the same room.
 app.get("/connections", async (req: Request, res: Response) => {
   try {
@@ -280,11 +296,13 @@ app.post("/addRoom", async (req: Request, res: Response) => {
   const { newRoom } = req.body;
 
   try {
+    // Every room gets its fixed outer power source (grid) in the same insert (atomic)
     await prisma.room.create({
       data: {
         Area: toNumber(newRoom.area),
         Capacity: toNumber(newRoom.capacity),
         HeightCm: toNumber(newRoom.heightcm),
+        Equipment: { create: { Type: "grid" } },
       },
     });
     res.json({ message: "new Room added" });
@@ -465,6 +483,16 @@ app.post("/addConnections", async (req: Request, res: Response) => {
       // Also covers connecting something to itself
       if (from.Type === to.Type) {
         res.status(400).json({ error: "A cable must connect two different equipment types" });
+        return;
+      }
+      // Power only flows out of the grid, never into it
+      if (to.Type === "grid") {
+        res.status(400).json({ error: "The power source can only be the start of a cable" });
+        return;
+      }
+      // Same rule as isAllowedCable in the frontend (helpers/powerFlow.ts)
+      if (from.Type === "grid" && to.Type === "rack") {
+        res.status(400).json({ error: "The power grid can't feed a rack directly, use a UPS or PDU in between" });
         return;
       }
     }

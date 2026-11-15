@@ -136,6 +136,16 @@ export async function getPduData() {
     return response.json();
 }
 
+export async function getPowerSourceData() {
+    const response = await apiFetch(`/powerSources`);
+
+    if (!response.ok) {
+        throw new Error("Failed Database getPowerSourceData Query");
+    }
+
+    return response.json();
+}
+
 export async function getConnectionsData() {
     const response = await apiFetch(`/connections`);
 
