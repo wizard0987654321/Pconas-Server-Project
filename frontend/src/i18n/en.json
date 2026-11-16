@@ -84,6 +84,13 @@
         "name": "name",
         "height (cm)": "height (cm)"
       },"detailedView": {
+        "roomData": {
+          "power": "Power usage",
+          "cooling": "AC cooling load",
+          "acOff": "AC off (no power)",
+          "temperature": "Temperature",
+          "humidity": "Humidity"
+        },
         "smallScreen": "Please enlarge your browser window or open this page on a larger screen. The minimum required screen width is 768 px.",
         "cables": {
           "openButton": "Change cables",

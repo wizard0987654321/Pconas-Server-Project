@@ -3,18 +3,20 @@
 //react imports
 import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useMemo, useRef } from "react";
 
 //types
-import type { Rack, Ups, Pdu, Connection, Fault, Fan, PowerSource as PowerSourceData } from "../types";
+import type { PowerSource as PowerSourceData } from "../types";
 
 //Helper functions
-import { getRackData, getUpsData, getPduData, getPowerSourceData, getFanData, getConnectionsData, getFaultsData } from "../services/api";
+import { computeRoomClimate, itLoadOfRacks } from "../helpers/roomClimate";
 import { useRooms } from "../helpers/hooks/roomOperations";
 import { useAuth } from "../contexts/AuthProvider";
 import { useEquipmentRefs, useConnectionLines, type LineInput } from "../helpers/hooks/connectionLines";
 import { usePowerFlow } from "../helpers/hooks/usePowerFlow";
-import { usePolling, keepIfUnchanged } from "../helpers/hooks/usePolling";
+import { useRoomData } from "../helpers/hooks/useRoomData";
+import { useEquipmentLabels } from "../helpers/hooks/useEquipmentLabels";
+import { useTrainerSelection } from "../helpers/hooks/useTrainerSelection";
 import { isPowerCable } from "../helpers/powerFlow";
 
 //icons
@@ -38,12 +40,9 @@ import CableChangeOverlay from "./CableChangeOverlay";
 import PowerSource from "./simulation/PowerSource";
 import PowerLegend from "./simulation/PowerLegend";
 import DamagedMark from "./simulation/DamagedMark";
-import TrainerPanel, { type TrainerTarget } from "./simulation/TrainerPanel";
+import TrainerPanel from "./simulation/TrainerPanel";
 import GeneratorInfoOverlay from "./simulation/GeneratorInfoOverlay";
 import { POWER_STATE_ICON_CLASS, DAMAGED_COLOR } from "./simulation/powerStyles";
-
-// How often faults and cables are reloaded (live sync between trainer and trainee)
-const POLL_INTERVAL_MS = 3000;
 
 function DetailedRoom() {
 
@@ -55,14 +54,11 @@ function DetailedRoom() {
     const { roomsData } = useRooms();
     const { isTrainer } = useAuth();
 
-    // For Service calls
-    const [racksData, setRacksData] = useState<Rack[]>([]);
-    const [upsData, setUpsData] = useState<Ups[]>([]);
-    const [pduData, setPduData] = useState<Pdu[]>([]);
-    const [powerSourceData, setPowerSourceData] = useState<PowerSourceData[]>([]);
-    const [connectionsData, setConnectionsData] = useState<Connection[]>([]);
-    const [faultsData, setFaultsData] = useState<Fault[]>([]);
-    const [fansData, setFansData] = useState<Fan[]>([]);
+    // All equipment, cables and faults of this room (faults, cables, generators and fans are polled)
+    const {
+        roomRacks, roomUps, roomPdus, roomConnections, roomPowerSources, roomGrid, roomGenerators,
+        roomFaults, outsideEquipment, devices, reloadPowerSources, reloadFaults, reloadConnections,
+    } = useRoomData(roomId);
 
     // For adding new rack, without explicitly choosing room ID
     const [selectedRoomId, setSelectedRoomId] = useState<number | null>(null);
@@ -76,72 +72,8 @@ function DetailedRoom() {
     // Equipment ID of the clicked generator, its info overlay is open while set
     const [infoGeneratorId, setInfoGeneratorId] = useState<number | null>(null);
 
-    // Fetch racks, UPS and PDUs once (they don't change during training)
-    useEffect(() => {
-        getRackData()
-            .then(setRacksData)
-            .catch((err) => console.error("Rack API error", err));
-
-        getUpsData()
-            .then(setUpsData)
-            .catch((err) => console.error("UPS API error", err));
-
-        getPduData()
-            .then(setPduData)
-            .catch((err) => console.error("PDU API error", err));
-    }, []);
-
-    // Grid + generators, also called after adding a generator
-    const reloadPowerSources = () =>
-        getPowerSourceData()
-            .then(sources => setPowerSourceData(keepIfUnchanged(sources)))
-            .catch((err) => console.error("Power source API error", err));
-
-    const reloadFans = () =>
-        getFanData()
-            .then(fans => setFansData(keepIfUnchanged(fans)))
-            .catch((err) => console.error("Fan API error", err));
-
-    // Also called by the trainer panel after damaging / repairing
-    const reloadFaults = () =>
-        getFaultsData()
-            .then(faults => setFaultsData(keepIfUnchanged(faults)))
-            .catch((err) => console.error("Faults API error", err));
-
-    // Also called by the cable overlay after saving new cables
-    const reloadConnections = () =>
-        getConnectionsData()
-            .then(connections => setConnectionsData(keepIfUnchanged(connections)))
-            .catch((err) => console.error("Connections API error", err));
-
-    // Live sync: faults, cables, generators and fans change during training
-    // (trainer damages, trainee rewires / adds generators and fans), so they are reloaded every few seconds
-    usePolling(() => {
-        reloadFaults();
-        reloadConnections();
-        reloadPowerSources();
-        reloadFans();
-    }, POLL_INTERVAL_MS);
-
     // Get current room object with parameters
     const currentRoom = roomsData.find(room => room.ID === roomId);
-
-    // Equipment and cables belonging to current room, filtering with current room id
-    // (memoized, so the line and power calculations below only re-run when data really changes)
-    const roomRacks = useMemo(() => racksData.filter(rack => rack.RoomID === roomId), [racksData, roomId]);
-    const roomUps = useMemo(() => upsData.filter(ups => ups.RoomID === roomId), [upsData, roomId]);
-    const roomPdus = useMemo(() => pduData.filter(pdu => pdu.RoomID === roomId), [pduData, roomId]);
-    const roomConnections = useMemo(() => connectionsData.filter(connection => connection.RoomID === roomId), [connectionsData, roomId]);
-    const roomPowerSources = useMemo(() => powerSourceData.filter(source => source.RoomID === roomId), [powerSourceData, roomId]);
-    const roomGrid = roomPowerSources.find(source => source.Type === "grid") ?? null;
-    const roomGenerators = useMemo(() => roomPowerSources.filter(source => source.Type === "generator"), [roomPowerSources]);
-    const roomFaults = useMemo(() => faultsData.filter(fault => fault.RoomID === roomId), [faultsData, roomId]);
-
-    // What stands in the two places left / right of the grid: generators and fans, oldest first
-    const outsideEquipment = useMemo(() => [
-        ...roomGenerators,
-        ...fansData.filter(fan => fan.RoomID === roomId).map(fan => ({ ...fan, Type: "fan" as const })),
-    ].sort((a, b) => a.ID - b.ID), [roomGenerators, fansData, roomId]);
 
     // Which equipment has power, which cables are dead, and what is damaged
     const { deadCableIds, powerStateOf, faultOfEquipment, faultOfCable } = usePowerFlow({
@@ -157,6 +89,16 @@ function DetailedRoom() {
 
     // A generator can only be added while the grid is damaged (the backend checks this too)
     const gridDown = roomGrid !== null && isDamaged(roomGrid.ID);
+
+    // The AC runs on the grid, or on a working generator while the grid is down
+    const acPowered = !gridDown || roomGenerators.some(generator => !isDamaged(generator.ID));
+
+    // Power usage, cooling, temperature, humidity. Recalculated whenever rack power changes, e.g. after new cables
+    const roomClimate = computeRoomClimate(
+        itLoadOfRacks(roomRacks, devices, rackId => powerStateOf(rackId) !== "unpowered"),
+        currentRoom?.Capacity ?? 0,
+        acPowered
+    );
 
     // Navigate to rack details
     const handleRackClick = (rackId: number) => {
@@ -212,52 +154,21 @@ function DetailedRoom() {
     // Currently hovered cable (line key = connection ID)
     const [hoveredLineKey, setHoveredLineKey] = useState<string | null>(null);
 
-    // Equipment ID -> readable name ("Power grid", "Generator 1", "Rack 3", "UPS 1", "PDU 2"), used in the cable hover div
-    const equipmentLabels = useMemo(() => {
-        const labels = new Map<number, string>();
-        if (roomGrid) labels.set(roomGrid.ID, t("pages.rooms.detailedView.power.grid"));
-        roomGenerators.forEach((generator, index) => labels.set(generator.ID, `${t("pages.rooms.detailedView.power.generator")} ${index + 1}`));
-        roomRacks.forEach(rack => labels.set(rack.ID, `${t("common.rack")} ${rack.RackNumber}`));
-        roomUps.forEach(ups => labels.set(ups.ID, `${t("common.ups")} ${ups.UPSNumber}`));
-        roomPdus.forEach(pdu => labels.set(pdu.ID, `${t("common.pdu")} ${pdu.PDUNumber}`));
-        return labels;
-    }, [roomGrid, roomGenerators, roomRacks, roomUps, roomPdus, t]);
-
     const hoveredLine = lines.find(line => line.key === hoveredLineKey);
     const hoveredConnection = roomConnections.find(connection => String(connection.ID) === hoveredLineKey);
 
-    // Trainer selection: while select mode is on, a click selects the equipment / cable
-    // (instead of its normal action, e.g. opening the rack)
-    const [selectMode, setSelectMode] = useState(false);
-    const [selectedTarget, setSelectedTarget] = useState<TrainerTarget | null>(null);
+    // Equipment ID -> readable name ("Power grid", "Generator 1", "Rack 3", ...)
+    const equipmentLabel = useEquipmentLabels({
+        grid: roomGrid,
+        generators: roomGenerators,
+        racks: roomRacks,
+        ups: roomUps,
+        pdus: roomPdus,
+    });
 
-    const handleSelectModeChange = (on: boolean) => {
-        setSelectMode(on);
-        setSelectedTarget(null);
-    };
-
-    const equipmentLabel = (equipmentId: number) => equipmentLabels.get(equipmentId) ?? t("common.unknown");
-
-    const selectCable = (connectionId: number) => {
-        const connection = roomConnections.find(c => c.ID === connectionId);
-        if (!connection) return;
-        setSelectedTarget({
-            kind: "cable",
-            id: connectionId,
-            label: `${equipmentLabel(connection.FromEquipmentID)} → ${equipmentLabel(connection.ToEquipmentID)}`,
-        });
-    };
-
-    // Click on an equipment icon: select it in select mode, otherwise its normal action (if any)
-    const handleEquipmentClick = (equipmentId: number, normalAction?: () => void) => () => {
-        if (selectMode) setSelectedTarget({ kind: "equipment", id: equipmentId, label: equipmentLabel(equipmentId) });
-        else normalAction?.();
-    };
-
-    const isSelected = (kind: TrainerTarget["kind"], targetId: number) =>
-        selectMode && selectedTarget?.kind === kind && selectedTarget.id === targetId;
-
-    const selectionClass = (equipmentId: number) => isSelected("equipment", equipmentId) ? "rounded-lg ring-4 ring-[#DC2626]" : "";
+    // Trainer select mode: clicks select equipment / cables instead of their normal action
+    const { selectMode, selectedTarget, handleSelectModeChange, selectCable, handleEquipmentClick, isSelected, selectionClass } =
+        useTrainerSelection(equipmentLabel, roomConnections);
 
     // Grid or generator icon with its hover info
     const renderPowerSource = (source: PowerSourceData) => (
@@ -382,7 +293,7 @@ function DetailedRoom() {
                 <div className="my-15 flex w-full flex-col gap-6">
 
                     {/* Room Data - Temperature, Humidity, etc. */}
-                    <DisplayedRoomData />
+                    <DisplayedRoomData climate={roomClimate} />
 
                     <PowerLegend t={t} />
 
@@ -417,8 +328,8 @@ function DetailedRoom() {
                                 connection={hoveredConnection}
                                 dead={isPowerCable(hoveredConnection) ? deadCableIds.has(hoveredConnection.ID) : undefined}
                                 faultType={faultOfCable(hoveredConnection.ID)}
-                                fromLabel={equipmentLabels.get(hoveredConnection.FromEquipmentID) ?? t("common.unknown")}
-                                toLabel={equipmentLabels.get(hoveredConnection.ToEquipmentID) ?? t("common.unknown")}
+                                fromLabel={equipmentLabel(hoveredConnection.FromEquipmentID)}
+                                toLabel={equipmentLabel(hoveredConnection.ToEquipmentID)}
                                 language={i18n.language}
                                 x={(hoveredLine.x1 + hoveredLine.x2) / 2}
                                 y={(hoveredLine.y1 + hoveredLine.y2) / 2}

@@ -85,6 +85,13 @@
         "height (cm)": "Höhe (cm)"
       },
       "detailedView": {
+        "roomData": {
+          "power": "Stromverbrauch",
+          "cooling": "Auslastung Klimaanlage",
+          "acOff": "Klimaanlage aus (kein Strom)",
+          "temperature": "Temperatur",
+          "humidity": "Luftfeuchtigkeit"
+        },
         "smallScreen": "Bitte vergrößern Sie das Browserfenster oder öffnen Sie diese Seite auf einem größeren Bildschirm. Die Mindestbreite beträgt 768 px.",
         "cables": {
           "openButton": "Kabel ändern",
