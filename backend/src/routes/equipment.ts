@@ -141,29 +141,31 @@ router.post("/addOutsideEquipment", async (req: Request, res: Response) => {
   }
 });
 
-// Removes one generator (trainer or trainee). Cables first (Connection FKs are NO ACTION),
-// then the Equipment row, its faults are removed by the cascade.
-router.delete("/deleteGenerator/:id", async (req: Request, res: Response) => {
-  const generatorId = Number(req.params.id);
+// Removes one generator or fan from the outside slots (trainer or trainee). Cables first
+// (Connection FKs are NO ACTION, fans have none), then the Equipment row, its faults are removed by the cascade.
+router.delete("/deleteOutsideEquipment/:id", async (req: Request, res: Response) => {
+  const equipmentId = Number(req.params.id);
 
   try {
-    const generator = await prisma.equipment.findFirst({ where: { ID: generatorId, Type: "generator" } });
+    const equipment = await prisma.equipment.findFirst({
+      where: { ID: equipmentId, Type: { in: ["generator", "fan"] } },
+    });
 
-    if (!generator) {
-      res.status(404).json({ error: "Generator not found" });
+    if (!equipment) {
+      res.status(404).json({ error: "Generator or fan not found" });
       return;
     }
 
     await prisma.$transaction([
       prisma.connection.deleteMany({
-        where: { OR: [{ FromEquipmentID: generatorId }, { ToEquipmentID: generatorId }] },
+        where: { OR: [{ FromEquipmentID: equipmentId }, { ToEquipmentID: equipmentId }] },
       }),
-      prisma.equipment.delete({ where: { ID: generatorId } }),
+      prisma.equipment.delete({ where: { ID: equipmentId } }),
     ]);
-    res.json({ message: "Generator deleted" });
+    res.json({ message: "Equipment deleted" });
   } catch (error) {
-    console.error("Delete generator error:", error);
-    res.status(500).json({ error: "Failed to delete generator" });
+    console.error("Delete outside equipment error:", error);
+    res.status(500).json({ error: "Failed to delete equipment" });
   }
 });
 

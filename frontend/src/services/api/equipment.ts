@@ -24,8 +24,9 @@ export function getFanData() {
 }
 
 // Removes a generator together with its cables
-export async function deleteGenerator(id: number) {
-    await sendJson("DELETE", `/deleteGenerator/${id}`, undefined, "Failed to delete generator");
+// Generator or fan from the outside slots
+export async function deleteOutsideEquipment(id: number) {
+    await sendJson("DELETE", `/deleteOutsideEquipment/${id}`, undefined, "Failed to delete equipment");
 }
 
 export async function deleteRack(id: number) {

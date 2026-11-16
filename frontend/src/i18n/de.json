@@ -104,6 +104,7 @@
           "fan": "Ventilator",
           "addOutsideEquipment": "Generator oder Lüfter hinzufügen",
           "generatorInfo": "Notstromquelle des Raums. Wenn das äußere Stromnetz ausfällt, kann der Generator übernehmen und den Raum mit Strom versorgen. Verbinde ihn mit einem Kabel mit einer UPS oder PDU, genau wie das Stromnetz. Er kann weder direkt mit einem Rack noch mit dem Stromnetz verbunden werden. Beim Löschen des Generators werden auch alle seine Kabel entfernt.",
+          "fanInfo": "Zusätzlicher Ventilator des Raums. Er hilft, die Luft zu bewegen, wenn die Kühlung ein Problem hat. Er braucht kein Kabel.",
           "status": "Strom",
           "states": {
             "powered": "Versorgt",

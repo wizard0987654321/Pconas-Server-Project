@@ -102,6 +102,7 @@ export function useRoomData(roomId: number) {
         // All devices (not filtered, they are matched to the room's racks by RackID)
         devices,
         reloadPowerSources,
+        reloadFans,
         reloadFaults,
         reloadConnections,
     };

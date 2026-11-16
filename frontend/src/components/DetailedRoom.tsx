@@ -41,7 +41,7 @@ import PowerSource from "./simulation/PowerSource";
 import PowerLegend from "./simulation/PowerLegend";
 import DamagedMark from "./simulation/DamagedMark";
 import TrainerPanel from "./simulation/TrainerPanel";
-import GeneratorInfoOverlay from "./simulation/GeneratorInfoOverlay";
+import OutsideEquipmentInfoOverlay from "./simulation/OutsideEquipmentInfoOverlay";
 import { POWER_STATE_ICON_CLASS, DAMAGED_COLOR } from "./simulation/powerStyles";
 
 function DetailedRoom() {
@@ -57,7 +57,7 @@ function DetailedRoom() {
     // All equipment, cables and faults of this room (faults, cables, generators and fans are polled)
     const {
         roomRacks, roomUps, roomPdus, roomConnections, roomPowerSources, roomGrid, roomGenerators,
-        roomFaults, outsideEquipment, devices, reloadPowerSources, reloadFaults, reloadConnections,
+        roomFaults, outsideEquipment, devices, reloadPowerSources, reloadFans, reloadFaults, reloadConnections,
     } = useRoomData(roomId);
 
     // For adding new rack, without explicitly choosing room ID
@@ -69,8 +69,8 @@ function DetailedRoom() {
     // For showing the add generator / fan overlay ("+" next to the grid)
     const [showOutsideOverlay, setShowOutsideOverlay] = useState(false);
 
-    // Equipment ID of the clicked generator, its info overlay is open while set
-    const [infoGeneratorId, setInfoGeneratorId] = useState<number | null>(null);
+    // Clicked generator / fan, its info overlay is open while set
+    const [infoItem, setInfoItem] = useState<{ id: number; type: "generator" | "fan" } | null>(null);
 
     // Get current room object with parameters
     const currentRoom = roomsData.find(room => room.ID === roomId);
@@ -181,7 +181,7 @@ function DetailedRoom() {
             iconClassName={selectionClass(source.ID)}
             onClick={handleEquipmentClick(
                 source.ID,
-                source.Type === "generator" ? () => setInfoGeneratorId(source.ID) : undefined
+                source.Type === "generator" ? () => setInfoItem({ id: source.ID, type: "generator" }) : undefined
             )}
             t={t}
         />
@@ -195,7 +195,12 @@ function DetailedRoom() {
         return (
             <div className="pointer-events-none flex w-20 justify-center">
                 {item?.Type === "fan" && (
-                    <img src={fanIcon} alt={t("pages.rooms.detailedView.power.fan")} className="h-20 w-auto" />
+                    <img
+                        src={fanIcon}
+                        alt={t("pages.rooms.detailedView.power.fan")}
+                        onClick={() => !selectMode && setInfoItem({ id: item.ID, type: "fan" })}
+                        className="pointer-events-auto h-20 w-auto cursor-pointer"
+                    />
                 )}
                 {item && item.Type !== "fan" && renderPowerSource(item)}
                 {!item && gridDown && (
@@ -229,13 +234,15 @@ function DetailedRoom() {
                 />
             )}
 
-            {infoGeneratorId !== null && (
-                <GeneratorInfoOverlay
-                    generatorId={infoGeneratorId}
-                    label={equipmentLabel(infoGeneratorId)}
-                    onClose={() => setInfoGeneratorId(null)}
+            {infoItem !== null && (
+                <OutsideEquipmentInfoOverlay
+                    equipmentId={infoItem.id}
+                    label={infoItem.type === "fan" ? t("pages.rooms.detailedView.power.fan") : equipmentLabel(infoItem.id)}
+                    info={t(`pages.rooms.detailedView.power.${infoItem.type}Info`)}
+                    onClose={() => setInfoItem(null)}
                     onDeleted={() => {
                         reloadPowerSources();
+                        reloadFans();
                         reloadConnections();
                     }}
                     t={t}

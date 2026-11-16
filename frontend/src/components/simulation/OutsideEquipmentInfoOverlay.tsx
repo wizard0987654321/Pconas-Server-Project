@@ -1,31 +1,33 @@
 import { useState } from "react";
 
-import { deleteGenerator } from "../../services/api";
+import { deleteOutsideEquipment } from "../../services/api";
 import DeletingOverlay from "../overlays/generics/DeletingOverlay";
 
-type GeneratorInfoOverlayProps = {
-    generatorId: number;
-    // Shown name, e.g. "Generator 1"
+type OutsideEquipmentInfoOverlayProps = {
+    equipmentId: number;
+    // Shown name, e.g. "Generator 1" or "Fan"
     label: string;
+    // Info text about the generator / fan
+    info: string;
     onClose: () => void;
-    // Called after the generator was deleted (reload data)
+    // Called after the equipment was deleted (reload data)
     onDeleted: () => void;
     t: (key: string) => string;
 };
 
-// Info about an emergency generator, with a delete button (trainer and trainee)
-function GeneratorInfoOverlay({ generatorId, label, onClose, onDeleted, t }: GeneratorInfoOverlayProps) {
+// Info about a generator or fan next to the grid, with a delete button (trainer and trainee)
+function OutsideEquipmentInfoOverlay({ equipmentId, label, info, onClose, onDeleted, t }: OutsideEquipmentInfoOverlayProps) {
     const [confirmDelete, setConfirmDelete] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const handleDelete = async () => {
         setConfirmDelete(false);
         try {
-            await deleteGenerator(generatorId);
+            await deleteOutsideEquipment(equipmentId);
             onDeleted();
             onClose();
         } catch (err) {
-            setError(err instanceof Error ? err.message : "Failed to delete generator");
+            setError(err instanceof Error ? err.message : "Failed to delete equipment");
         }
     };
 
@@ -40,7 +42,7 @@ function GeneratorInfoOverlay({ generatorId, label, onClose, onDeleted, t }: Gen
 
                 {error && <p className="mb-4 text-red-600">{error}</p>}
 
-                <p className="mb-6">{t("pages.rooms.detailedView.power.generatorInfo")}</p>
+                <p className="mb-6">{info}</p>
 
                 <div className="flex justify-end gap-3">
                     <button
@@ -63,4 +65,4 @@ function GeneratorInfoOverlay({ generatorId, label, onClose, onDeleted, t }: Gen
     );
 }
 
-export default GeneratorInfoOverlay;
+export default OutsideEquipmentInfoOverlay;
