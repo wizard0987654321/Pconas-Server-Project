@@ -89,38 +89,55 @@ router.get("/powerSources", async (req: Request, res: Response) => {
   }
 });
 
-// Emergency generator, only allowed while the room's grid is damaged. Max two per room (left and right of the grid).
-// Body: { roomId }
-router.post("/addGenerator", async (req: Request, res: Response) => {
-  const roomId = toNumber(req.body.roomId);
+// Fans of every room (stand left / right of the grid, no cables)
+router.get("/fans", async (req: Request, res: Response) => {
+  try {
+    const fans = await prisma.equipment.findMany({
+      where: { Type: "fan" },
+      select: { ID: true, RoomID: true },
+      orderBy: { ID: "asc" },
+    });
+    res.json(fans);
+  } catch (error) {
+    console.error("Get fans error:", error);
+    res.status(500).json({ error: "Failed to get fans" });
+  }
+});
 
-  if (!roomId) {
-    res.status(400).json({ error: "Room is missing" });
+// Generator or fan in one of the two places left / right of the grid (max two per room, both types together).
+// A generator is only allowed while the room's grid is damaged.
+// Body: { roomId, type: "generator" | "fan" }
+router.post("/addOutsideEquipment", async (req: Request, res: Response) => {
+  const roomId = toNumber(req.body.roomId);
+  const type = req.body.type;
+
+  if (!roomId || (type !== "generator" && type !== "fan")) {
+    res.status(400).json({ error: "Room or type is missing" });
     return;
   }
 
   try {
-    const [gridFault, generatorCount] = await Promise.all([
+    const [gridFault, usedPlaces] = await Promise.all([
       prisma.fault.findFirst({
         where: { ResolvedAt: null, FaultType: "damaged", Equipment: { RoomID: roomId, Type: "grid" } },
       }),
-      prisma.equipment.count({ where: { RoomID: roomId, Type: "generator" } }),
+      prisma.equipment.count({ where: { RoomID: roomId, Type: { in: ["generator", "fan"] } } }),
     ]);
 
-    if (!gridFault) {
+    if (type === "generator" && !gridFault) {
       res.status(409).json({ error: "A generator can only be added while the power grid is down" });
       return;
     }
-    if (generatorCount >= 2) {
-      res.status(409).json({ error: "Both generator places are already taken" });
+    if (usedPlaces >= 2) {
+      res.status(409).json({ error: "Both places are already taken" });
       return;
     }
 
-    await prisma.equipment.create({ data: { RoomID: roomId, Type: "generator" } });
-    res.json({ message: "Generator added" });
+    await prisma.equipment.create({ data: { RoomID: roomId, Type: type } });
+    res.json({ message: `${type} added` });
   } catch (error) {
-    console.error("Add generator error:", error);
-    res.status(500).json({ error: "Failed to add generator" });
+    console.error("Add outside equipment error:", error);
+    res.status(500).json({ error: "Failed to add equipment" });
   }
 });
 

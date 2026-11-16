@@ -6,10 +6,10 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useMemo, useRef } from "react";
 
 //types
-import type { Rack, Ups, Pdu, Connection, Fault, PowerSource as PowerSourceData } from "../types";
+import type { Rack, Ups, Pdu, Connection, Fault, Fan, PowerSource as PowerSourceData } from "../types";
 
 //Helper functions
-import { getRackData, getUpsData, getPduData, getPowerSourceData, getConnectionsData, getFaultsData } from "../services/api";
+import { getRackData, getUpsData, getPduData, getPowerSourceData, getFanData, getConnectionsData, getFaultsData } from "../services/api";
 import { useRooms } from "../helpers/hooks/roomOperations";
 import { useAuth } from "../contexts/AuthProvider";
 import { useEquipmentRefs, useConnectionLines, type LineInput } from "../helpers/hooks/connectionLines";
@@ -22,6 +22,7 @@ import serverIcon from "../assets/ServerIcon.svg";
 import upsIcon from "../assets/upsIcon.svg";
 import pduIcon from "../assets/PDU.svg";
 import buttonIcon from "../assets/AddButton.svg";
+import fanIcon from "../assets/fanIcon.svg";
 
 //components
 import PageHeading from "./PageHeading";
@@ -30,7 +31,7 @@ import UpsHoverOverlay from "./UpsHoverOverlay";
 import PduHoverOverlay from "./PduHoverOverlay";
 import ConnectionHoverOverlay from "./ConnectionHoverOverlay";
 import AddEquipmentOverlay from "./overlays/AddEquipmentOverlay";
-import AddGeneratorOverlay from "./overlays/AddGeneratorOverlay";
+import AddOutsideEquipmentOverlay from "./overlays/AddOutsideEquipmentOverlay";
 import DisplayedRoomData from "./DisplayedRoomData";
 import ConnectionLine from "./ConnectionLine";
 import CableChangeOverlay from "./CableChangeOverlay";
@@ -61,6 +62,7 @@ function DetailedRoom() {
     const [powerSourceData, setPowerSourceData] = useState<PowerSourceData[]>([]);
     const [connectionsData, setConnectionsData] = useState<Connection[]>([]);
     const [faultsData, setFaultsData] = useState<Fault[]>([]);
+    const [fansData, setFansData] = useState<Fan[]>([]);
 
     // For adding new rack, without explicitly choosing room ID
     const [selectedRoomId, setSelectedRoomId] = useState<number | null>(null);
@@ -68,8 +70,8 @@ function DetailedRoom() {
     // For showing Cable Rearrange Overlay
     const [showCableOverlay, setShowCableOverlay] = useState(false);
 
-    // For showing the add generator overlay ("+" next to the grid)
-    const [showGeneratorOverlay, setShowGeneratorOverlay] = useState(false);
+    // For showing the add generator / fan overlay ("+" next to the grid)
+    const [showOutsideOverlay, setShowOutsideOverlay] = useState(false);
 
     // Equipment ID of the clicked generator, its info overlay is open while set
     const [infoGeneratorId, setInfoGeneratorId] = useState<number | null>(null);
@@ -95,6 +97,11 @@ function DetailedRoom() {
             .then(sources => setPowerSourceData(keepIfUnchanged(sources)))
             .catch((err) => console.error("Power source API error", err));
 
+    const reloadFans = () =>
+        getFanData()
+            .then(fans => setFansData(keepIfUnchanged(fans)))
+            .catch((err) => console.error("Fan API error", err));
+
     // Also called by the trainer panel after damaging / repairing
     const reloadFaults = () =>
         getFaultsData()
@@ -107,12 +114,13 @@ function DetailedRoom() {
             .then(connections => setConnectionsData(keepIfUnchanged(connections)))
             .catch((err) => console.error("Connections API error", err));
 
-    // Live sync: faults, cables and generators change during training
-    // (trainer damages, trainee rewires / adds generators), so they are reloaded every few seconds
+    // Live sync: faults, cables, generators and fans change during training
+    // (trainer damages, trainee rewires / adds generators and fans), so they are reloaded every few seconds
     usePolling(() => {
         reloadFaults();
         reloadConnections();
         reloadPowerSources();
+        reloadFans();
     }, POLL_INTERVAL_MS);
 
     // Get current room object with parameters
@@ -128,6 +136,12 @@ function DetailedRoom() {
     const roomGrid = roomPowerSources.find(source => source.Type === "grid") ?? null;
     const roomGenerators = useMemo(() => roomPowerSources.filter(source => source.Type === "generator"), [roomPowerSources]);
     const roomFaults = useMemo(() => faultsData.filter(fault => fault.RoomID === roomId), [faultsData, roomId]);
+
+    // What stands in the two places left / right of the grid: generators and fans, oldest first
+    const outsideEquipment = useMemo(() => [
+        ...roomGenerators,
+        ...fansData.filter(fan => fan.RoomID === roomId).map(fan => ({ ...fan, Type: "fan" as const })),
+    ].sort((a, b) => a.ID - b.ID), [roomGenerators, fansData, roomId]);
 
     // Which equipment has power, which cables are dead, and what is damaged
     const { deadCableIds, powerStateOf, faultOfEquipment, faultOfCable } = usePowerFlow({
@@ -262,20 +276,23 @@ function DetailedRoom() {
         />
     );
 
-    // Generator place left (index 0) / right (index 1) of the grid:
-    // the generator, a "+" opening the add overlay (only while the grid is down), or empty
-    const renderGeneratorSlot = (index: number) => {
-        const generator = roomGenerators[index];
+    // Place left (index 0) / right (index 1) of the grid:
+    // a generator, a fan, a "+" opening the add overlay (only while the grid is down), or empty
+    const renderOutsideSlot = (index: number) => {
+        const item = outsideEquipment[index];
 
         return (
             <div className="pointer-events-none flex w-20 justify-center">
-                {generator && renderPowerSource(generator)}
-                {!generator && gridDown && (
+                {item?.Type === "fan" && (
+                    <img src={fanIcon} alt={t("pages.rooms.detailedView.power.fan")} className="h-20 w-auto" />
+                )}
+                {item && item.Type !== "fan" && renderPowerSource(item)}
+                {!item && gridDown && (
                     <img
                         src={buttonIcon}
-                        alt={t("pages.rooms.detailedView.power.addPowerSource")}
-                        title={t("pages.rooms.detailedView.power.addPowerSource")}
-                        onClick={() => setShowGeneratorOverlay(true)}
+                        alt={t("pages.rooms.detailedView.power.addOutsideEquipment")}
+                        title={t("pages.rooms.detailedView.power.addOutsideEquipment")}
+                        onClick={() => setShowOutsideOverlay(true)}
                         className="pointer-events-auto h-20 w-20 cursor-pointer transition-transform duration-150 hover:scale-110 active:scale-95"
                     />
                 )}
@@ -294,9 +311,9 @@ function DetailedRoom() {
                 />
             )}
 
-            {showGeneratorOverlay && (
-                <AddGeneratorOverlay
-                    onClose={() => setShowGeneratorOverlay(false)}
+            {showOutsideOverlay && (
+                <AddOutsideEquipmentOverlay
+                    onClose={() => setShowOutsideOverlay(false)}
                     roomId={roomId}
                 />
             )}
@@ -411,12 +428,12 @@ function DetailedRoom() {
 
                         {/* Rows don't catch the mouse (only their items do), so lines behind the empty row space stay hoverable */}
 
-                        {/* Power sources - above (outside) the room: generator place, fixed grid, generator place */}
+                        {/* Above (outside) the room: generator / fan place, fixed grid, generator / fan place */}
                         {roomGrid && (
                             <div className="pointer-events-none mb-12 flex items-center justify-center gap-16">
-                                {renderGeneratorSlot(0)}
+                                {renderOutsideSlot(0)}
                                 {renderPowerSource(roomGrid)}
-                                {renderGeneratorSlot(1)}
+                                {renderOutsideSlot(1)}
                             </div>
                         )}
 

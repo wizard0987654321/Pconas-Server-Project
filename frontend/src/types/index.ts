@@ -44,6 +44,12 @@ export type PowerSource = {
     Type: "grid" | "generator";
 }
 
+// Fan standing left / right of the grid (no cables, only displayed)
+export type Fan = {
+    ID: number;
+    RoomID: number;
+}
+
 // Kinds of faults the trainer can cause (grows step by step, same list as CK_Fault_Type in the DB)
 export type FaultType = "damaged";
 

@@ -92,7 +92,8 @@
         "power": {
           "grid": "Power grid",
           "generator": "Generator",
-          "addPowerSource": "Add power source",
+          "fan": "Fan",
+          "addOutsideEquipment": "Add generator or fan",
           "generatorInfo": "Emergency power source of the room. When the outer power grid is down, the generator can take over and power the room. Connect it with a cable to a UPS or PDU, just like the grid. It can't be connected to a rack directly or to the grid. Deleting the generator also removes all of its cables.",
           "status": "Power",
           "states": {

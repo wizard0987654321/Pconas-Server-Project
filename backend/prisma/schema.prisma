@@ -126,7 +126,7 @@ model ConnectionType {
 model Equipment {
   ID         Int          @id(map: "PK_Equipment") @default(autoincrement())
   RoomID     Int
-  Type       String       @db.NVarChar(10) // 'rack' | 'ups' | 'pdu' | 'grid' | 'generator' (CK_Equipment_Type). grid = fixed outer power source, max one per room (UQ_Equipment_OneGridPerRoom). generator = emergency power source, max two per room (checked in POST /addGenerator)
+  Type       String       @db.NVarChar(10) // 'rack' | 'ups' | 'pdu' | 'grid' | 'generator' | 'fan' (CK_Equipment_Type). grid = fixed outer power source, max one per room (UQ_Equipment_OneGridPerRoom). generator (emergency power source) and fan share the two places next to the grid, max two per room together (checked in POST /addOutsideEquipment)
   CablesFrom Connection[] @relation("CableFrom")
   CablesTo   Connection[] @relation("CableTo")
   Room       Room         @relation(fields: [RoomID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_Equipment_Room")

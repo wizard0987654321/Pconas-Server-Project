@@ -76,6 +76,11 @@ router.post("/addConnections", async (req: Request, res: Response) => {
         res.status(400).json({ error: "Both ends of a cable must be in the same room" });
         return;
       }
+      // Fans get no cables
+      if (from.Type === "fan" || to.Type === "fan") {
+        res.status(400).json({ error: "A fan can't be connected with a cable" });
+        return;
+      }
       // Also covers connecting something to itself
       if (from.Type === to.Type) {
         res.status(400).json({ error: "A cable must connect two different equipment types" });
