@@ -19,6 +19,11 @@ export function getPowerSourceData() {
     return getJson<PowerSource[]>(`/powerSources`, "Failed to get power sources");
 }
 
+// Removes a generator together with its cables
+export async function deleteGenerator(id: number) {
+    await sendJson("DELETE", `/deleteGenerator/${id}`, undefined, "Failed to delete generator");
+}
+
 export async function deleteRack(id: number) {
     await sendJson("DELETE", `/deleteRack/${id}`, undefined, "Failed to delete rack");
 }

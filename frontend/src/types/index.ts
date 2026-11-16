@@ -33,13 +33,15 @@ export type Pdu = {
     RoomNumber: number;
 }
 
-// Every row of the Equipment table is one of these ('grid' = fixed outer power source of a room)
-export type EquipmentType = "grid" | "ups" | "pdu" | "rack";
+// Every row of the Equipment table is one of these
+// ('grid' = fixed outer power source of a room, 'generator' = emergency power source added by the trainee)
+export type EquipmentType = "grid" | "generator" | "ups" | "pdu" | "rack";
 
-// Fixed outer power source (utility grid), exactly one per room
+// Power source of a room: exactly one grid, plus up to two generators
 export type PowerSource = {
     ID: number;
     RoomID: number;
+    Type: "grid" | "generator";
 }
 
 // Kinds of faults the trainer can cause (grows step by step, same list as CK_Fault_Type in the DB)

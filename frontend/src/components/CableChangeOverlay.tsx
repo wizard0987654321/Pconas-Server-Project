@@ -15,6 +15,7 @@ import serverIcon from "../assets/ServerIcon.svg";
 import upsIcon from "../assets/upsIcon.svg";
 import pduIcon from "../assets/PDU.svg";
 import powerIcon from "../assets/powerIcon.svg";
+import generatorIcon from "../assets/generatorIcon.svg";
 
 //components
 import ConnectionLine from "./ConnectionLine";
@@ -35,7 +36,8 @@ type CableChangeOverlayProps = {
     onClose: () => void;
     onSaved: () => void;
     heading: string;
-    roomPowerSource: PowerSource | null;
+    roomGrid: PowerSource | null;
+    roomGenerators: PowerSource[];
     roomRacks: Rack[];
     roomUps: Ups[];
     roomPdus: Pdu[];
@@ -46,7 +48,8 @@ function CableChangeOverlay({
     onClose,
     onSaved,
     heading,
-    roomPowerSource,
+    roomGrid,
+    roomGenerators,
     roomRacks,
     roomUps,
     roomPdus,
@@ -76,15 +79,15 @@ function CableChangeOverlay({
             return;
         }
 
-        // forbidden pair (grid <-> rack) -> no cable, explain why
+        // forbidden pair (power source <-> rack, grid <-> generator) -> no cable, explain why
         if (!isAllowedCable(selected.type, type)) {
-            setError(t("pages.rooms.detailedView.cables.gridToRackNotAllowed"));
+            setError(t("pages.rooms.detailedView.cables.notAllowed"));
             setSelected(null);
             return;
         }
         setError(null);
 
-        // different type -> new cable, From is always the higher one (Grid -> UPS -> PDU -> Rack)
+        // different type -> new cable, From is always the higher one (Grid / Generator -> UPS -> PDU -> Rack)
         const [fromId, toId] = POWER_LEVEL[selected.type] < POWER_LEVEL[type]
             ? [selected.id, id]
             : [id, selected.id];
@@ -136,7 +139,7 @@ function CableChangeOverlay({
         })),
     ], [roomConnections, newConnections]);
 
-    const lines = useConnectionLines(linesContainerRef, equipmentRefs, lineInputs, [roomPowerSource, roomRacks, roomUps, roomPdus]);
+    const lines = useConnectionLines(linesContainerRef, equipmentRefs, lineInputs, [roomGrid, roomGenerators, roomRacks, roomUps, roomPdus]);
 
 
     // Clickable equipment icon, selected one gets a green ring around
@@ -179,10 +182,12 @@ function CableChangeOverlay({
                             ))}
                         </svg>
 
-                        {/* Fixed outer power source */}
-                        {roomPowerSource && (
-                            <div className="flex justify-center">
-                                {renderEquipment(roomPowerSource.ID, "grid", powerIcon, "w-20")}
+                        {/* Power sources: generator (left), fixed grid, generator (right) */}
+                        {roomGrid && (
+                            <div className="flex items-center justify-center gap-16">
+                                {roomGenerators[0] && renderEquipment(roomGenerators[0].ID, "generator", generatorIcon, "h-20 w-auto")}
+                                {renderEquipment(roomGrid.ID, "grid", powerIcon, "h-20 w-auto")}
+                                {roomGenerators[1] && renderEquipment(roomGenerators[1].ID, "generator", generatorIcon, "h-20 w-auto")}
                             </div>
                         )}
 

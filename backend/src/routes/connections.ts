@@ -4,7 +4,10 @@ import { toNumber } from "../helpers/parse";
 
 const router = Router();
 
-// Cables between two pieces of Equipment (grid / rack / ups / pdu), flattened for the frontend.
+// Equipment types that produce power (fixed grid and emergency generators)
+const POWER_SOURCE_TYPES = ["grid", "generator"];
+
+// Cables between two pieces of Equipment (grid / generator / rack / ups / pdu), flattened for the frontend.
 // RoomID is taken from the "from" side, both ends are expected to be in the same room.
 router.get("/connections", async (req: Request, res: Response) => {
   try {
@@ -78,14 +81,15 @@ router.post("/addConnections", async (req: Request, res: Response) => {
         res.status(400).json({ error: "A cable must connect two different equipment types" });
         return;
       }
-      // Power only flows out of the grid, never into it
-      if (to.Type === "grid") {
+      // Power only flows out of a power source (grid / generator), never into it.
+      // Also covers grid <-> generator cables
+      if (POWER_SOURCE_TYPES.includes(to.Type)) {
         res.status(400).json({ error: "The power source can only be the start of a cable" });
         return;
       }
       // Same rule as isAllowedCable in the frontend (helpers/powerFlow.ts)
-      if (from.Type === "grid" && to.Type === "rack") {
-        res.status(400).json({ error: "The power grid can't feed a rack directly, use a UPS or PDU in between" });
+      if (POWER_SOURCE_TYPES.includes(from.Type) && to.Type === "rack") {
+        res.status(400).json({ error: "A power source can't feed a rack directly, use a UPS or PDU in between" });
         return;
       }
     }

@@ -73,19 +73,80 @@ router.get("/pdus", async (req: Request, res: Response) => {
   res.json(result);
 });
 
-// Fixed outer power source (utility grid) of every room: one Equipment row with Type 'grid' per room.
-// Has no child table, only the ID is needed so cables can start from it.
+// Power sources of every room: the fixed outer grid (one per room) and emergency generators (max two per room).
+// They have no child table, only ID and Type are needed so cables can start from them.
 router.get("/powerSources", async (req: Request, res: Response) => {
   try {
     const powerSources = await prisma.equipment.findMany({
-      where: { Type: "grid" },
-      select: { ID: true, RoomID: true },
+      where: { Type: { in: ["grid", "generator"] } },
+      select: { ID: true, RoomID: true, Type: true },
       orderBy: { ID: "asc" },
     });
     res.json(powerSources);
   } catch (error) {
     console.error("Get power sources error:", error);
     res.status(500).json({ error: "Failed to get power sources" });
+  }
+});
+
+// Emergency generator, only allowed while the room's grid is damaged. Max two per room (left and right of the grid).
+// Body: { roomId }
+router.post("/addGenerator", async (req: Request, res: Response) => {
+  const roomId = toNumber(req.body.roomId);
+
+  if (!roomId) {
+    res.status(400).json({ error: "Room is missing" });
+    return;
+  }
+
+  try {
+    const [gridFault, generatorCount] = await Promise.all([
+      prisma.fault.findFirst({
+        where: { ResolvedAt: null, FaultType: "damaged", Equipment: { RoomID: roomId, Type: "grid" } },
+      }),
+      prisma.equipment.count({ where: { RoomID: roomId, Type: "generator" } }),
+    ]);
+
+    if (!gridFault) {
+      res.status(409).json({ error: "A generator can only be added while the power grid is down" });
+      return;
+    }
+    if (generatorCount >= 2) {
+      res.status(409).json({ error: "Both generator places are already taken" });
+      return;
+    }
+
+    await prisma.equipment.create({ data: { RoomID: roomId, Type: "generator" } });
+    res.json({ message: "Generator added" });
+  } catch (error) {
+    console.error("Add generator error:", error);
+    res.status(500).json({ error: "Failed to add generator" });
+  }
+});
+
+// Removes one generator (trainer or trainee). Cables first (Connection FKs are NO ACTION),
+// then the Equipment row, its faults are removed by the cascade.
+router.delete("/deleteGenerator/:id", async (req: Request, res: Response) => {
+  const generatorId = Number(req.params.id);
+
+  try {
+    const generator = await prisma.equipment.findFirst({ where: { ID: generatorId, Type: "generator" } });
+
+    if (!generator) {
+      res.status(404).json({ error: "Generator not found" });
+      return;
+    }
+
+    await prisma.$transaction([
+      prisma.connection.deleteMany({
+        where: { OR: [{ FromEquipmentID: generatorId }, { ToEquipmentID: generatorId }] },
+      }),
+      prisma.equipment.delete({ where: { ID: generatorId } }),
+    ]);
+    res.json({ message: "Generator deleted" });
+  } catch (error) {
+    console.error("Delete generator error:", error);
+    res.status(500).json({ error: "Failed to delete generator" });
   }
 });
 

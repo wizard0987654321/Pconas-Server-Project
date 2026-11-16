@@ -30,6 +30,7 @@ import UpsHoverOverlay from "./UpsHoverOverlay";
 import PduHoverOverlay from "./PduHoverOverlay";
 import ConnectionHoverOverlay from "./ConnectionHoverOverlay";
 import AddEquipmentOverlay from "./overlays/AddEquipmentOverlay";
+import AddGeneratorOverlay from "./overlays/AddGeneratorOverlay";
 import DisplayedRoomData from "./DisplayedRoomData";
 import ConnectionLine from "./ConnectionLine";
 import CableChangeOverlay from "./CableChangeOverlay";
@@ -37,6 +38,7 @@ import PowerSource from "./simulation/PowerSource";
 import PowerLegend from "./simulation/PowerLegend";
 import DamagedMark from "./simulation/DamagedMark";
 import TrainerPanel, { type TrainerTarget } from "./simulation/TrainerPanel";
+import GeneratorInfoOverlay from "./simulation/GeneratorInfoOverlay";
 import { POWER_STATE_ICON_CLASS, DAMAGED_COLOR } from "./simulation/powerStyles";
 
 // How often faults and cables are reloaded (live sync between trainer and trainee)
@@ -66,7 +68,13 @@ function DetailedRoom() {
     // For showing Cable Rearrange Overlay
     const [showCableOverlay, setShowCableOverlay] = useState(false);
 
-    // Fetch racks, UPS, PDUs and power sources once (they don't change during training)
+    // For showing the add generator overlay ("+" next to the grid)
+    const [showGeneratorOverlay, setShowGeneratorOverlay] = useState(false);
+
+    // Equipment ID of the clicked generator, its info overlay is open while set
+    const [infoGeneratorId, setInfoGeneratorId] = useState<number | null>(null);
+
+    // Fetch racks, UPS and PDUs once (they don't change during training)
     useEffect(() => {
         getRackData()
             .then(setRacksData)
@@ -79,11 +87,13 @@ function DetailedRoom() {
         getPduData()
             .then(setPduData)
             .catch((err) => console.error("PDU API error", err));
-
-        getPowerSourceData()
-            .then(setPowerSourceData)
-            .catch((err) => console.error("Power source API error", err));
     }, []);
+
+    // Grid + generators, also called after adding a generator
+    const reloadPowerSources = () =>
+        getPowerSourceData()
+            .then(sources => setPowerSourceData(keepIfUnchanged(sources)))
+            .catch((err) => console.error("Power source API error", err));
 
     // Also called by the trainer panel after damaging / repairing
     const reloadFaults = () =>
@@ -97,11 +107,12 @@ function DetailedRoom() {
             .then(connections => setConnectionsData(keepIfUnchanged(connections)))
             .catch((err) => console.error("Connections API error", err));
 
-    // Live sync: faults and cables change during training (trainer damages, trainee rewires),
-    // so they are reloaded every few seconds
+    // Live sync: faults, cables and generators change during training
+    // (trainer damages, trainee rewires / adds generators), so they are reloaded every few seconds
     usePolling(() => {
         reloadFaults();
         reloadConnections();
+        reloadPowerSources();
     }, POLL_INTERVAL_MS);
 
     // Get current room object with parameters
@@ -113,12 +124,14 @@ function DetailedRoom() {
     const roomUps = useMemo(() => upsData.filter(ups => ups.RoomID === roomId), [upsData, roomId]);
     const roomPdus = useMemo(() => pduData.filter(pdu => pdu.RoomID === roomId), [pduData, roomId]);
     const roomConnections = useMemo(() => connectionsData.filter(connection => connection.RoomID === roomId), [connectionsData, roomId]);
-    const roomPowerSource = useMemo(() => powerSourceData.find(source => source.RoomID === roomId) ?? null, [powerSourceData, roomId]);
+    const roomPowerSources = useMemo(() => powerSourceData.filter(source => source.RoomID === roomId), [powerSourceData, roomId]);
+    const roomGrid = roomPowerSources.find(source => source.Type === "grid") ?? null;
+    const roomGenerators = useMemo(() => roomPowerSources.filter(source => source.Type === "generator"), [roomPowerSources]);
     const roomFaults = useMemo(() => faultsData.filter(fault => fault.RoomID === roomId), [faultsData, roomId]);
 
     // Which equipment has power, which cables are dead, and what is damaged
     const { deadCableIds, powerStateOf, faultOfEquipment, faultOfCable } = usePowerFlow({
-        powerSource: roomPowerSource,
+        powerSources: roomPowerSources,
         ups: roomUps,
         pdus: roomPdus,
         racks: roomRacks,
@@ -127,6 +140,9 @@ function DetailedRoom() {
     });
     const isDamaged = (equipmentId: number) => faultOfEquipment(equipmentId) === "damaged";
     const powerClass = (equipmentId: number) => POWER_STATE_ICON_CLASS[powerStateOf(equipmentId)];
+
+    // A generator can only be added while the grid is damaged (the backend checks this too)
+    const gridDown = roomGrid !== null && isDamaged(roomGrid.ID);
 
     // Navigate to rack details
     const handleRackClick = (rackId: number) => {
@@ -177,20 +193,21 @@ function DetailedRoom() {
     );
 
     // Line coordinates calculated from the real positions of the icons
-    const lines = useConnectionLines(linesContainerRef, equipmentRefs, lineInputs, [roomPowerSource, roomRacks, roomUps, roomPdus]);
+    const lines = useConnectionLines(linesContainerRef, equipmentRefs, lineInputs, [roomPowerSources, roomRacks, roomUps, roomPdus]);
 
     // Currently hovered cable (line key = connection ID)
     const [hoveredLineKey, setHoveredLineKey] = useState<string | null>(null);
 
-    // Equipment ID -> readable name ("Power grid", "Rack 3", "UPS 1", "PDU 2"), used in the cable hover div
+    // Equipment ID -> readable name ("Power grid", "Generator 1", "Rack 3", "UPS 1", "PDU 2"), used in the cable hover div
     const equipmentLabels = useMemo(() => {
         const labels = new Map<number, string>();
-        if (roomPowerSource) labels.set(roomPowerSource.ID, t("pages.rooms.detailedView.power.grid"));
+        if (roomGrid) labels.set(roomGrid.ID, t("pages.rooms.detailedView.power.grid"));
+        roomGenerators.forEach((generator, index) => labels.set(generator.ID, `${t("pages.rooms.detailedView.power.generator")} ${index + 1}`));
         roomRacks.forEach(rack => labels.set(rack.ID, `${t("common.rack")} ${rack.RackNumber}`));
         roomUps.forEach(ups => labels.set(ups.ID, `${t("common.ups")} ${ups.UPSNumber}`));
         roomPdus.forEach(pdu => labels.set(pdu.ID, `${t("common.pdu")} ${pdu.PDUNumber}`));
         return labels;
-    }, [roomPowerSource, roomRacks, roomUps, roomPdus, t]);
+    }, [roomGrid, roomGenerators, roomRacks, roomUps, roomPdus, t]);
 
     const hoveredLine = lines.find(line => line.key === hoveredLineKey);
     const hoveredConnection = roomConnections.find(connection => String(connection.ID) === hoveredLineKey);
@@ -228,6 +245,44 @@ function DetailedRoom() {
 
     const selectionClass = (equipmentId: number) => isSelected("equipment", equipmentId) ? "rounded-lg ring-4 ring-[#DC2626]" : "";
 
+    // Grid or generator icon with its hover info
+    const renderPowerSource = (source: PowerSourceData) => (
+        <PowerSource
+            type={source.Type}
+            label={equipmentLabel(source.ID)}
+            state={powerStateOf(source.ID)}
+            faultType={faultOfEquipment(source.ID)}
+            iconRef={setEquipmentRef(source.ID)}
+            iconClassName={selectionClass(source.ID)}
+            onClick={handleEquipmentClick(
+                source.ID,
+                source.Type === "generator" ? () => setInfoGeneratorId(source.ID) : undefined
+            )}
+            t={t}
+        />
+    );
+
+    // Generator place left (index 0) / right (index 1) of the grid:
+    // the generator, a "+" opening the add overlay (only while the grid is down), or empty
+    const renderGeneratorSlot = (index: number) => {
+        const generator = roomGenerators[index];
+
+        return (
+            <div className="pointer-events-none flex w-20 justify-center">
+                {generator && renderPowerSource(generator)}
+                {!generator && gridDown && (
+                    <img
+                        src={buttonIcon}
+                        alt={t("pages.rooms.detailedView.power.addPowerSource")}
+                        title={t("pages.rooms.detailedView.power.addPowerSource")}
+                        onClick={() => setShowGeneratorOverlay(true)}
+                        className="pointer-events-auto h-20 w-20 cursor-pointer transition-transform duration-150 hover:scale-110 active:scale-95"
+                    />
+                )}
+            </div>
+        );
+    };
+
 
     return (
         <>
@@ -239,12 +294,33 @@ function DetailedRoom() {
                 />
             )}
 
+            {showGeneratorOverlay && (
+                <AddGeneratorOverlay
+                    onClose={() => setShowGeneratorOverlay(false)}
+                    roomId={roomId}
+                />
+            )}
+
+            {infoGeneratorId !== null && (
+                <GeneratorInfoOverlay
+                    generatorId={infoGeneratorId}
+                    label={equipmentLabel(infoGeneratorId)}
+                    onClose={() => setInfoGeneratorId(null)}
+                    onDeleted={() => {
+                        reloadPowerSources();
+                        reloadConnections();
+                    }}
+                    t={t}
+                />
+            )}
+
             {showCableOverlay && (
                 <CableChangeOverlay
                     onClose={() => setShowCableOverlay(false)}
                     onSaved={reloadConnections}
                     heading={`${t("pages.rooms.cardHeading")} ${id}`}
-                    roomPowerSource={roomPowerSource}
+                    roomGrid={roomGrid}
+                    roomGenerators={roomGenerators}
                     roomRacks={roomRacks}
                     roomUps={roomUps}
                     roomPdus={roomPdus}
@@ -335,22 +411,17 @@ function DetailedRoom() {
 
                         {/* Rows don't catch the mouse (only their items do), so lines behind the empty row space stay hoverable */}
 
-                        {/* Fixed outer power source - above (outside) the room */}
-                        {roomPowerSource && (
-                            <div className="pointer-events-none mb-12 flex justify-center">
-                                <PowerSource
-                                    state={powerStateOf(roomPowerSource.ID)}
-                                    faultType={faultOfEquipment(roomPowerSource.ID)}
-                                    iconRef={setEquipmentRef(roomPowerSource.ID)}
-                                    iconClassName={selectionClass(roomPowerSource.ID)}
-                                    onClick={handleEquipmentClick(roomPowerSource.ID)}
-                                    t={t}
-                                />
+                        {/* Power sources - above (outside) the room: generator place, fixed grid, generator place */}
+                        {roomGrid && (
+                            <div className="pointer-events-none mb-12 flex items-center justify-center gap-16">
+                                {renderGeneratorSlot(0)}
+                                {renderPowerSource(roomGrid)}
+                                {renderGeneratorSlot(1)}
                             </div>
                         )}
 
                         {/* The room itself */}
-                        <div className="pointer-events-none flex w-full flex-col gap-8 rounded-[0.5rem] border-[1rem] border-[#6ADBAF] p-6">
+                        <div className="pointer-events-none mx-auto flex w-full xl:w-[70%] flex-col gap-8 rounded-[0.5rem] border-[1rem] border-[#6ADBAF] p-6">
 
                             {/* UPS devices - First row */}
                             <div className="pointer-events-none flex flex-wrap justify-center gap-4">

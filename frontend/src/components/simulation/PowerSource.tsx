@@ -1,6 +1,7 @@
 import powerIcon from "../../assets/powerIcon.svg";
+import generatorIcon from "../../assets/generatorIcon.svg";
 
-import type { FaultType } from "../../types";
+import type { FaultType, PowerSource as PowerSourceData } from "../../types";
 import type { PowerState } from "../../helpers/powerFlow";
 import { POWER_STATE_ICON_CLASS } from "./powerStyles";
 import PowerStatusText from "./PowerStatusText";
@@ -8,6 +9,9 @@ import FaultText from "./FaultText";
 import DamagedMark from "./DamagedMark";
 
 interface PowerSourceProps {
+    type: PowerSourceData["Type"];
+    // Shown name ("Power grid", "Generator 1")
+    label: string;
     state: PowerState;
     faultType?: FaultType;
     // Registers the icon for the cable line calculation (setEquipmentRef(powerSource.ID))
@@ -18,23 +22,23 @@ interface PowerSourceProps {
     t: (key: string) => string;
 }
 
-// Fixed outer power source (utility grid) of the room, drawn above the room border
-function PowerSource({ state, faultType, iconRef, iconClassName = "", onClick, t }: PowerSourceProps) {
+// Power source of the room (grid or generator), drawn above the room border
+function PowerSource({ type, label, state, faultType, iconRef, iconClassName = "", onClick, t }: PowerSourceProps) {
     return (
         <div className="pointer-events-auto relative group flex justify-center">
             <img
                 ref={iconRef}
-                src={powerIcon}
-                alt={t("pages.rooms.detailedView.power.grid")}
+                src={type === "generator" ? generatorIcon : powerIcon}
+                alt={label}
                 onClick={onClick}
-                className={`w-20 transition-transform duration-150 hover:scale-110 ${POWER_STATE_ICON_CLASS[state]} ${iconClassName}`}
+                className={`h-20 w-auto cursor-pointer transition-transform duration-150 hover:scale-110 ${POWER_STATE_ICON_CLASS[state]} ${iconClassName}`}
             />
 
             {faultType === "damaged" && <DamagedMark />}
 
             {/* Same look as the other equipment hover overlays */}
             <div className="font-mono absolute left-1/2 top-full z-10 mt-2 hidden w-44 -translate-x-1/2 rounded-md border-3 border-[#6ADBAF] bg-[#F8FAFC] p-2 text-xs text-[#111827] shadow-lg group-hover:block dark:bg-[#0E1F48] dark:text-[#F9FAFB]">
-                <p className="font-semibold">{t("pages.rooms.detailedView.power.grid")}</p>
+                <p className="font-semibold">{label}</p>
                 <PowerStatusText state={state} t={t} />
                 {faultType && <FaultText faultType={faultType} t={t} />}
             </div>

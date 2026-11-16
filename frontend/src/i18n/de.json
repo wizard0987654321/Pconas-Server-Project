@@ -88,10 +88,13 @@
         "smallScreen": "Bitte vergrößern Sie das Browserfenster oder öffnen Sie diese Seite auf einem größeren Bildschirm. Die Mindestbreite beträgt 768 px.",
         "cables": {
           "openButton": "Kabel ändern",
-          "gridToRackNotAllowed": "Das Stromnetz kann nicht direkt mit einem Rack verbunden werden. Bitte eine UPS oder PDU dazwischen setzen."
+          "notAllowed": "Dieses Kabel ist nicht erlaubt. Eine Stromquelle (Stromnetz oder Generator) kann weder direkt mit einem Rack noch mit einer anderen Stromquelle verbunden werden. Bitte eine UPS oder PDU dazwischen setzen."
         },
         "power": {
           "grid": "Stromnetz",
+          "generator": "Generator",
+          "addPowerSource": "Stromquelle hinzufügen",
+          "generatorInfo": "Notstromquelle des Raums. Wenn das äußere Stromnetz ausfällt, kann der Generator übernehmen und den Raum mit Strom versorgen. Verbinde ihn mit einem Kabel mit einer UPS oder PDU, genau wie das Stromnetz. Er kann weder direkt mit einem Rack noch mit dem Stromnetz verbunden werden. Beim Löschen des Generators werden auch alle seine Kabel entfernt.",
           "status": "Strom",
           "states": {
             "powered": "Versorgt",

@@ -3,8 +3,8 @@ import type { Connection, EquipmentType } from "../types";
 // Power flow through a room, calculated only from equipment + cables (no React, no API calls).
 //
 // Rules:
-// - The grid (fixed outer power source) is always on for now (grid outages come in a later step).
-// - Power flows only in cable direction: From -> To (grid -> UPS -> PDU -> rack).
+// - Power sources (the fixed grid and emergency generators) are on unless damaged.
+// - Power flows only in cable direction: From -> To (grid / generator -> UPS -> PDU -> rack).
 // - A UPS that gets no power from the grid still feeds its cables from its battery.
 //   Battery runtime is unlimited for now (time simulation comes in a later step).
 // - Only "Power" cables carry electricity, network cables are ignored here.
@@ -16,11 +16,16 @@ export type PowerState = "powered" | "battery" | "unpowered";
 export const POWER_CONNECTION_TYPE = "Power";
 
 // Position in the power chain, a cable always goes from the lower to the higher level
-export const POWER_LEVEL: Record<EquipmentType, number> = { grid: 0, ups: 1, pdu: 2, rack: 3 };
+export const POWER_LEVEL: Record<EquipmentType, number> = { grid: 0, generator: 0, ups: 1, pdu: 2, rack: 3 };
 
 // Equipment pairs that must never be connected (in either direction).
-// The grid can't feed a rack directly, there must be a UPS or PDU in between.
-const FORBIDDEN_PAIRS: [EquipmentType, EquipmentType][] = [["grid", "rack"]];
+// A power source can't feed a rack directly (there must be a UPS or PDU in between),
+// and two power sources can't be connected to each other.
+const FORBIDDEN_PAIRS: [EquipmentType, EquipmentType][] = [
+    ["grid", "rack"],
+    ["generator", "rack"],
+    ["grid", "generator"],
+];
 
 export function isAllowedCable(a: EquipmentType, b: EquipmentType) {
     return !FORBIDDEN_PAIRS.some(([x, y]) => (a === x && b === y) || (a === y && b === x));
@@ -96,10 +101,10 @@ export function computePowerFlow(
 
     const idsOfType = (type: EquipmentType) => nodes.filter(node => node.type === type).map(node => node.id);
 
-    // 1. Grid power
-    spreadPower(idsOfType("grid"), "powered");
+    // 1. Grid and generator power
+    spreadPower([...idsOfType("grid"), ...idsOfType("generator")], "powered");
 
-    // 2. UPS units that the grid didn't reach run on battery
+    // 2. UPS units that no power source reached run on battery
     spreadPower(idsOfType("ups"), "battery");
 
     // A power cable is dead when it is damaged or nothing flows into it

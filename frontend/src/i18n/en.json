@@ -87,10 +87,13 @@
         "smallScreen": "Please enlarge your browser window or open this page on a larger screen. The minimum required screen width is 768 px.",
         "cables": {
           "openButton": "Change cables",
-          "gridToRackNotAllowed": "The power grid can't be connected to a rack directly. Put a UPS or PDU in between."
+          "notAllowed": "This cable is not allowed. A power source (grid or generator) can't be connected to a rack directly or to another power source. Put a UPS or PDU in between."
         },
         "power": {
           "grid": "Power grid",
+          "generator": "Generator",
+          "addPowerSource": "Add power source",
+          "generatorInfo": "Emergency power source of the room. When the outer power grid is down, the generator can take over and power the room. Connect it with a cable to a UPS or PDU, just like the grid. It can't be connected to a rack directly or to the grid. Deleting the generator also removes all of its cables.",
           "status": "Power",
           "states": {
             "powered": "Powered",
