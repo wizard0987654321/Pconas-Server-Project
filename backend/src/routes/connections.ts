@@ -115,4 +115,25 @@ router.post("/addConnections", async (req: Request, res: Response) => {
   }
 });
 
+// Deletes several cables at once (all or nothing). Body: { ids: number[] }
+// Faults on these cables are removed by the DB (ON DELETE CASCADE)
+router.post("/deleteConnections", async (req: Request, res: Response) => {
+  const ids: number[] = Array.isArray(req.body.ids)
+    ? req.body.ids.map((id: unknown) => toNumber(id)).filter((id: number | null | undefined) => id != null)
+    : [];
+
+  if (ids.length === 0) {
+    res.status(400).json({ error: "No connections provided" });
+    return;
+  }
+
+  try {
+    const result = await prisma.connection.deleteMany({ where: { ID: { in: ids } } });
+    res.json({ message: "Connections deleted", count: result.count });
+  } catch (error) {
+    console.error("Delete connections error:", error);
+    res.status(500).json({ error: "Failed to delete connections" });
+  }
+});
+
 export default router;

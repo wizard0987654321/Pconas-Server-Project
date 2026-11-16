@@ -95,7 +95,8 @@
         "smallScreen": "Bitte vergrößern Sie das Browserfenster oder öffnen Sie diese Seite auf einem größeren Bildschirm. Die Mindestbreite beträgt 768 px.",
         "cables": {
           "openButton": "Kabel ändern",
-          "notAllowed": "Dieses Kabel ist nicht erlaubt. Eine Stromquelle (Stromnetz oder Generator) kann weder direkt mit einem Rack noch mit einer anderen Stromquelle verbunden werden. Bitte eine UPS oder PDU dazwischen setzen."
+          "notAllowed": "Dieses Kabel ist nicht erlaubt. Eine Stromquelle (Stromnetz oder Generator) kann weder direkt mit einem Rack noch mit einer anderen Stromquelle verbunden werden. Bitte eine UPS oder PDU dazwischen setzen.",
+          "deleteHint": "Zwei Geräte anklicken, um ein Kabel hinzuzufügen. Ein Kabel anklicken, um es zu entfernen (erneut anklicken, um es zu behalten). Änderungen werden mit Speichern übernommen."
         },
         "power": {
           "grid": "Stromnetz",

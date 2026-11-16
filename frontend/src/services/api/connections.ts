@@ -14,3 +14,8 @@ export function addConnections(
 ) {
     return sendJson("POST", `/addConnections`, { connections }, "Failed to add connections");
 }
+
+// Deletes several saved cables at once
+export function deleteConnections(ids: number[]) {
+    return sendJson("POST", `/deleteConnections`, { ids }, "Failed to delete connections");
+}

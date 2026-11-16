@@ -30,7 +30,7 @@ const ConnectionLine: React.FC<ConnectionLineProps> = ({
   onMouseLeave,
   onClick,
 }) => {
-  const hoverable = !!(onMouseEnter || onMouseLeave);
+  const hoverable = !!(onMouseEnter || onMouseLeave || onClick);
 
   // Middle of the line, for the damage X
   const midX = (x1 + x2) / 2;

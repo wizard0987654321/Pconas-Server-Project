@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import type { Rack, Ups, Pdu, Connection, EquipmentType, PowerSource } from "../types";
 
 //helpers
-import { addConnections } from "../services/api";
+import { addConnections, deleteConnections } from "../services/api";
 import { useEquipmentRefs, useConnectionLines, type LineInput } from "../helpers/hooks/connectionLines";
 import { POWER_LEVEL, isAllowedCable } from "../helpers/powerFlow";
 
@@ -64,6 +64,9 @@ function CableChangeOverlay({
     // Cables created in this overlay, only saved on submit
     const [newConnections, setNewConnections] = useState<NewConnection[]>([]);
 
+    // Saved cables marked for deletion, only deleted on submit
+    const [removedIds, setRemovedIds] = useState<number[]>([]);
+
     const [error, setError] = useState<string | null>(null);
 
     const handleEquipmentClick = (id: number, type: EquipmentType) => {
@@ -92,24 +95,43 @@ function CableChangeOverlay({
             ? [selected.id, id]
             : [id, selected.id];
 
-        // skip cables that already exist (saved in DB or already drawn here), otherwise Save fails with 409
-        const alreadyExists =
-            roomConnections.some(c => c.FromEquipmentID === fromId && c.ToEquipmentID === toId) ||
-            newConnections.some(c => c.fromId === fromId && c.toId === toId);
+        // skip cables that already exist (saved in DB or already drawn here), otherwise Save fails with 409.
+        // A saved cable that was marked for deletion is simply kept again.
+        const savedCable = roomConnections.find(c => c.FromEquipmentID === fromId && c.ToEquipmentID === toId);
+        const alreadyDrawn = newConnections.some(c => c.fromId === fromId && c.toId === toId);
 
-        if (!alreadyExists) {
+        if (savedCable) {
+            setRemovedIds(prev => prev.filter(id => id !== savedCable.ID));
+        } else if (!alreadyDrawn) {
             setNewConnections(prev => [...prev, { fromId, toId }]);
         }
 
         setSelected(null);
     };
 
-    // saving into database
+    // Click on a cable: saved cable -> mark / unmark for deletion, new (unsaved) cable -> remove it
+    const handleCableClick = (key: string) => {
+        const [kind, value] = key.split("-");
+        const id = Number(value);
+
+        if (kind === "saved") {
+            setRemovedIds(prev => prev.includes(id) ? prev.filter(r => r !== id) : [...prev, id]);
+        } else {
+            setNewConnections(prev => prev.filter((_, index) => index !== id));
+        }
+    };
+
+    // saving into database: first delete the marked cables, then add the new ones
     const handleSubmit = async () => {
         try {
-            await addConnections(
-                newConnections.map(c => ({ fromEquipmentId: c.fromId, toEquipmentId: c.toId }))
-            );
+            if (removedIds.length > 0) {
+                await deleteConnections(removedIds);
+            }
+            if (newConnections.length > 0) {
+                await addConnections(
+                    newConnections.map(c => ({ fromEquipmentId: c.fromId, toEquipmentId: c.toId }))
+                );
+            }
             onSaved();
             onClose();
         } catch (err) {
@@ -119,7 +141,7 @@ function CableChangeOverlay({
     };
 
 
-    //Lines design: saved cables solid, new cables dashed
+    //Lines design: saved cables solid, new cables dashed, cables marked for deletion grey + dashed
     const { equipmentRefs, setEquipmentRef } = useEquipmentRefs();
     const linesContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -128,7 +150,8 @@ function CableChangeOverlay({
             key: `saved-${c.ID}`,
             fromId: c.FromEquipmentID,
             toId: c.ToEquipmentID,
-            color: c.Color,
+            color: removedIds.includes(c.ID) ? "#9CA3AF" : c.Color,
+            dashed: removedIds.includes(c.ID),
         })),
         ...newConnections.map((c, index) => ({
             key: `new-${index}`,
@@ -137,7 +160,7 @@ function CableChangeOverlay({
             color: "#FF6B6B",
             dashed: true,
         })),
-    ], [roomConnections, newConnections]);
+    ], [roomConnections, newConnections, removedIds]);
 
     const lines = useConnectionLines(linesContainerRef, equipmentRefs, lineInputs, [roomGrid, roomGenerators, roomRacks, roomUps, roomPdus]);
 
@@ -161,6 +184,8 @@ function CableChangeOverlay({
 
                 <h2 className="mb-6 text-2xl font-bold">{heading}</h2>
 
+                <p className="mb-4 text-gray-600">{t("pages.rooms.detailedView.cables.deleteHint")}</p>
+
                 {error && <p className="mb-4 text-red-600">{error}</p>}
 
                 <div className="flex w-full flex-col rounded-[0.5rem] border-[1rem] border-[#6ADBAF] p-6">
@@ -178,6 +203,7 @@ function CableChangeOverlay({
                                     color={line.color}
                                     strokeWidth={3}
                                     dashed={line.dashed}
+                                    onClick={() => handleCableClick(line.key)}
                                 />
                             ))}
                         </svg>
@@ -223,7 +249,7 @@ function CableChangeOverlay({
                     <button
                         type="button"
                         onClick={handleSubmit}
-                        disabled={newConnections.length === 0}
+                        disabled={newConnections.length === 0 && removedIds.length === 0}
                         className="cursor-pointer rounded bg-[#6ADBAF] px-4 py-2 text-white disabled:opacity-50"
                     >
                         {t("common.save")}
