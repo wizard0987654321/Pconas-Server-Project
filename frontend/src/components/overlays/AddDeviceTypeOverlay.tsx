@@ -36,15 +36,26 @@ function AddDeviceTypeOverlay({ onClose }:AddDeviceTypeOverlayProps) {
                     name:"usage",
                     label:t("pages.deviceTypes.form.usage"),
                     type: "text"
+                },
+
+                {
+                    name:"isUps",
+                    label:t("pages.deviceTypes.form.isUps"),
+                    options: [
+                        { value: "false", label: t("common.no") },
+                        { value: "true", label: t("common.yes") },
+                    ]
                 }
             ]}
 
+            initialData={{ isUps: "false" }}
 
             transformData={(data)=>({
                 newDeviceType:{
                     typeName:data.name,
                     manufacturer:data.manufacturer,
-                    usage:data.usage
+                    usage:data.usage,
+                    isUps: data.isUps === "true"
                 }
             })}
 

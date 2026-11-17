@@ -22,6 +22,7 @@ type EditOverlayProps = {
     initialData: Record<string, string>;
     transformData?: (data: Record<string, string>) => any;
     validate?: (data: Record<string, string>) => string | null;
+    onFieldChange?: (name: string, value: string) => void;
 };
 
 function EditOverlay({
@@ -32,6 +33,7 @@ function EditOverlay({
     initialData,
     transformData = (data) => data,
     validate,
+    onFieldChange,
 }: EditOverlayProps) {
     const { t } = useTranslation();
 
@@ -51,6 +53,8 @@ function EditOverlay({
             ...prev,
             [name]: value,
         }));
+
+        onFieldChange?.(name, value);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {

@@ -10,6 +10,7 @@ import type { PowerSource as PowerSourceData } from "../types";
 
 //Helper functions
 import { computeRoomClimate, itLoadOfRacks } from "../helpers/roomClimate";
+import { runningDevicesOfRack } from "../helpers/inRackUps";
 import { useRooms } from "../helpers/hooks/roomOperations";
 import { useAuth } from "../contexts/AuthProvider";
 import { useEquipmentRefs, useConnectionLines, type LineInput } from "../helpers/hooks/connectionLines";
@@ -95,7 +96,7 @@ function DetailedRoom() {
 
     // Power usage, cooling, temperature, humidity. Recalculated whenever rack power changes, e.g. after new cables
     const roomClimate = computeRoomClimate(
-        itLoadOfRacks(roomRacks, devices, rackId => powerStateOf(rackId) !== "unpowered"),
+        itLoadOfRacks(roomRacks, devices, powerStateOf),
         currentRoom?.Capacity ?? 0,
         acPowered
     );
@@ -414,7 +415,16 @@ function DetailedRoom() {
 
                                         {isDamaged(rack.ID) && <DamagedMark />}
 
-                                        <RackHoverOverlay rack={rack} powerState={powerStateOf(rack.ID)} faultType={faultOfEquipment(rack.ID)} t={t} />
+                                        <RackHoverOverlay
+                                            rack={rack}
+                                            powerState={powerStateOf(rack.ID)}
+                                            faultType={faultOfEquipment(rack.ID)}
+                                            // rack without power: servers still running on an in-rack UPS
+                                            devicesOnRackUps={powerStateOf(rack.ID) === "unpowered"
+                                                ? runningDevicesOfRack(rack.ID, "unpowered", devices).length
+                                                : 0}
+                                            t={t}
+                                        />
                                     </div>
                                 ))}
 

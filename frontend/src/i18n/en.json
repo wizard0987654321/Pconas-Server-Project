@@ -112,7 +112,8 @@
           },
           "cableLive": "Live",
           "cableDead": "No power",
-          "deadCable": "Cable without power"
+          "deadCable": "Cable without power",
+          "devicesOnRackUps": "On in-rack UPS"
         },
         "trainer": {
           "title": "Trainer panel",
@@ -165,12 +166,14 @@
         "title": "Add New Device Type",
         "typeName": "Type Name",
         "manufacturer": "Manufacturer",
-        "usage": "Usage"
+        "usage": "Usage",
+        "isUps": "In-rack UPS"
       },
       "data": {
         "typeName": "name",
         "manufacturer": "manufacturer",
-        "usage": "usage"
+        "usage": "usage",
+        "isUps": "in-rack UPS"
       }
     },
     "devices": {
@@ -182,9 +185,12 @@
         "internalId": "Internal ID",
         "positionFrom": "Position (From)",
         "positionTo": "Position (To)",
-        "electricityConnected": "Electricity Connected",
+        "electricityConnected": "Electricity (connected via)",
         "torConnected": "TOR Connected",
         "deviceType": "Device Type",
+        "notConnected": "Not connected",
+        "rackFeed": "Rack power feed (PDU)",
+        "noRackCable": "no cable to the rack",
         "selectRack": "Rack {{number}}",
         "yes": "Yes",
         "no": "No",
@@ -193,7 +199,9 @@
           "positionOrder": "Position (From) must be less than or equal to Position (To).",
           "positionFromTooLarge": "Position (From) must be less than total size (Units) of chosen rack, size - {{size}}",
           "positionToTooLarge": "Position (To) can not be more than total size (Units) of chosen rack, size - {{size}}",
-          "overlap": "The selected device positions overlap with an existing device in this rack."
+          "overlap": "The selected device positions overlap with an existing device in this rack.",
+          "upsOnUps": "An in-rack UPS can't be plugged into another UPS. Choose the rack power feed.",
+          "upsOtherRack": "The chosen UPS is not in the selected rack."
         }
       },
       "data": {

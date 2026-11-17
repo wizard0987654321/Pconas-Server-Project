@@ -3,6 +3,8 @@ import { useRacks } from "../../helpers/hooks/rackOperations";
 import { useDeviceTypes } from "../../helpers/hooks/deviceTypeOperations";
 import { useDevice } from "../../helpers/hooks/deviceOperations";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
+import { RACK_FEED, electricityOptions, electricityError, electricityFields } from "../../helpers/inRackUps";
 
 type AddDeviceOverlayProps = {
     onClose: () => void,
@@ -15,13 +17,18 @@ function AddDeviceOverlay({ onClose, rackId }: AddDeviceOverlayProps) {
     const { deviceTypesData } = useDeviceTypes();
     const { deviceData } = useDevice();
 
+    // Currently chosen rack, for the in-rack UPS options of "Electricity"
+    const [formRackId, setFormRackId] = useState<number | null>(rackId ?? null);
 
     return (
         <AddOverlay
             title={t("pages.devices.form.title")}
             endpoint="/addDevice"
             onClose={onClose}
-            initialData={rackId != null ? { rackId: String(rackId) } : undefined}
+            initialData={{ ...(rackId != null ? { rackId: String(rackId) } : {}), electricity: RACK_FEED }}
+            onFieldChange={(name, value) => {
+                if (name === "rackId") setFormRackId(Number(value) || null);
+            }}
             validate={(data) => {
                 const selectedRackId = Number(data.rackId);
                 const selectedRack = racksData.find(rack => rack.ID == selectedRackId);
@@ -61,6 +68,10 @@ function AddDeviceOverlay({ onClose, rackId }: AddDeviceOverlayProps) {
                     return t("pages.devices.form.validation.overlap");
                 }
 
+                const typeIsUps = deviceTypesData.find(type => type.ID === Number(data.typeId))?.IsUps ?? false;
+                const upsError = electricityError(deviceData, selectedRackId, typeIsUps, data.electricity);
+                if (upsError) return t(upsError);
+
                 return null;
             }}
             fields={[
@@ -90,12 +101,9 @@ function AddDeviceOverlay({ onClose, rackId }: AddDeviceOverlayProps) {
                     min: 1,
                 },
                 {
-                    name: "electricityConnected",
+                    name: "electricity",
                     label: t("pages.devices.form.electricityConnected"),
-                    options: [
-                        { value: "true", label: t("pages.devices.form.yes") },
-                        { value: "false", label: t("pages.devices.form.no") },
-                    ],
+                    options: electricityOptions(deviceData, formRackId, t),
                 },
                 {
                     name: "torConnected",
@@ -121,7 +129,7 @@ function AddDeviceOverlay({ onClose, rackId }: AddDeviceOverlayProps) {
                     internalId: data.internalId,
                     positionFrom: Number(data.positionFrom),
                     positionTo: Number(data.positionTo),
-                    electricityConnected: data.electricityConnected === "true",
+                    ...electricityFields(data.electricity),
                     torConnected: data.torConnected === "true",
                 },
             })}

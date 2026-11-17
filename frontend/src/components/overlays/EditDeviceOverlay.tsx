@@ -4,6 +4,8 @@ import { useDeviceTypes } from "../../helpers/hooks/deviceTypeOperations";
 import { useDevice } from "../../helpers/hooks/deviceOperations";
 import { useTranslation } from "react-i18next";
 import type { Device } from "../../types";
+import { useState } from "react";
+import { electricityValue, electricityOptions, electricityError, electricityFields } from "../../helpers/inRackUps";
 
 type EditDeviceOverlayProps = {
     device: Device;
@@ -20,6 +22,9 @@ function EditDeviceOverlay({
     const { deviceTypesData } = useDeviceTypes();
     const { deviceData } = useDevice();
 
+    // Currently chosen rack, for the in-rack UPS options of "Electricity"
+    const [formRackId, setFormRackId] = useState<number>(device.RackID);
+
     return (
         <EditOverlay
             title={t("pages.devices.form.title")}
@@ -31,9 +36,12 @@ function EditDeviceOverlay({
                 internalId: device.InternalID,
                 positionFrom: String(device.PositionFrom),
                 positionTo: String(device.PositionTo),
-                electricityConnected: String(device.ElectricityConnected),
+                electricity: electricityValue(device),
                 torConnected: String(device.TORConnected),
                 typeId: String(device.TypeID),
+            }}
+            onFieldChange={(name, value) => {
+                if (name === "rackId") setFormRackId(Number(value));
             }}
             validate={(data) => {
                 const selectedRackId = Number(data.rackId);
@@ -87,6 +95,10 @@ function EditDeviceOverlay({
                     return t("pages.devices.form.validation.overlap");
                 }
 
+                const typeIsUps = deviceTypesData.find(type => type.ID === Number(data.typeId))?.IsUps ?? false;
+                const upsError = electricityError(deviceData, selectedRackId, typeIsUps, data.electricity);
+                if (upsError) return t(upsError);
+
                 return null;
             }}
             fields={[
@@ -116,18 +128,9 @@ function EditDeviceOverlay({
                     min: 1,
                 },
                 {
-                    name: "electricityConnected",
+                    name: "electricity",
                     label: t("pages.devices.form.electricityConnected"),
-                    options: [
-                        {
-                            value: "true",
-                            label: t("pages.devices.form.yes"),
-                        },
-                        {
-                            value: "false",
-                            label: t("pages.devices.form.no"),
-                        },
-                    ],
+                    options: electricityOptions(deviceData, formRackId, t, device.ID),
                 },
                 {
                     name: "torConnected",
@@ -160,8 +163,7 @@ function EditDeviceOverlay({
                     internalId: data.internalId,
                     positionFrom: Number(data.positionFrom),
                     positionTo: Number(data.positionTo),
-                    electricityConnected:
-                        data.electricityConnected === "true",
+                    ...electricityFields(data.electricity),
                     torConnected:
                         data.torConnected === "true",
                 },

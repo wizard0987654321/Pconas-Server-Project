@@ -17,6 +17,7 @@ function ServerDeviceTypes() {
                     TypeName: "pages.deviceTypes.data.typeName",
                     Manufacturer: "pages.deviceTypes.data.manufacturer",
                     Usage: "pages.deviceTypes.data.usage",
+                    IsUps: "pages.deviceTypes.data.isUps",
                 },
             }),
         [deviceTypesData]

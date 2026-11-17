@@ -9,6 +9,11 @@ import { useGSAP } from "@gsap/react";
 import { detailedRackAnimation } from "../animations/detailedRackAnimation";
 import EditDeviceOverlay from "./overlays/EditDeviceOverlay";
 import LoadingSpinner from "./LoadingSpinner";
+import { POWER_STATE_TEXT_CLASS, powerStateKey } from "./simulation/powerStyles";
+import { useRoomData } from "../helpers/hooks/useRoomData";
+import { usePowerFlow } from "../helpers/hooks/usePowerFlow";
+import { useEquipmentLabels } from "../helpers/hooks/useEquipmentLabels";
+import { devicePowerState } from "../helpers/inRackUps";
 
 //detailed view for rack, can be opened with "to the rack detailed view" button
 function DetailedRack() {
@@ -28,6 +33,28 @@ function DetailedRack() {
     const [loadingRack, setLoadingRack] = useState(true);
     const [loadingDevices, setLoadingDevices] = useState(true);
 
+    // Power state of this rack from its room's power flow (polled, so trainer faults show up live)
+    const {
+        roomRacks, roomUps, roomPdus, roomConnections, roomPowerSources, roomGrid, roomGenerators, roomFaults,
+    } = useRoomData(rack?.RoomID ?? 0);
+    const { powerStateOf } = usePowerFlow({
+        powerSources: roomPowerSources,
+        ups: roomUps,
+        pdus: roomPdus,
+        racks: roomRacks,
+        connections: roomConnections,
+        faults: roomFaults,
+    });
+    // Until the room's data is loaded (every room has a grid), treat the rack as powered, so nothing flashes grey
+    const rackState = rack && roomGrid ? powerStateOf(rack.ID) : "powered";
+
+    // What feeds the rack: the equipment with a cable into it (e.g. "PDU 1, PDU 2")
+    const equipmentLabel = useEquipmentLabels({
+        grid: roomGrid, generators: roomGenerators, racks: roomRacks, ups: roomUps, pdus: roomPdus,
+    });
+    const rackFeeders = roomConnections
+        .filter(connection => connection.ToEquipmentID === rack?.ID)
+        .map(connection => equipmentLabel(connection.FromEquipmentID));
 
     //GSAP animation for rack
     const rackRef = useRef<HTMLDivElement>(null);
@@ -128,6 +155,19 @@ function DetailedRack() {
                                 unit >= d.PositionFrom &&
                                 unit <= d.PositionTo
                         );
+                        const deviceState = device ? devicePowerState(device, rackState, devices) : "unpowered";
+                        const poweredByUps = device?.PoweredByDeviceID != null
+                            ? devices.find(d => d.ID === device.PoweredByDeviceID)
+                            : undefined;
+
+                        // "Electricity" hover line: where the device is plugged in (in-rack UPS or the rack's PDU / UPS)
+                        const electricitySource = !device?.ElectricityConnected
+                            ? t("pages.devices.form.notConnected")
+                            : poweredByUps
+                                ? `${poweredByUps.TypeName} (${poweredByUps.InternalID})`
+                                : rackFeeders.length > 0
+                                    ? rackFeeders.join(", ")
+                                    : t("pages.devices.form.noRackCable");
 
                         return (
                             <div
@@ -143,9 +183,12 @@ function DetailedRack() {
                                         <div className={`relative group w-full ${!selectedDevice ? "hover:z-50" : ""}`}>
                                             <div
                                                 onClick={() => setSelectedDevice(device)}
-                                                className={`w-full cursor-pointer rounded px-2 py-1 text-xs transition-transform duration-150 hover:scale-[1.02] ${device.ElectricityConnected
-                                                    ? "bg-[#6ADBAF] text-white"
-                                                    : "bg-[#6ADBAF]/30 text-white"
+                                                // not plugged in: faded, plugged in but no power (rack down, no UPS): grey, otherwise green
+                                                className={`w-full cursor-pointer rounded px-2 py-1 text-xs transition-transform duration-150 hover:scale-[1.02] ${!device.ElectricityConnected && !device.IsUps
+                                                    ? "bg-[#6ADBAF]/30 text-white"
+                                                    : deviceState === "unpowered"
+                                                        ? "bg-gray-400 text-white"
+                                                        : "bg-[#6ADBAF] text-white"
                                                     }`}
                                             >
                                                 {device.InternalID}
@@ -164,13 +207,17 @@ function DetailedRack() {
                                                         }
                                                     </p>
                                                     <p><span className="font-semibold">{t("common.position")}:</span> {device.PositionFrom}U - {device.PositionTo}U</p>
+                                                    {/* Electricity: source + whether power really arrives there (an in-rack UPS always shows its state) */}
                                                     <p>
                                                         <span className="font-semibold">{t("common.electricity")}:</span>{" "}
-                                                        <span
-                                                            className={!device.ElectricityConnected ? "font-bold text-[#FF6B6B]" : ""}
-                                                        >
-                                                            {device.ElectricityConnected ? t("common.yes") : t("common.no")}
+                                                        <span className={!device.ElectricityConnected ? "font-bold text-[#FF6B6B]" : ""}>
+                                                            {electricitySource}
                                                         </span>
+                                                        {(device.ElectricityConnected || device.IsUps) && (
+                                                            <span className={`font-semibold ${POWER_STATE_TEXT_CLASS[deviceState]}`}>
+                                                                {" · "}{t(powerStateKey(deviceState))}
+                                                            </span>
+                                                        )}
                                                     </p>
 
                                                     <p>

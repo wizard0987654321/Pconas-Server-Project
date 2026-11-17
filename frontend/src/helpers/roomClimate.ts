@@ -1,8 +1,10 @@
 import type { Device, Rack } from "../types";
+import type { PowerState } from "./powerFlow";
+import { runningDevicesOfRack } from "./inRackUps";
 
 // Simple room climate model: not exact physics, but realistic orders of magnitude.
 //
-// - Every device that is plugged in (ElectricityConnected) and sits in a rack with power
+// - Every running device (plugged in and getting power from the rack or from an in-rack UPS battery)
 //   draws WATTS_PER_UNIT per height unit (U) it occupies.
 // - All electricity used by the IT equipment turns into heat, so the AC has to remove
 //   exactly that much heat (cooling load = IT load).
@@ -39,11 +41,11 @@ export function deviceWatts(device: Device) {
     return (device.PositionTo - device.PositionFrom + 1) * WATTS_PER_UNIT;
 }
 
-// Power usage of a room in W: plugged-in devices in racks that have power (grid, generator or UPS battery)
-export function itLoadOfRacks(racks: Rack[], devices: Device[], rackHasPower: (rackId: number) => boolean) {
+// Power usage of a room in W: running devices of all racks (power from grid, generator,
+// cabinet UPS battery or in-rack UPS battery)
+export function itLoadOfRacks(racks: Rack[], devices: Device[], rackStateOf: (rackId: number) => PowerState) {
     return racks
-        .filter(rack => rackHasPower(rack.ID))
-        .flatMap(rack => devices.filter(device => device.RackID === rack.ID && device.ElectricityConnected))
+        .flatMap(rack => runningDevicesOfRack(rack.ID, rackStateOf(rack.ID), devices))
         .reduce((sum, device) => sum + deviceWatts(device), 0);
 }
 

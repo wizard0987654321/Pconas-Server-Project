@@ -90,8 +90,12 @@ export type Device = {
     PositionTo: number,
     ElectricityConnected: boolean,
     TORConnected: boolean
+    // In-rack UPS device this device is plugged into, null = rack power feed directly
+    PoweredByDeviceID: number | null,
     Manufacturer: string,
-    Usage: string
+    Usage: string,
+    // Device type is an in-rack UPS
+    IsUps: boolean
 }
 
 export type VM = {
@@ -122,5 +126,6 @@ export type DeviceType = {
     DeviceTypeNumber: number,
     TypeName: string,
     Manufacturer: string,
-    Usage: string
+    Usage: string,
+    IsUps: boolean
 }

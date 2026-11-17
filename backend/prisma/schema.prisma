@@ -31,8 +31,12 @@ model Device {
   PositionTo           Int?
   ElectricityConnected Boolean?    @default(false, map: "DF__Device__Electric__5165187F")
   TORConnected         Boolean?    @default(false, map: "DF__Device__TORConne__52593CB8")
+  // In-rack UPS (Device whose type has IsUps) this device is plugged into, NULL = rack power feed directly
+  PoweredByDeviceID    Int?
   DeviceType           DeviceType? @relation(fields: [TypeID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_DeviceType_Device")
   Rack                 Rack?       @relation(fields: [RackID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_Rack_Device")
+  PoweredBy            Device?     @relation("DevicePower", fields: [PoweredByDeviceID], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "FK_Device_PoweredByDevice")
+  PoweredDevices       Device[]    @relation("DevicePower")
   VM                   VM[]
 }
 
@@ -41,6 +45,8 @@ model DeviceType {
   TypeName     String?  @db.NVarChar(100)
   Manufacturer String?  @db.NVarChar(50)
   Usage        String?  @db.NVarChar(100)
+  // true = UPS unit mounted in a rack (other devices can be plugged into it)
+  IsUps        Boolean  @default(false, map: "DF_DeviceType_IsUps")
   Device       Device[]
 }
 

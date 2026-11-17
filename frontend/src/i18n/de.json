@@ -113,7 +113,8 @@
           },
           "cableLive": "Unter Spannung",
           "cableDead": "Kein Strom",
-          "deadCable": "Kabel ohne Strom"
+          "deadCable": "Kabel ohne Strom",
+          "devicesOnRackUps": "An Rack-USV"
         },
         "trainer": {
           "title": "Trainer-Bereich",
@@ -166,12 +167,14 @@
         "title": "Neuen Gerätetyp hinzufügen",
         "typeName": "Typname",
         "manufacturer": "Hersteller",
-        "usage": "Nutzung"
+        "usage": "Nutzung",
+        "isUps": "Rack-USV"
       },
       "data": {
         "typeName": "Name",
         "manufacturer": "Hersteller",
-        "usage": "Nutzung"
+        "usage": "Nutzung",
+        "isUps": "Rack-USV"
       }
     },
     "devices": {
@@ -183,9 +186,12 @@
         "internalId": "Interne ID",
         "positionFrom": "Position (Von)",
         "positionTo": "Position (Bis)",
-        "electricityConnected": "Strom angeschlossen",
+        "electricityConnected": "Strom (angeschlossen über)",
         "torConnected": "TOR angeschlossen",
         "deviceType": "Gerätetyp",
+        "notConnected": "Nicht angeschlossen",
+        "rackFeed": "Rack-Stromzufuhr (PDU)",
+        "noRackCable": "kein Kabel zum Rack",
         "selectRack": "Rack {{number}}",
         "yes": "Ja",
         "no": "Nein",
@@ -194,7 +200,9 @@
           "positionOrder": "Position (Von) muss kleiner oder gleich Position (Bis) sein.",
           "positionFromTooLarge": "Position (Von) muss kleiner als die Gesamtgröße (Einheiten) des ausgewählten Racks sein, Größe - {{size}}",
           "positionToTooLarge": "Position (Bis) darf nicht größer als die Gesamtgröße (Einheiten) des ausgewählten Racks sein, Größe - {{size}}",
-          "overlap": "Die ausgewählten Gerätepositionen überschneiden sich mit einem vorhandenen Gerät in diesem Rack."
+          "overlap": "Die ausgewählten Gerätepositionen überschneiden sich mit einem vorhandenen Gerät in diesem Rack.",
+          "upsOnUps": "Eine Rack-USV kann nicht an eine andere USV angeschlossen werden. Bitte die Rack-Stromzufuhr wählen.",
+          "upsOtherRack": "Die gewählte USV befindet sich nicht im ausgewählten Rack."
         }
       },
       "data": {
