@@ -1,3 +1,13 @@
+/* ==========================================================================
+ * BOOK THREAD 2.5.12.1  ConnectionLine   (Chapter 2: Rooms)
+ * File: src/components/powerSimulation/ConnectionLine.tsx
+ *
+ * One cable drawn as an SVG line (dashed when dead or not saved yet, with an X when damaged).
+ *
+ * Used by: 2.5 DetailedRoom, 2.5.12 CableChangeOverlay
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 import React from "react";
 
 type ConnectionLineProps = {
@@ -84,3 +94,5 @@ const ConnectionLine: React.FC<ConnectionLineProps> = ({
 };
 
 export default ConnectionLine;
+
+// → Next in the book: 2.5.13 TrainerPanel  (src/components/powerSimulation/TrainerPanel.tsx)

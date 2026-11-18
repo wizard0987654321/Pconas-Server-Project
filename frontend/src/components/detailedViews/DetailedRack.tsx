@@ -1,19 +1,34 @@
+/* ==========================================================================
+ * BOOK THREAD 2.6  DetailedRack   (Chapter 2: Rooms)
+ * File: src/components/detailedViews/DetailedRack.tsx
+ *
+ * One rack with its height units (U) and devices. Color and hover of each device show where its electricity
+ * comes from (room power flow 2.5.2 + in-rack UPS 2.5.3.1).
+ *
+ * Reached via: URL /racks/:id  (rack click in 2.2 ServerRoom and 2.5 DetailedRoom, detail button in 3.1 ServerRacks)
+ * Used by: 0.5 routes
+ * Uses: 2.5.1 useRoomData, 2.5.2 usePowerFlow, 2.5.3.1 inRackUps, 2.5.5 useEquipmentLabels,
+ *   2.5.7 powerStyles, 2.6.1 AddDeviceOverlay, 2.6.2 EditDeviceOverlay, A.2 PrimaryButton,
+ *   A.5 LoadingSpinner, A.12 api/index, A.13 types, A.14.5 detailedRackAnimation
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 import { useParams } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
-import { getRackData, getDevicesData, getDeviceTypesData } from "../../services/api";
-import type { Rack, Device } from "../../types";
+import { getRackData, getDevicesData, getDeviceTypesData } from "../../services/api"; // A.12 api/index
+import type { Rack, Device } from "../../types"; // A.13 types
 import { useTranslation } from "react-i18next";
-import PrimaryButton from "../buttons/PrimaryButton";
-import AddDeviceOverlay from "../overlays/AddDeviceOverlay";
+import PrimaryButton from "../buttons/PrimaryButton"; // A.2 PrimaryButton
+import AddDeviceOverlay from "../overlays/AddDeviceOverlay"; // 2.6.1 AddDeviceOverlay
 import { useGSAP } from "@gsap/react";
-import { detailedRackAnimation } from "../../animations/detailedRackAnimation";
-import EditDeviceOverlay from "../overlays/EditDeviceOverlay";
-import LoadingSpinner from "../LoadingSpinner";
-import { POWER_STATE_TEXT_CLASS, powerStateKey } from "../powerSimulation/powerStyles";
-import { useRoomData } from "../../helpers/hooks/useRoomData";
-import { usePowerFlow } from "../../helpers/hooks/usePowerFlow";
-import { useEquipmentLabels } from "../../helpers/hooks/useEquipmentLabels";
-import { devicePowerState } from "../../helpers/inRackUps";
+import { detailedRackAnimation } from "../../animations/detailedRackAnimation"; // A.14.5 detailedRackAnimation
+import EditDeviceOverlay from "../overlays/EditDeviceOverlay"; // 2.6.2 EditDeviceOverlay
+import LoadingSpinner from "../LoadingSpinner"; // A.5 LoadingSpinner
+import { POWER_STATE_TEXT_CLASS, powerStateKey } from "../powerSimulation/powerStyles"; // 2.5.7 powerStyles
+import { useRoomData } from "../../helpers/hooks/useRoomData"; // 2.5.1 useRoomData
+import { usePowerFlow } from "../../helpers/hooks/usePowerFlow"; // 2.5.2 usePowerFlow
+import { useEquipmentLabels } from "../../helpers/hooks/useEquipmentLabels"; // 2.5.5 useEquipmentLabels
+import { devicePowerState } from "../../helpers/inRackUps"; // 2.5.3.1 inRackUps
 
 //detailed view for rack, can be opened with "to the rack detailed view" button
 function DetailedRack() {
@@ -36,8 +51,8 @@ function DetailedRack() {
     // Power state of this rack from its room's power flow (polled, so trainer faults show up live)
     const {
         roomRacks, roomUps, roomPdus, roomConnections, roomPowerSources, roomGrid, roomGenerators, roomFaults,
-    } = useRoomData(rack?.RoomID ?? 0);
-    const { powerStateOf } = usePowerFlow({
+    } = useRoomData(rack?.RoomID ?? 0); // 2.5.1 useRoomData
+    const { powerStateOf } = usePowerFlow({ // 2.5.2 usePowerFlow
         powerSources: roomPowerSources,
         ups: roomUps,
         pdus: roomPdus,
@@ -49,7 +64,7 @@ function DetailedRack() {
     const rackState = rack && roomGrid ? powerStateOf(rack.ID) : "powered";
 
     // What feeds the rack: the equipment with a cable into it (e.g. "PDU 1, PDU 2")
-    const equipmentLabel = useEquipmentLabels({
+    const equipmentLabel = useEquipmentLabels({ // 2.5.5 useEquipmentLabels
         grid: roomGrid, generators: roomGenerators, racks: roomRacks, ups: roomUps, pdus: roomPdus,
     });
     const rackFeeders = roomConnections
@@ -155,7 +170,7 @@ function DetailedRack() {
                                 unit >= d.PositionFrom &&
                                 unit <= d.PositionTo
                         );
-                        const deviceState = device ? devicePowerState(device, rackState, devices) : "unpowered";
+                        const deviceState = device ? devicePowerState(device, rackState, devices) : "unpowered"; // 2.5.3.1 devicePowerState
                         const poweredByUps = device?.PoweredByDeviceID != null
                             ? devices.find(d => d.ID === device.PoweredByDeviceID)
                             : undefined;
@@ -245,3 +260,5 @@ function DetailedRack() {
 }
 
 export default DetailedRack;
+
+// → Next in the book: 2.6.1 AddDeviceOverlay  (src/components/overlays/AddDeviceOverlay.tsx)

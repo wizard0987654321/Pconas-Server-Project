@@ -1,3 +1,12 @@
+/* ==========================================================================
+ * BOOK THREAD A.3  SecondaryButton   (Chapter A: Appendix: generic parts used everywhere)
+ * File: src/components/buttons/SecondaryButton.tsx
+ *
+ * Outlined green button (not used anywhere at the moment).
+ *
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 type ButtonProps = {
     label: string,
     onClick: () => void
@@ -17,3 +26,5 @@ function SecondaryButton({
 }
 
 export default SecondaryButton;
+
+// → Next in the book: A.4 DeleteButton  (src/components/buttons/DeleteButton.tsx)

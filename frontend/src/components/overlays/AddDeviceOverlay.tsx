@@ -1,10 +1,22 @@
-import AddOverlay from "./generics/AddOverlay";
-import { useRacks } from "../../helpers/hooks/rackOperations";
-import { useDeviceTypes } from "../../helpers/hooks/deviceTypeOperations";
-import { useDevice } from "../../helpers/hooks/deviceOperations";
+/* ==========================================================================
+ * BOOK THREAD 2.6.1  AddDeviceOverlay   (Chapter 2: Rooms)
+ * File: src/components/overlays/AddDeviceOverlay.tsx
+ *
+ * Form to add a device to a rack (positions, electricity, TOR, type).
+ *
+ * Used by: 2.6 DetailedRack, 5 DevicesPage
+ * Uses: 2.5.3.1 inRackUps, A.7 AddOverlay, A.10.2 rackOperations, A.10.3 deviceTypeOperations,
+ *   A.10.4 deviceOperations
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
+import AddOverlay from "./generics/AddOverlay"; // A.7 AddOverlay
+import { useRacks } from "../../helpers/hooks/rackOperations"; // A.10.2 rackOperations
+import { useDeviceTypes } from "../../helpers/hooks/deviceTypeOperations"; // A.10.3 deviceTypeOperations
+import { useDevice } from "../../helpers/hooks/deviceOperations"; // A.10.4 deviceOperations
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
-import { RACK_FEED, electricityOptions, electricityError, electricityFields } from "../../helpers/inRackUps";
+import { RACK_FEED, electricityOptions, electricityError, electricityFields } from "../../helpers/inRackUps"; // 2.5.3.1 inRackUps
 
 type AddDeviceOverlayProps = {
     onClose: () => void,
@@ -69,7 +81,7 @@ function AddDeviceOverlay({ onClose, rackId }: AddDeviceOverlayProps) {
                 }
 
                 const typeIsUps = deviceTypesData.find(type => type.ID === Number(data.typeId))?.IsUps ?? false;
-                const upsError = electricityError(deviceData, selectedRackId, typeIsUps, data.electricity);
+                const upsError = electricityError(deviceData, selectedRackId, typeIsUps, data.electricity); // 2.5.3.1 electricityError
                 if (upsError) return t(upsError);
 
                 return null;
@@ -138,3 +150,5 @@ function AddDeviceOverlay({ onClose, rackId }: AddDeviceOverlayProps) {
 }
 
 export default AddDeviceOverlay;
+
+// → Next in the book: 2.6.2 EditDeviceOverlay  (src/components/overlays/EditDeviceOverlay.tsx)

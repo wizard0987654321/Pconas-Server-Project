@@ -1,5 +1,20 @@
-import type { Device } from "../types";
-import type { PowerState } from "./powerFlow";
+/* ==========================================================================
+ * BOOK THREAD 2.5.3.1  inRackUps   (Chapter 2: Rooms)
+ * File: src/helpers/inRackUps.ts
+ *
+ * In-rack UPS logic: power state of each device in a rack, and the "Electricity (connected via)" choice of
+ * the device forms (2.6.1, 2.6.2).
+ *
+ * HELPER - plain functions / settings, no React, renders no HTML.
+ *
+ * Used by: 2.5 DetailedRoom, 2.5.3 roomClimate, 2.6 DetailedRack, 2.6.1 AddDeviceOverlay,
+ *   2.6.2 EditDeviceOverlay
+ * Uses: 2.5.2.1 powerFlow, A.13 types
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
+import type { Device } from "../types"; // A.13 types
+import type { PowerState } from "./powerFlow"; // 2.5.2.1 powerFlow
 
 // What an in-rack UPS delivers: the rack's power while it gets some, otherwise its own battery.
 // Not plugged in (ElectricityConnected = false) means it gets nothing from the rack feed -> battery.
@@ -70,3 +85,5 @@ export function electricityError(devices: Device[], rackId: number, typeIsUps: b
     if (!ups || ups.RackID !== rackId) return "pages.devices.form.validation.upsOtherRack";
     return null;
 }
+
+// → Next in the book: 2.5.4 connectionLines  (src/helpers/hooks/connectionLines.ts)

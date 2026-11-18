@@ -1,3 +1,13 @@
+/* ==========================================================================
+ * BOOK THREAD A.4  DeleteButton   (Chapter A: Appendix: generic parts used everywhere)
+ * File: src/components/buttons/DeleteButton.tsx
+ *
+ * Red outlined delete button.
+ *
+ * Used by: 2.2 ServerRoom, A.6 DataList
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 type ButtonProps = {
     label: string,
     onClick: () => void
@@ -18,3 +28,5 @@ function DeleteButton({
 }
 
 export default DeleteButton;
+
+// → Next in the book: A.5 LoadingSpinner  (src/components/LoadingSpinner.tsx)

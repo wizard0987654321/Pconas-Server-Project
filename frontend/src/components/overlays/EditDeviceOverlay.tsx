@@ -1,11 +1,23 @@
-import EditOverlay from "./generics/EditOverlay";
-import { useRacks } from "../../helpers/hooks/rackOperations";
-import { useDeviceTypes } from "../../helpers/hooks/deviceTypeOperations";
-import { useDevice } from "../../helpers/hooks/deviceOperations";
+/* ==========================================================================
+ * BOOK THREAD 2.6.2  EditDeviceOverlay   (Chapter 2: Rooms)
+ * File: src/components/overlays/EditDeviceOverlay.tsx
+ *
+ * Form to edit a device, opened by clicking the device in the rack.
+ *
+ * Used by: 2.6 DetailedRack
+ * Uses: 2.5.3.1 inRackUps, A.8 EditOverlay, A.10.2 rackOperations, A.10.3 deviceTypeOperations,
+ *   A.10.4 deviceOperations, A.13 types
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
+import EditOverlay from "./generics/EditOverlay"; // A.8 EditOverlay
+import { useRacks } from "../../helpers/hooks/rackOperations"; // A.10.2 rackOperations
+import { useDeviceTypes } from "../../helpers/hooks/deviceTypeOperations"; // A.10.3 deviceTypeOperations
+import { useDevice } from "../../helpers/hooks/deviceOperations"; // A.10.4 deviceOperations
 import { useTranslation } from "react-i18next";
-import type { Device } from "../../types";
+import type { Device } from "../../types"; // A.13 types
 import { useState } from "react";
-import { electricityValue, electricityOptions, electricityError, electricityFields } from "../../helpers/inRackUps";
+import { electricityValue, electricityOptions, electricityError, electricityFields } from "../../helpers/inRackUps"; // 2.5.3.1 inRackUps
 
 type EditDeviceOverlayProps = {
     device: Device;
@@ -96,7 +108,7 @@ function EditDeviceOverlay({
                 }
 
                 const typeIsUps = deviceTypesData.find(type => type.ID === Number(data.typeId))?.IsUps ?? false;
-                const upsError = electricityError(deviceData, selectedRackId, typeIsUps, data.electricity);
+                const upsError = electricityError(deviceData, selectedRackId, typeIsUps, data.electricity); // 2.5.3.1 electricityError
                 if (upsError) return t(upsError);
 
                 return null;
@@ -173,3 +185,5 @@ function EditDeviceOverlay({
 }
 
 export default EditDeviceOverlay;
+
+// → Next in the book: 3 RacksPage  (src/pages/RacksPage.tsx)

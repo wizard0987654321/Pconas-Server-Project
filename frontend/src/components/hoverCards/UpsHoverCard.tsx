@@ -1,8 +1,19 @@
+/* ==========================================================================
+ * BOOK THREAD 2.2.3  UpsHoverCard   (Chapter 2: Rooms)
+ * File: src/components/hoverCards/UpsHoverCard.tsx
+ *
+ * Info card shown while hovering a cabinet UPS.
+ *
+ * Used by: 2.2 ServerRoom, 2.5 DetailedRoom
+ * Uses: 2.5.2.1 powerFlow, 2.5.8.1 PowerStatusText, 2.5.8.2 FaultText, A.13 types
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
 
-import type { Ups, FaultType } from "../../types";
-import type { PowerState } from "../../helpers/powerFlow";
-import PowerStatusText from "../powerSimulation/PowerStatusText";
-import FaultText from "../powerSimulation/FaultText";
+
+import type { Ups, FaultType } from "../../types"; // A.13 types
+import type { PowerState } from "../../helpers/powerFlow"; // 2.5.2.1 powerFlow
+import PowerStatusText from "../powerSimulation/PowerStatusText"; // 2.5.8.1 PowerStatusText
+import FaultText from "../powerSimulation/FaultText"; // 2.5.8.2 FaultText
 
 interface UpsHoverOverlayProps {
     ups: Ups;
@@ -36,11 +47,13 @@ function UpsHoverOverlay({ ups, powerState, faultType, t }: UpsHoverOverlayProps
                 {ups.HeightCm} cm
             </p>
 
-            {powerState && <PowerStatusText state={powerState} t={t} />}
-            {faultType && <FaultText faultType={faultType} t={t} />}
+            {powerState && <PowerStatusText /* 2.5.8.1 */ state={powerState} t={t} />}
+            {faultType && <FaultText /* 2.5.8.2 */ faultType={faultType} t={t} />}
 
         </div>
     );
 }
 
 export default UpsHoverOverlay;
+
+// → Next in the book: 2.3 QuizQuestionsButton  (src/components/QuizQuestionsButton.tsx)

@@ -1,3 +1,16 @@
+/* ==========================================================================
+ * BOOK THREAD A.11  transformData   (Chapter A: Appendix: generic parts used everywhere)
+ * File: src/helpers/transformData.ts
+ *
+ * Prepares rows for DataList (A.6): adds the "#" column, renames or hides columns.
+ *
+ * HELPER - plain functions / settings, no React, renders no HTML.
+ *
+ * Used by: 2.1 ServerRoomList, 3.1 ServerRacks, 4.1 ServerDeviceTypes, 5.1 ServerDevices, 6.1 ServerVms,
+ *   7.1 ServerServices, 8.1 ServerCustomers
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 //helper function for receiving and transforming database information
 
 //comuns can be either renamed or omitted
@@ -31,3 +44,5 @@ export function transformData<T extends Record<string, any>>(
         return result;
     });
 }
+
+// → Next in the book: A.12 api/index  (src/services/api/index.ts)

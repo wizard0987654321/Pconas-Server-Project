@@ -1,5 +1,17 @@
-import type { Connection } from "../../types";
-import { getJson, sendJson } from "./client";
+/* ==========================================================================
+ * BOOK THREAD A.12.5  connections   (Chapter A: Appendix: generic parts used everywhere)
+ * File: src/services/api/connections.ts
+ *
+ * Cable requests (load, add, delete).
+ *
+ * DATA - backend requests or types, renders no HTML.
+ *
+ * Uses: A.12.1 client, A.13 types
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
+import type { Connection } from "../../types"; // A.13 types
+import { getJson, sendJson } from "./client"; // A.12.1 client
 
 // Cables between equipment
 
@@ -19,3 +31,5 @@ export function addConnections(
 export function deleteConnections(ids: number[]) {
     return sendJson("POST", `/deleteConnections`, { ids }, "Failed to delete connections");
 }
+
+// → Next in the book: A.12.6 devices  (src/services/api/devices.ts)

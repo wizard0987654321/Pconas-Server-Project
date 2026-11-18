@@ -1,3 +1,15 @@
+/* ==========================================================================
+ * BOOK THREAD A.14.3  serverRoomAnimation   (Chapter A: Appendix: generic parts used everywhere)
+ * File: src/animations/serverRoomAnimation.ts
+ *
+ * GSAP animation of the room view (2.2).
+ *
+ * ANIMATION - GSAP animation function, renders no HTML.
+ *
+ * Used by: 2.2 ServerRoom
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 import { gsap } from "gsap";
 
 export const serverRoomAnimation = (container: HTMLElement) => {
@@ -17,3 +29,5 @@ export const serverRoomAnimation = (container: HTMLElement) => {
     stagger: 0.1,
   });
 };
+
+// → Next in the book: A.14.4 dataListAnimation  (src/animations/dataListAnimation.ts)

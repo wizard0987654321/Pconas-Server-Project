@@ -1,4 +1,20 @@
-import type { Connection, EquipmentType } from "../types";
+/* ==========================================================================
+ * BOOK THREAD 2.5.2.1  powerFlow   (Chapter 2: Rooms)
+ * File: src/helpers/powerFlow.ts
+ *
+ * Calculates which equipment has power (grid / generator -> UPS -> PDU -> rack) and which cables are dead.
+ * Also the cable rules (which pairs may be connected).
+ *
+ * HELPER - plain functions / settings, no React, renders no HTML.
+ *
+ * Used by: 2.2.2 RackHoverCard, 2.2.3 UpsHoverCard, 2.5 DetailedRoom, 2.5.2 usePowerFlow, 2.5.3 roomClimate,
+ *   2.5.3.1 inRackUps, 2.5.7 powerStyles, 2.5.8 PowerSource, 2.5.8.1 PowerStatusText,
+ *   2.5.12 CableChangeOverlay, 2.5.17 PduHoverCard
+ * Uses: A.13 types
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
+import type { Connection, EquipmentType } from "../types"; // A.13 types
 
 // Power flow through a room, calculated only from equipment + cables (no React, no API calls).
 //
@@ -119,3 +135,5 @@ export function computePowerFlow(
 
     return { states, deadCableIds };
 }
+
+// → Next in the book: 2.5.3 roomClimate  (src/helpers/roomClimate.ts)

@@ -1,3 +1,13 @@
+/* ==========================================================================
+ * BOOK THREAD 0.7  ErrorPage   (Chapter 0: App start and layout)
+ * File: src/pages/ErrorPage.tsx
+ *
+ * Shown by the router when a URL doesn't exist or a page crashes.
+ *
+ * Used by: 0.5 routes
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 import { useTranslation } from 'react-i18next';
 
 //simple error page
@@ -18,3 +28,5 @@ function ErrorPage() {
 }
 
 export default ErrorPage
+
+// → Next in the book: 1 Homepage  (src/pages/Homepage.tsx)

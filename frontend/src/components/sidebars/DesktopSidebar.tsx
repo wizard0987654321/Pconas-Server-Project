@@ -1,4 +1,15 @@
-import NavList from "../navComponents/NavList";
+/* ==========================================================================
+ * BOOK THREAD 0.6.3  DesktopSidebar   (Chapter 0: App start and layout)
+ * File: src/components/sidebars/DesktopSidebar.tsx
+ *
+ * Sidebar with the page links on large screens.
+ *
+ * Used by: 0.6 Navigation
+ * Uses: 0.6.3.1 NavList
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
+import NavList from "../navComponents/NavList"; // 0.6.3.1 NavList
 
 function DesktopSidebar() {
     return (
@@ -18,10 +29,12 @@ function DesktopSidebar() {
                     "
         >
             <nav className="flex flex-col justify-between items-center w-full h-full">
-                <NavList />
+                <NavList /* 0.6.3.1 */ />
             </nav>
         </div>
     )
 }
 
 export default DesktopSidebar;
+
+// → Next in the book: 0.6.3.1 NavList  (src/components/navComponents/NavList.tsx)

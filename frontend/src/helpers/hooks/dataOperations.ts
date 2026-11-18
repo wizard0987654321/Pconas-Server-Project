@@ -1,3 +1,17 @@
+/* ==========================================================================
+ * BOOK THREAD A.10  dataOperations   (Chapter A: Appendix: generic parts used everywhere)
+ * File: src/helpers/hooks/dataOperations.ts
+ *
+ * useData: generic loading + deleting of one table. The ...Operations hooks (A.10.1 - A.10.7) only configure
+ * it per table.
+ *
+ * HOOK - only provides data / functions to the component that calls it, renders no HTML.
+ *
+ * Used by: A.10.1 roomOperations, A.10.2 rackOperations, A.10.3 deviceTypeOperations,
+ *   A.10.4 deviceOperations, A.10.5 vmOperations, A.10.6 serviceOperations, A.10.7 customerOperations
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 import { useEffect, useState } from "react";
 
 
@@ -44,3 +58,5 @@ export function useData<T>({
         remove,
     };
 }
+
+// → Next in the book: A.10.1 roomOperations  (src/helpers/hooks/roomOperations.ts)

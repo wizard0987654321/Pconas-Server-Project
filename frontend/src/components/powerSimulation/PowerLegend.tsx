@@ -1,4 +1,15 @@
-import { LEGEND_STATES, POWER_STATE_DOT_CLASS, powerStateKey } from "./powerStyles";
+/* ==========================================================================
+ * BOOK THREAD 2.5.15  PowerLegend   (Chapter 2: Rooms)
+ * File: src/components/powerSimulation/PowerLegend.tsx
+ *
+ * Small legend explaining the colors (powered / no power / dead cable).
+ *
+ * Used by: 2.5 DetailedRoom
+ * Uses: 2.5.7 powerStyles
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
+import { LEGEND_STATES, POWER_STATE_DOT_CLASS, powerStateKey } from "./powerStyles"; // 2.5.7 powerStyles
 
 interface PowerLegendProps {
     t: (key: string) => string;
@@ -26,3 +37,5 @@ function PowerLegend({ t }: PowerLegendProps) {
 }
 
 export default PowerLegend;
+
+// → Next in the book: 2.5.16 ConnectionHoverCard  (src/components/hoverCards/ConnectionHoverCard.tsx)

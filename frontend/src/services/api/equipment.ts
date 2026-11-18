@@ -1,5 +1,17 @@
-import type { Rack, Ups, Pdu, PowerSource, Fan } from "../../types";
-import { getJson, sendJson } from "./client";
+/* ==========================================================================
+ * BOOK THREAD A.12.4  equipment   (Chapter A: Appendix: generic parts used everywhere)
+ * File: src/services/api/equipment.ts
+ *
+ * Racks, UPS, PDUs, power sources, generators and fans requests.
+ *
+ * DATA - backend requests or types, renders no HTML.
+ *
+ * Uses: A.12.1 client, A.13 types
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
+import type { Rack, Ups, Pdu, PowerSource, Fan } from "../../types"; // A.13 types
+import { getJson, sendJson } from "./client"; // A.12.1 client
 
 // Racks, UPS, PDUs and power sources (all of them are Equipment rows in the DB)
 
@@ -32,3 +44,5 @@ export async function deleteOutsideEquipment(id: number) {
 export async function deleteRack(id: number) {
     await sendJson("DELETE", `/deleteRack/${id}`, undefined, "Failed to delete rack");
 }
+
+// → Next in the book: A.12.5 connections  (src/services/api/connections.ts)

@@ -1,3 +1,15 @@
+/* ==========================================================================
+ * BOOK THREAD A.14.5  detailedRackAnimation   (Chapter A: Appendix: generic parts used everywhere)
+ * File: src/animations/detailedRackAnimation.ts
+ *
+ * GSAP animation of the rack view (2.6).
+ *
+ * ANIMATION - GSAP animation function, renders no HTML.
+ *
+ * Used by: 2.6 DetailedRack
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 import { gsap } from "gsap";
 
 export const detailedRackAnimation = (container: HTMLElement) => {
@@ -21,3 +33,5 @@ export const detailedRackAnimation = (container: HTMLElement) => {
         }
     );
 };
+
+// → End of the book. Back to the table of contents: frontend/CODE_GUIDE.md

@@ -1,6 +1,17 @@
+/* ==========================================================================
+ * BOOK THREAD 2.5.14  DisplayedRoomData   (Chapter 2: Rooms)
+ * File: src/components/powerSimulation/DisplayedRoomData.tsx
+ *
+ * Tiles under the room: power usage, AC cooling load, temperature, humidity.
+ *
+ * Used by: 2.5 DetailedRoom
+ * Uses: 2.5.3 roomClimate
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 import { useTranslation } from "react-i18next";
 
-import type { RoomClimate } from "../../helpers/roomClimate";
+import type { RoomClimate } from "../../helpers/roomClimate"; // 2.5.3 roomClimate
 
 type DisplayedRoomDataProps = {
     climate: RoomClimate;
@@ -39,3 +50,5 @@ function DisplayedRoomData({ climate }: DisplayedRoomDataProps) {
 }
 
 export default DisplayedRoomData;
+
+// → Next in the book: 2.5.15 PowerLegend  (src/components/powerSimulation/PowerLegend.tsx)

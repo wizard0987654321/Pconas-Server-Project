@@ -1,6 +1,20 @@
+/* ==========================================================================
+ * BOOK THREAD A.7  AddOverlay   (Chapter A: Appendix: generic parts used everywhere)
+ * File: src/components/overlays/generics/AddOverlay.tsx
+ *
+ * Generic "add" form: draws the given fields, validates, POSTs to the given endpoint and reloads the page.
+ * All Add...Overlay files only configure it.
+ *
+ * Used by: 2.2.1 AddRackOverlay, 2.4 AddRoomOverlay, 2.5.9 AddEquipmentOverlay,
+ *   2.5.10 AddOutsideEquipmentOverlay, 2.6.1 AddDeviceOverlay, 4.2 AddDeviceTypeOverlay, 6.2 AddVmOverlay,
+ *   7.2 AddServiceOverlay, 8.2 AddCustomerOverlay
+ * Uses: A.12 api/index
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { apiFetch } from "../../../services/api";
+import { apiFetch } from "../../../services/api"; // A.12 api/index
 
 type FieldConfig = {
     name: string;
@@ -163,3 +177,5 @@ function AddOverlay({
 }
 
 export default AddOverlay;
+
+// → Next in the book: A.8 EditOverlay  (src/components/overlays/generics/EditOverlay.tsx)

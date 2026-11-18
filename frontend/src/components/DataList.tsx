@@ -1,9 +1,21 @@
+/* ==========================================================================
+ * BOOK THREAD A.6  DataList   (Chapter A: Appendix: generic parts used everywhere)
+ * File: src/components/DataList.tsx
+ *
+ * Generic table (cards on small screens) with detail and delete buttons, used by all list pages.
+ *
+ * Used by: 2.1 ServerRoomList, 3.1 ServerRacks, 4.1 ServerDeviceTypes, 5.1 ServerDevices, 6.1 ServerVms,
+ *   7.1 ServerServices, 8.1 ServerCustomers
+ * Uses: A.2 PrimaryButton, A.4 DeleteButton, A.14.4 dataListAnimation
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import PrimaryButton from "./buttons/PrimaryButton";
-import DeleteButton from "./buttons/DeleteButton";
+import PrimaryButton from "./buttons/PrimaryButton"; // A.2 PrimaryButton
+import DeleteButton from "./buttons/DeleteButton"; // A.4 DeleteButton
 import { useEffect, useRef } from "react";
-import { dataListAnimation } from "../animations/dataListAnimation";
+import { dataListAnimation } from "../animations/dataListAnimation"; // A.14.4 dataListAnimation
 
 type DataListProps = {
     data: Record<string, any>[];
@@ -157,6 +169,4 @@ function DataList({ data, detailPath, detailLabel, idField = "ID", onDelete }: D
 
 export default DataList;
 
-
-
-
+// → Next in the book: A.7 AddOverlay  (src/components/overlays/generics/AddOverlay.tsx)

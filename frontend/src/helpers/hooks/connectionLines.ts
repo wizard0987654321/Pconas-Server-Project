@@ -1,3 +1,16 @@
+/* ==========================================================================
+ * BOOK THREAD 2.5.4  connectionLines   (Chapter 2: Rooms)
+ * File: src/helpers/hooks/connectionLines.ts
+ *
+ * Measures where the equipment icons are on the screen and turns the cables into line coordinates for the
+ * SVG.
+ *
+ * HOOK - only provides data / functions to the component that calls it, renders no HTML.
+ *
+ * Used by: 2.5 DetailedRoom, 2.5.12 CableChangeOverlay
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 import { useCallback, useLayoutEffect, useRef, useState, type RefObject } from "react";
 
 // Shared logic for drawing cables between equipment icons (used in DetailedRoom and CableChangeOverlay)
@@ -100,3 +113,5 @@ export function useConnectionLines(
 
     return lines;
 }
+
+// → Next in the book: 2.5.5 useEquipmentLabels  (src/helpers/hooks/useEquipmentLabels.ts)

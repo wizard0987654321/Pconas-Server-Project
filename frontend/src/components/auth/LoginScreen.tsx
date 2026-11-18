@@ -1,11 +1,22 @@
+/* ==========================================================================
+ * BOOK THREAD 0.6.1  LoginScreen   (Chapter 0: App start and layout)
+ * File: src/components/auth/LoginScreen.tsx
+ *
+ * Login form (username + password), shown by Navigation while nobody is logged in.
+ *
+ * Used by: 0.6 Navigation
+ * Uses: 0.3 AuthProvider, A.1 PageHeading, A.2 PrimaryButton
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 import { useState } from "react";
-import PageHeading from "../PageHeading";
-import PrimaryButton from "../buttons/PrimaryButton";
-import { useAuth } from "../../contexts/AuthProvider";
+import PageHeading from "../PageHeading"; // A.1 PageHeading
+import PrimaryButton from "../buttons/PrimaryButton"; // A.2 PrimaryButton
+import { useAuth } from "../../contexts/AuthProvider"; // 0.3 AuthProvider
 import { useTranslation } from "react-i18next";
 
 function LoginScreen() {
-  const { login, isLoggingIn, error } = useAuth();
+  const { login, isLoggingIn, error } = useAuth(); // 0.3 useAuth
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const { t } = useTranslation();
@@ -69,3 +80,5 @@ function LoginScreen() {
 }
 
 export default LoginScreen;
+
+// → Next in the book: 0.6.2 Header  (src/components/Header.tsx)

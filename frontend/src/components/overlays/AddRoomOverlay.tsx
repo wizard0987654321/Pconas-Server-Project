@@ -1,4 +1,15 @@
-import AddOverlay from "./generics/AddOverlay";
+/* ==========================================================================
+ * BOOK THREAD 2.4  AddRoomOverlay   (Chapter 2: Rooms)
+ * File: src/components/overlays/AddRoomOverlay.tsx
+ *
+ * Form to add a room (area, capacity, height).
+ *
+ * Used by: 2 RoomsPage
+ * Uses: A.7 AddOverlay
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
+import AddOverlay from "./generics/AddOverlay"; // A.7 AddOverlay
 import { useTranslation } from "react-i18next";
 
 type AddRoomOverlayProps = {
@@ -46,3 +57,5 @@ function AddRoomOverlay({ onClose }: AddRoomOverlayProps) {
 }
 
 export default AddRoomOverlay;
+
+// → Next in the book: 2.5 DetailedRoom  (src/components/detailedViews/DetailedRoom.tsx)

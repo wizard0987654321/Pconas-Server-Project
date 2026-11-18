@@ -1,8 +1,19 @@
+/* ==========================================================================
+ * BOOK THREAD 2.5.17  PduHoverCard   (Chapter 2: Rooms)
+ * File: src/components/hoverCards/PduHoverCard.tsx
+ *
+ * Info card shown while hovering a PDU.
+ *
+ * Used by: 2.5 DetailedRoom
+ * Uses: 2.5.2.1 powerFlow, 2.5.8.1 PowerStatusText, 2.5.8.2 FaultText, A.13 types
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
 
-import type { Pdu, FaultType } from "../../types";
-import type { PowerState } from "../../helpers/powerFlow";
-import PowerStatusText from "../powerSimulation/PowerStatusText";
-import FaultText from "../powerSimulation/FaultText";
+
+import type { Pdu, FaultType } from "../../types"; // A.13 types
+import type { PowerState } from "../../helpers/powerFlow"; // 2.5.2.1 powerFlow
+import PowerStatusText from "../powerSimulation/PowerStatusText"; // 2.5.8.1 PowerStatusText
+import FaultText from "../powerSimulation/FaultText"; // 2.5.8.2 FaultText
 
 interface PduHoverOverlayProps {
     pdu: Pdu;
@@ -29,11 +40,13 @@ function PduHoverOverlay({ pdu, powerState, faultType, t }: PduHoverOverlayProps
                 {pdu.OutletCount ?? t("common.unknown")}
             </p>
 
-            {powerState && <PowerStatusText state={powerState} t={t} />}
-            {faultType && <FaultText faultType={faultType} t={t} />}
+            {powerState && <PowerStatusText /* 2.5.8.1 */ state={powerState} t={t} />}
+            {faultType && <FaultText /* 2.5.8.2 */ faultType={faultType} t={t} />}
 
         </div>
     );
 }
 
 export default PduHoverOverlay;
+
+// → Next in the book: 2.6 DetailedRack  (src/components/detailedViews/DetailedRack.tsx)

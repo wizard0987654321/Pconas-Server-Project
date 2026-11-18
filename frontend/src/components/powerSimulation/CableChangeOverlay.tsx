@@ -1,14 +1,25 @@
+/* ==========================================================================
+ * BOOK THREAD 2.5.12  CableChangeOverlay   (Chapter 2: Rooms)
+ * File: src/components/powerSimulation/CableChangeOverlay.tsx
+ *
+ * Rewiring: draw new cables by clicking two devices, mark cables for removal by clicking them, then Save.
+ *
+ * Used by: 2.5 DetailedRoom
+ * Uses: 2.5.2.1 powerFlow, 2.5.4 connectionLines, 2.5.12.1 ConnectionLine, A.12 api/index, A.13 types
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 //react imports 
 import { useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 //types
-import type { Rack, Ups, Pdu, Connection, EquipmentType, PowerSource } from "../../types";
+import type { Rack, Ups, Pdu, Connection, EquipmentType, PowerSource } from "../../types"; // A.13 types
 
 //helpers
-import { addConnections, deleteConnections } from "../../services/api";
-import { useEquipmentRefs, useConnectionLines, type LineInput } from "../../helpers/hooks/connectionLines";
-import { POWER_LEVEL, isAllowedCable } from "../../helpers/powerFlow";
+import { addConnections, deleteConnections } from "../../services/api"; // A.12 api/index
+import { useEquipmentRefs, useConnectionLines, type LineInput } from "../../helpers/hooks/connectionLines"; // 2.5.4 connectionLines
+import { POWER_LEVEL, isAllowedCable } from "../../helpers/powerFlow"; // 2.5.2.1 powerFlow
 
 //icons
 import serverIcon from "../../assets/ServerIcon.svg";
@@ -18,7 +29,7 @@ import powerIcon from "../../assets/powerIcon.svg";
 import generatorIcon from "../../assets/generatorIcon.svg";
 
 //components
-import ConnectionLine from "./ConnectionLine";
+import ConnectionLine from "./ConnectionLine"; // 2.5.12.1 ConnectionLine
 
 // Selected equipment: its Equipment ID and type
 type SelectedEquipment = {
@@ -142,7 +153,7 @@ function CableChangeOverlay({
 
 
     //Lines design: saved cables solid, new cables dashed, cables marked for deletion grey + dashed
-    const { equipmentRefs, setEquipmentRef } = useEquipmentRefs();
+    const { equipmentRefs, setEquipmentRef } = useEquipmentRefs(); // 2.5.4 useEquipmentRefs
     const linesContainerRef = useRef<HTMLDivElement | null>(null);
 
     const lineInputs = useMemo<LineInput[]>(() => [
@@ -162,7 +173,7 @@ function CableChangeOverlay({
         })),
     ], [roomConnections, newConnections, removedIds]);
 
-    const lines = useConnectionLines(linesContainerRef, equipmentRefs, lineInputs, [roomGrid, roomGenerators, roomRacks, roomUps, roomPdus]);
+    const lines = useConnectionLines(linesContainerRef, equipmentRefs, lineInputs, [roomGrid, roomGenerators, roomRacks, roomUps, roomPdus]); // 2.5.4 useConnectionLines
 
 
     // Clickable equipment icon, selected one gets a green ring around
@@ -262,3 +273,5 @@ function CableChangeOverlay({
 }
 
 export default CableChangeOverlay;
+
+// → Next in the book: 2.5.12.1 ConnectionLine  (src/components/powerSimulation/ConnectionLine.tsx)

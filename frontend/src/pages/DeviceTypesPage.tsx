@@ -1,8 +1,20 @@
-import ServerDeviceTypes from "../components/pageContents/ServerDeviceTypes";
-import PageHeading from "../components/PageHeading";
+/* ==========================================================================
+ * BOOK THREAD 4  DeviceTypesPage   (Chapter 4: Device Types)
+ * File: src/pages/DeviceTypesPage.tsx
+ *
+ * All device types (server, switch, in-rack UPS, ...).
+ *
+ * Reached via: URL /deviceTypes  (sidebar link "Device Types")
+ * Used by: 0.5 routes
+ * Uses: 4.1 ServerDeviceTypes, 4.2 AddDeviceTypeOverlay, A.1 PageHeading, A.2 PrimaryButton
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
+import ServerDeviceTypes from "../components/pageContents/ServerDeviceTypes"; // 4.1 ServerDeviceTypes
+import PageHeading from "../components/PageHeading"; // A.1 PageHeading
 import { useState } from "react";
-import AddDeviceTypeOverlay from "../components/overlays/AddDeviceTypeOverlay";
-import PrimaryButton from "../components/buttons/PrimaryButton";
+import AddDeviceTypeOverlay from "../components/overlays/AddDeviceTypeOverlay"; // 4.2 AddDeviceTypeOverlay
+import PrimaryButton from "../components/buttons/PrimaryButton"; // A.2 PrimaryButton
 import { useTranslation } from "react-i18next";
 
 function DeviceTypesPage() {
@@ -26,7 +38,7 @@ function DeviceTypesPage() {
                 />
             </div>
 
-            <ServerDeviceTypes />
+            <ServerDeviceTypes /* 4.1 */ />
 
             {/* overlay, located in  src/components/overlays*/}
             {isAddDeviceTypeOpen && (
@@ -39,3 +51,5 @@ function DeviceTypesPage() {
 }
 
 export default DeviceTypesPage;
+
+// → Next in the book: 4.1 ServerDeviceTypes  (src/components/pageContents/ServerDeviceTypes.tsx)

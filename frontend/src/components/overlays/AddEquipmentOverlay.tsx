@@ -1,7 +1,18 @@
+/* ==========================================================================
+ * BOOK THREAD 2.5.9  AddEquipmentOverlay   (Chapter 2: Rooms)
+ * File: src/components/overlays/AddEquipmentOverlay.tsx
+ *
+ * Form behind a free "+" place in the room: add a rack or a cabinet UPS.
+ *
+ * Used by: 2.5 DetailedRoom
+ * Uses: A.7 AddOverlay, A.10.1 roomOperations
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 
 import { useState } from "react";
-import { useRooms } from "../../helpers/hooks/roomOperations";
-import AddOverlay from "./generics/AddOverlay";
+import { useRooms } from "../../helpers/hooks/roomOperations"; // A.10.1 roomOperations
+import AddOverlay from "./generics/AddOverlay"; // A.7 AddOverlay
 import { useTranslation } from "react-i18next";
 
 type AddEquipmentOverlayProps = {
@@ -98,3 +109,5 @@ function AddEquipmentOverlay({ onClose, roomId }: AddEquipmentOverlayProps) {
 }
 
 export default AddEquipmentOverlay;
+
+// → Next in the book: 2.5.10 AddOutsideEquipmentOverlay  (src/components/overlays/AddOutsideEquipmentOverlay.tsx)

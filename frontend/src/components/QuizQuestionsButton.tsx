@@ -1,12 +1,23 @@
+/* ==========================================================================
+ * BOOK THREAD 2.3  QuizQuestionsButton   (Chapter 2: Rooms)
+ * File: src/components/QuizQuestionsButton.tsx
+ *
+ * Quiz button. Trainer: activates questions (2.3.1). Trainee: answers them (2.3.2).
+ *
+ * Used by: 2 RoomsPage
+ * Uses: 0.3 AuthProvider, 2.3.1 ActivateQuestionOverlay, 2.3.2 AnswerQuestionsOverlay, A.2 PrimaryButton
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 import { useState } from "react";
-import PrimaryButton from "./buttons/PrimaryButton";
+import PrimaryButton from "./buttons/PrimaryButton"; // A.2 PrimaryButton
 import { useTranslation } from "react-i18next";
-import ActivateQuestionOverlay from "./overlays/ActivateQuestionOverlay";
-import AnswerQuestionsOverlay from "./overlays/AnswerQuestionsOverlay";
-import { useAuth } from "../contexts/AuthProvider";
+import ActivateQuestionOverlay from "./overlays/ActivateQuestionOverlay"; // 2.3.1 ActivateQuestionOverlay
+import AnswerQuestionsOverlay from "./overlays/AnswerQuestionsOverlay"; // 2.3.2 AnswerQuestionsOverlay
+import { useAuth } from "../contexts/AuthProvider"; // 0.3 AuthProvider
 
 function QuizQuestions() {
-    const { user } = useAuth();
+    const { user } = useAuth(); // 0.3 useAuth
     const { t } = useTranslation();
 
     const [open, setOpen] = useState(false);
@@ -43,3 +54,5 @@ function QuizQuestions() {
 }
 
 export default QuizQuestions;
+
+// → Next in the book: 2.3.1 ActivateQuestionOverlay  (src/components/overlays/ActivateQuestionOverlay.tsx)

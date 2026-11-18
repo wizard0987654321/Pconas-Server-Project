@@ -1,6 +1,19 @@
-import type { Device, Rack } from "../types";
-import type { PowerState } from "./powerFlow";
-import { runningDevicesOfRack } from "./inRackUps";
+/* ==========================================================================
+ * BOOK THREAD 2.5.3  roomClimate   (Chapter 2: Rooms)
+ * File: src/helpers/roomClimate.ts
+ *
+ * Calculates the room's power usage (W), AC cooling load, temperature and humidity.
+ *
+ * HELPER - plain functions / settings, no React, renders no HTML.
+ *
+ * Used by: 2.5 DetailedRoom, 2.5.14 DisplayedRoomData
+ * Uses: 2.5.2.1 powerFlow, 2.5.3.1 inRackUps, A.13 types
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
+import type { Device, Rack } from "../types"; // A.13 types
+import type { PowerState } from "./powerFlow"; // 2.5.2.1 powerFlow
+import { runningDevicesOfRack } from "./inRackUps"; // 2.5.3.1 inRackUps
 
 // Simple room climate model: not exact physics, but realistic orders of magnitude.
 //
@@ -74,3 +87,5 @@ export function computeRoomClimate(itLoadW: number, rackPlaces: number, acPowere
 
     return { itLoadW, coolingCapacityW, coolingPercent, acPowered, temperatureC, humidityPercent };
 }
+
+// → Next in the book: 2.5.3.1 inRackUps  (src/helpers/inRackUps.ts)

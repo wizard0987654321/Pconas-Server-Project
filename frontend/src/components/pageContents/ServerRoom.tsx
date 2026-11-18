@@ -1,21 +1,34 @@
+/* ==========================================================================
+ * BOOK THREAD 2.2  ServerRoom   (Chapter 2: Rooms)
+ * File: src/components/pageContents/ServerRoom.tsx
+ *
+ * Room view: every room drawn as a box with its rack and UPS icons and free "+" places. Clicking a rack opens
+ * the rack view (2.6), the button opens the detailed room view (2.5).
+ *
+ * Used by: 2 RoomsPage
+ * Uses: 2.2.1 AddRackOverlay, 2.2.2 RackHoverCard, 2.2.3 UpsHoverCard, A.2 PrimaryButton, A.4 DeleteButton,
+ *   A.9 DeletingOverlay, A.10.1 roomOperations, A.12 api/index, A.13 types, A.14.3 serverRoomAnimation
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 
 import serverIcon from "../../assets/ServerIcon.svg";
 import upsIcon from "../../assets/upsIcon.svg";
 import buttonIcon from "../../assets/AddButton.svg";
-import PrimaryButton from "../buttons/PrimaryButton";
+import PrimaryButton from "../buttons/PrimaryButton"; // A.2 PrimaryButton
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { getRackData, getUpsData } from "../../services/api";
+import { getRackData, getUpsData } from "../../services/api"; // A.12 api/index
 import { useState, useEffect, useRef } from "react";
-import type { Room, Rack, Ups } from "../../types";
-import DeleteButton from "../buttons/DeleteButton";
-import DeletingOverlay from "../overlays/generics/DeletingOverlay";
-import { useRooms } from "../../helpers/hooks/roomOperations";
-import AddRackOverlay from "../overlays/AddRackOverlay";
+import type { Room, Rack, Ups } from "../../types"; // A.13 types
+import DeleteButton from "../buttons/DeleteButton"; // A.4 DeleteButton
+import DeletingOverlay from "../overlays/generics/DeletingOverlay"; // A.9 DeletingOverlay
+import { useRooms } from "../../helpers/hooks/roomOperations"; // A.10.1 roomOperations
+import AddRackOverlay from "../overlays/AddRackOverlay"; // 2.2.1 AddRackOverlay
 import { useGSAP } from "@gsap/react";
-import { serverRoomAnimation } from "../../animations/serverRoomAnimation";
-import RackHoverOverlay from "../hoverCards/RackHoverCard";
-import UpsHoverOverlay from "../hoverCards/UpsHoverCard";
+import { serverRoomAnimation } from "../../animations/serverRoomAnimation"; // A.14.3 serverRoomAnimation
+import RackHoverOverlay from "../hoverCards/RackHoverCard"; // 2.2.2 RackHoverCard
+import UpsHoverOverlay from "../hoverCards/UpsHoverCard"; // 2.2.3 UpsHoverCard
 
 function ServerRoom() {
     const navigate = useNavigate();
@@ -154,7 +167,7 @@ function ServerRoom() {
                                                 className="cursor-pointer transition-transform duration-150 hover:scale-110"
                                             />
 
-                                            <RackHoverOverlay rack={rack} t={t} />
+                                            <RackHoverOverlay /* 2.2.2 */ rack={rack} t={t} />
 
                                         </div>
                                     ))}
@@ -169,7 +182,7 @@ function ServerRoom() {
                                                 className="max-w-[120px] cursor-pointer transition-transform duration-150 hover:scale-110"
                                             />
 
-                                            <UpsHoverOverlay ups={ups} t={t} />
+                                            <UpsHoverOverlay /* 2.2.3 */ ups={ups} t={t} />
 
                                         </div>
                                     ))}
@@ -204,3 +217,5 @@ function ServerRoom() {
 }
 
 export default ServerRoom;
+
+// → Next in the book: 2.2.1 AddRackOverlay  (src/components/overlays/AddRackOverlay.tsx)

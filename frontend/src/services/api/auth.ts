@@ -1,4 +1,16 @@
-import { apiFetch } from "./client";
+/* ==========================================================================
+ * BOOK THREAD A.12.2  auth   (Chapter A: Appendix: generic parts used everywhere)
+ * File: src/services/api/auth.ts
+ *
+ * Login, logout, current user.
+ *
+ * DATA - backend requests or types, renders no HTML.
+ *
+ * Uses: A.12.1 client
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
+import { apiFetch } from "./client"; // A.12.1 client
 
 // Login / logout / who is logged in.
 // These don't use getJson/sendJson, because a 401 here is a normal answer, not an error.
@@ -49,3 +61,5 @@ export async function getMe(): Promise<AuthUser | null> {
 
     return response.json();
 }
+
+// → Next in the book: A.12.3 rooms  (src/services/api/rooms.ts)

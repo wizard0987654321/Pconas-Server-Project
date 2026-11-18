@@ -1,5 +1,16 @@
+/* ==========================================================================
+ * BOOK THREAD 2.5.10  AddOutsideEquipmentOverlay   (Chapter 2: Rooms)
+ * File: src/components/overlays/AddOutsideEquipmentOverlay.tsx
+ *
+ * Form behind the "+" next to the grid: add a generator or a fan.
+ *
+ * Used by: 2.5 DetailedRoom
+ * Uses: A.7 AddOverlay
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 import { useTranslation } from "react-i18next";
-import AddOverlay from "./generics/AddOverlay";
+import AddOverlay from "./generics/AddOverlay"; // A.7 AddOverlay
 
 type AddOutsideEquipmentOverlayProps = {
     onClose: () => void;
@@ -31,3 +42,5 @@ function AddOutsideEquipmentOverlay({ onClose, roomId }: AddOutsideEquipmentOver
 }
 
 export default AddOutsideEquipmentOverlay;
+
+// → Next in the book: 2.5.11 OutsideEquipmentInfoOverlay  (src/components/powerSimulation/OutsideEquipmentInfoOverlay.tsx)

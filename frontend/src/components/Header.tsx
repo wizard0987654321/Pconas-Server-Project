@@ -1,13 +1,24 @@
-import ThemeToggle from "./toggleButtons/ThemeToggle";
-import LanguageToggle from "./toggleButtons/LanguageToggle";
+/* ==========================================================================
+ * BOOK THREAD 0.6.2  Header   (Chapter 0: App start and layout)
+ * File: src/components/Header.tsx
+ *
+ * Top bar: logo, theme and language toggles, log out button.
+ *
+ * Used by: 0.6 Navigation
+ * Uses: 0.3 AuthProvider, 0.6.2.1 ThemeToggle, 0.6.2.2 LanguageToggle
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
+import ThemeToggle from "./toggleButtons/ThemeToggle"; // 0.6.2.1 ThemeToggle
+import LanguageToggle from "./toggleButtons/LanguageToggle"; // 0.6.2.2 LanguageToggle
 import logo from "../assets/pconasLogo.png";
 import darkLogo from "../assets/pconasLogoDark.png";
 import { Link } from "react-router-dom";
-import { useAuth } from "../contexts/AuthProvider";
+import { useAuth } from "../contexts/AuthProvider"; // 0.3 AuthProvider
 import { useTranslation } from "react-i18next";
 
 function Header() {
-    const { user, logout } = useAuth();
+    const { user, logout } = useAuth(); // 0.3 useAuth
     const { t } = useTranslation();
 
     return (
@@ -32,8 +43,8 @@ function Header() {
 
             <div className="ml-auto flex items-center gap-3 pr-2 sm:gap-4">
                 <div className="flex items-center gap-2 sm:gap-4">
-                    <ThemeToggle />
-                    <LanguageToggle />
+                    <ThemeToggle /* 0.6.2.1 */ />
+                    <LanguageToggle /* 0.6.2.2 */ />
                 </div>
 
                 {user && (
@@ -50,3 +61,5 @@ function Header() {
 }
 
 export default Header;
+
+// → Next in the book: 0.6.2.1 ThemeToggle  (src/components/toggleButtons/ThemeToggle.tsx)

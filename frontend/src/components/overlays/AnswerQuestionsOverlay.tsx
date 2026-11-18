@@ -1,11 +1,22 @@
+/* ==========================================================================
+ * BOOK THREAD 2.3.2  AnswerQuestionsOverlay   (Chapter 2: Rooms)
+ * File: src/components/overlays/AnswerQuestionsOverlay.tsx
+ *
+ * Trainee: answer the active questions. Correct answers deactivate the question.
+ *
+ * Used by: 2.3 QuizQuestionsButton
+ * Uses: A.5 LoadingSpinner, A.12 api/index
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import LoadingSpinner from "../LoadingSpinner";
+import LoadingSpinner from "../LoadingSpinner"; // A.5 LoadingSpinner
 import {
     getQuestions,
     getAnswers,
     deactivateQuestions
-} from "../../services/api";
+} from "../../services/api"; // A.12 api/index
 
 type AnswerQuestionsOverlayProps = {
     onClose: () => void;
@@ -179,3 +190,5 @@ function AnswerQuestionsOverlay({ onClose }: AnswerQuestionsOverlayProps) {
 }
 
 export default AnswerQuestionsOverlay;
+
+// → Next in the book: 2.4 AddRoomOverlay  (src/components/overlays/AddRoomOverlay.tsx)

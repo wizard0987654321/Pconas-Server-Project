@@ -1,3 +1,16 @@
+/* ==========================================================================
+ * BOOK THREAD 0.2  ThemeProvider   (Chapter 0: App start and layout)
+ * File: src/contexts/ThemeProvider.tsx
+ *
+ * Remembers light / dark mode and puts the `dark` class on <html>, so every `dark:` Tailwind class in the app
+ * switches.
+ *
+ * CONTEXT PROVIDER - shares data with every component below it, renders no HTML of its own.
+ *
+ * Used by: 0.1 main, 0.6.2.1 ThemeToggle
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 
 type Theme = 'light' | 'dark';
@@ -44,3 +57,5 @@ export function useTheme(): ThemeContextType {
   }
   return context;
 }
+
+// → Next in the book: 0.3 AuthProvider  (src/contexts/AuthProvider.tsx)

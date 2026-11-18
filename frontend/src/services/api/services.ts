@@ -1,5 +1,17 @@
-import type { VM, Service, Customer } from "../../types";
-import { getJson, sendJson } from "./client";
+/* ==========================================================================
+ * BOOK THREAD A.12.7  services   (Chapter A: Appendix: generic parts used everywhere)
+ * File: src/services/api/services.ts
+ *
+ * Services, customers and VMs requests.
+ *
+ * DATA - backend requests or types, renders no HTML.
+ *
+ * Uses: A.12.1 client, A.13 types
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
+import type { VM, Service, Customer } from "../../types"; // A.13 types
+import { getJson, sendJson } from "./client"; // A.12.1 client
 
 // VMs, services and customers (Device -> VM -> Service -> Customer)
 
@@ -38,3 +50,5 @@ export async function deleteService(id: number) {
 export async function deleteCustomer(id: number) {
     await sendJson("DELETE", `/deleteCustomer/${id}`, undefined, "Failed to delete customer");
 }
+
+// → Next in the book: A.12.8 quiz  (src/services/api/quiz.ts)

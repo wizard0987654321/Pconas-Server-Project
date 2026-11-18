@@ -1,4 +1,15 @@
-import NavList from "../navComponents/NavList";
+/* ==========================================================================
+ * BOOK THREAD 0.6.4  MobileSidebar   (Chapter 0: App start and layout)
+ * File: src/components/sidebars/MobileSidebar.tsx
+ *
+ * Sidebar for small screens, opened with the menu button. Shows the same NavList (0.6.3.1).
+ *
+ * Used by: 0.6 Navigation
+ * Uses: 0.6.3.1 NavList
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
+import NavList from "../navComponents/NavList"; // 0.6.3.1 NavList
 
 type Props = {
     open: boolean;
@@ -20,7 +31,7 @@ function MobileSidebar({ open, onClose }: Props) {
                 </div>
 
                 <nav className="flex flex-col items-center gap-2 pb-4">
-                    <NavList onItemClick={onClose} />
+                    <NavList /* 0.6.3.1 */ onItemClick={onClose} />
                 </nav>
             </div>
         </div>
@@ -28,3 +39,5 @@ function MobileSidebar({ open, onClose }: Props) {
 }
 
 export default MobileSidebar;
+
+// → Next in the book: 0.7 ErrorPage  (src/pages/ErrorPage.tsx)

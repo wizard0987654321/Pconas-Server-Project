@@ -1,8 +1,19 @@
-import DataList from "../DataList";
+/* ==========================================================================
+ * BOOK THREAD 5.1  ServerDevices   (Chapter 5: Devices)
+ * File: src/components/pageContents/ServerDevices.tsx
+ *
+ * Devices table (DataList) with delete.
+ *
+ * Used by: 5 DevicesPage
+ * Uses: A.6 DataList, A.9 DeletingOverlay, A.10.4 deviceOperations, A.11 transformData
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
+import DataList from "../DataList"; // A.6 DataList
 import { useMemo, useState } from "react";
-import { transformData } from "../../helpers/transformData";
-import { useDevice } from "../../helpers/hooks/deviceOperations";
-import DeletingOverlay from "../overlays/generics/DeletingOverlay";
+import { transformData } from "../../helpers/transformData"; // A.11 transformData
+import { useDevice } from "../../helpers/hooks/deviceOperations"; // A.10.4 deviceOperations
+import DeletingOverlay from "../overlays/generics/DeletingOverlay"; // A.9 DeletingOverlay
 
 function ServerDevices() {
 
@@ -49,3 +60,5 @@ function ServerDevices() {
 }
 
 export default ServerDevices;
+
+// → Next in the book: 6 VmsPage  (src/pages/VmsPage.tsx)

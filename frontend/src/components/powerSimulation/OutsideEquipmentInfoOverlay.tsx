@@ -1,7 +1,18 @@
+/* ==========================================================================
+ * BOOK THREAD 2.5.11  OutsideEquipmentInfoOverlay   (Chapter 2: Rooms)
+ * File: src/components/powerSimulation/OutsideEquipmentInfoOverlay.tsx
+ *
+ * Info about a clicked generator or fan, with a delete button.
+ *
+ * Used by: 2.5 DetailedRoom
+ * Uses: A.9 DeletingOverlay, A.12 api/index
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 import { useState } from "react";
 
-import { deleteOutsideEquipment } from "../../services/api";
-import DeletingOverlay from "../overlays/generics/DeletingOverlay";
+import { deleteOutsideEquipment } from "../../services/api"; // A.12 api/index
+import DeletingOverlay from "../overlays/generics/DeletingOverlay"; // A.9 DeletingOverlay
 
 type OutsideEquipmentInfoOverlayProps = {
     equipmentId: number;
@@ -66,3 +77,5 @@ function OutsideEquipmentInfoOverlay({ equipmentId, label, info, onClose, onDele
 }
 
 export default OutsideEquipmentInfoOverlay;
+
+// → Next in the book: 2.5.12 CableChangeOverlay  (src/components/powerSimulation/CableChangeOverlay.tsx)

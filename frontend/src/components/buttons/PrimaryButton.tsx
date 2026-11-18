@@ -1,3 +1,15 @@
+/* ==========================================================================
+ * BOOK THREAD A.2  PrimaryButton   (Chapter A: Appendix: generic parts used everywhere)
+ * File: src/components/buttons/PrimaryButton.tsx
+ *
+ * Main green button.
+ *
+ * Used by: 0.6.1 LoginScreen, 1 Homepage, 2 RoomsPage, 2.2 ServerRoom, 2.3 QuizQuestionsButton,
+ *   2.6 DetailedRack, 3 RacksPage, 4 DeviceTypesPage, 5 DevicesPage, 6 VmsPage, 7 ServicesPage,
+ *   8 CustomersPage, A.6 DataList
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 type ButtonProps = {
     label: string;
     onClick: () => void;
@@ -20,3 +32,5 @@ function PrimaryButton({
 }
 
 export default PrimaryButton;
+
+// → Next in the book: A.3 SecondaryButton  (src/components/buttons/SecondaryButton.tsx)

@@ -1,3 +1,13 @@
+/* ==========================================================================
+ * BOOK THREAD 0.6.2.2  LanguageToggle   (Chapter 0: App start and layout)
+ * File: src/components/toggleButtons/LanguageToggle.tsx
+ *
+ * Button switching between English and German (uses i18n 0.4).
+ *
+ * Used by: 0.6.2 Header
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 import { useTranslation } from 'react-i18next';
 
 export default function LanguageToggle() {
@@ -17,3 +27,5 @@ export default function LanguageToggle() {
     </button>
   );
 }
+
+// → Next in the book: 0.6.3 DesktopSidebar  (src/components/sidebars/DesktopSidebar.tsx)

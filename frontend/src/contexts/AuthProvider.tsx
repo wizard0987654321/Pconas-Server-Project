@@ -1,3 +1,18 @@
+/* ==========================================================================
+ * BOOK THREAD 0.3  AuthProvider   (Chapter 0: App start and layout)
+ * File: src/contexts/AuthProvider.tsx
+ *
+ * Knows who is logged in (trainer or trainee). Checks the session on load (GET /me) and offers login / logout
+ * to every component (useAuth).
+ *
+ * CONTEXT PROVIDER - shares data with every component below it, renders no HTML of its own.
+ *
+ * Used by: 0.1 main, 0.6 Navigation, 0.6.1 LoginScreen, 0.6.2 Header, 1 Homepage, 2.3 QuizQuestionsButton,
+ *   2.5 DetailedRoom
+ * Uses: A.12 api/index
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import {
     getMe,
@@ -5,7 +20,7 @@ import {
     logout as apiLogout,
     UNAUTHORIZED_EVENT,
     type AuthUser,
-} from "../services/api";
+} from "../services/api"; // A.12 api/index
 
 // The server is the source of truth for who is logged in (httpOnly cookie).
 // This context only mirrors that answer, so components can decide what to SHOW.
@@ -113,3 +128,5 @@ export function useAuth() {
 
     return context;
 }
+
+// → Next in the book: 0.4 config  (src/i18n/config.ts)

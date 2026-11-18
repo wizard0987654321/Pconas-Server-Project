@@ -1,8 +1,20 @@
+/* ==========================================================================
+ * BOOK THREAD 2.2.2  RackHoverCard   (Chapter 2: Rooms)
+ * File: src/components/hoverCards/RackHoverCard.tsx
+ *
+ * Info card shown while hovering a rack: number, size, height and (in the detailed room view) power state and
+ * fault.
+ *
+ * Used by: 2.2 ServerRoom, 2.5 DetailedRoom
+ * Uses: 2.5.2.1 powerFlow, 2.5.8.1 PowerStatusText, 2.5.8.2 FaultText, A.13 types
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
 
-import type { Rack, FaultType } from "../../types";
-import type { PowerState } from "../../helpers/powerFlow";
-import PowerStatusText from "../powerSimulation/PowerStatusText";
-import FaultText from "../powerSimulation/FaultText";
+
+import type { Rack, FaultType } from "../../types"; // A.13 types
+import type { PowerState } from "../../helpers/powerFlow"; // 2.5.2.1 powerFlow
+import PowerStatusText from "../powerSimulation/PowerStatusText"; // 2.5.8.1 PowerStatusText
+import FaultText from "../powerSimulation/FaultText"; // 2.5.8.2 FaultText
 
 interface RackHoverOverlayProps {
     rack: Rack;
@@ -37,15 +49,17 @@ function RackHoverOverlay({ rack, powerState, faultType, devicesOnRackUps = 0, t
                 {rack.HeightCm} cm
             </p>
 
-            {powerState && <PowerStatusText state={powerState} t={t} />}
+            {powerState && <PowerStatusText /* 2.5.8.1 */ state={powerState} t={t} />}
             {devicesOnRackUps > 0 && (
                 <p className="font-semibold text-[#D97706] dark:text-[#F59E0B]">
                     {t("pages.rooms.detailedView.power.devicesOnRackUps")}: {devicesOnRackUps}
                 </p>
             )}
-            {faultType && <FaultText faultType={faultType} t={t} />}
+            {faultType && <FaultText /* 2.5.8.2 */ faultType={faultType} t={t} />}
         </div>
     );
 }
 
 export default RackHoverOverlay;
+
+// → Next in the book: 2.2.3 UpsHoverCard  (src/components/hoverCards/UpsHoverCard.tsx)

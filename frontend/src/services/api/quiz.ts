@@ -1,4 +1,16 @@
-import { getJson, sendJson } from "./client";
+/* ==========================================================================
+ * BOOK THREAD A.12.8  quiz   (Chapter A: Appendix: generic parts used everywhere)
+ * File: src/services/api/quiz.ts
+ *
+ * Quiz questions and answers requests.
+ *
+ * DATA - backend requests or types, renders no HTML.
+ *
+ * Uses: A.12.1 client
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
+import { getJson, sendJson } from "./client"; // A.12.1 client
 
 // Trainer/trainee quiz: trainer activates questions, trainee answers them
 // (a correct answer deactivates the question again)
@@ -19,3 +31,5 @@ export function activateQuestions(ids: number[]) {
 export function deactivateQuestions(ids: number[]) {
     return sendJson("PUT", `/deactivateQuestions`, { ids }, "Failed to deactivate questions");
 }
+
+// → Next in the book: A.12.9 faults  (src/services/api/faults.ts)

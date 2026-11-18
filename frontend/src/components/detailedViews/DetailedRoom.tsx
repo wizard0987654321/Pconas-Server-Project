@@ -1,3 +1,23 @@
+/* ==========================================================================
+ * BOOK THREAD 2.5  DetailedRoom   (Chapter 2: Rooms)
+ * File: src/components/detailedViews/DetailedRoom.tsx
+ *
+ * Detailed virtual room: power grid with generators / fans, cabinet UPS, PDUs, racks, the cables between
+ * them, trainer faults and the room climate. Hooks 2.5.1 - 2.5.6 prepare the data, components 2.5.8 - 2.5.17
+ * draw it.
+ *
+ * Reached via: URL /rooms/:id  (button "Open detailed virtual Room View" in 2.1 ServerRoomList and 2.2 ServerRoom)
+ * Used by: 0.5 routes
+ * Uses: 0.3 AuthProvider, 2.2.2 RackHoverCard, 2.2.3 UpsHoverCard, 2.5.1 useRoomData, 2.5.2 usePowerFlow,
+ *   2.5.2.1 powerFlow, 2.5.3 roomClimate, 2.5.3.1 inRackUps, 2.5.4 connectionLines,
+ *   2.5.5 useEquipmentLabels, 2.5.6 useTrainerSelection, 2.5.7 powerStyles, 2.5.8 PowerSource,
+ *   2.5.8.3 DamagedMark, 2.5.9 AddEquipmentOverlay, 2.5.10 AddOutsideEquipmentOverlay,
+ *   2.5.11 OutsideEquipmentInfoOverlay, 2.5.12 CableChangeOverlay, 2.5.12.1 ConnectionLine,
+ *   2.5.13 TrainerPanel, 2.5.14 DisplayedRoomData, 2.5.15 PowerLegend, 2.5.16 ConnectionHoverCard,
+ *   2.5.17 PduHoverCard, A.1 PageHeading, A.10.1 roomOperations, A.13 types
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 //imports
 
 //react imports
@@ -6,19 +26,19 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useMemo, useRef } from "react";
 
 //types
-import type { PowerSource as PowerSourceData } from "../../types";
+import type { PowerSource as PowerSourceData } from "../../types"; // A.13 types
 
 //Helper functions
-import { computeRoomClimate, itLoadOfRacks } from "../../helpers/roomClimate";
-import { runningDevicesOfRack } from "../../helpers/inRackUps";
-import { useRooms } from "../../helpers/hooks/roomOperations";
-import { useAuth } from "../../contexts/AuthProvider";
-import { useEquipmentRefs, useConnectionLines, type LineInput } from "../../helpers/hooks/connectionLines";
-import { usePowerFlow } from "../../helpers/hooks/usePowerFlow";
-import { useRoomData } from "../../helpers/hooks/useRoomData";
-import { useEquipmentLabels } from "../../helpers/hooks/useEquipmentLabels";
-import { useTrainerSelection } from "../../helpers/hooks/useTrainerSelection";
-import { isPowerCable } from "../../helpers/powerFlow";
+import { computeRoomClimate, itLoadOfRacks } from "../../helpers/roomClimate"; // 2.5.3 roomClimate
+import { runningDevicesOfRack } from "../../helpers/inRackUps"; // 2.5.3.1 inRackUps
+import { useRooms } from "../../helpers/hooks/roomOperations"; // A.10.1 roomOperations
+import { useAuth } from "../../contexts/AuthProvider"; // 0.3 AuthProvider
+import { useEquipmentRefs, useConnectionLines, type LineInput } from "../../helpers/hooks/connectionLines"; // 2.5.4 connectionLines
+import { usePowerFlow } from "../../helpers/hooks/usePowerFlow"; // 2.5.2 usePowerFlow
+import { useRoomData } from "../../helpers/hooks/useRoomData"; // 2.5.1 useRoomData
+import { useEquipmentLabels } from "../../helpers/hooks/useEquipmentLabels"; // 2.5.5 useEquipmentLabels
+import { useTrainerSelection } from "../../helpers/hooks/useTrainerSelection"; // 2.5.6 useTrainerSelection
+import { isPowerCable } from "../../helpers/powerFlow"; // 2.5.2.1 powerFlow
 
 //icons
 import serverIcon from "../../assets/ServerIcon.svg";
@@ -28,22 +48,22 @@ import buttonIcon from "../../assets/AddButton.svg";
 import fanIcon from "../../assets/fanIcon.svg";
 
 //components
-import PageHeading from "../PageHeading";
-import RackHoverOverlay from "../hoverCards/RackHoverCard";
-import UpsHoverOverlay from "../hoverCards/UpsHoverCard";
-import PduHoverOverlay from "../hoverCards/PduHoverCard";
-import ConnectionHoverOverlay from "../hoverCards/ConnectionHoverCard";
-import AddEquipmentOverlay from "../overlays/AddEquipmentOverlay";
-import AddOutsideEquipmentOverlay from "../overlays/AddOutsideEquipmentOverlay";
-import DisplayedRoomData from "../powerSimulation/DisplayedRoomData";
-import ConnectionLine from "../powerSimulation/ConnectionLine";
-import CableChangeOverlay from "../powerSimulation/CableChangeOverlay";
-import PowerSource from "../powerSimulation/PowerSource";
-import PowerLegend from "../powerSimulation/PowerLegend";
-import DamagedMark from "../powerSimulation/DamagedMark";
-import TrainerPanel from "../powerSimulation/TrainerPanel";
-import OutsideEquipmentInfoOverlay from "../powerSimulation/OutsideEquipmentInfoOverlay";
-import { POWER_STATE_ICON_CLASS, DAMAGED_COLOR } from "../powerSimulation/powerStyles";
+import PageHeading from "../PageHeading"; // A.1 PageHeading
+import RackHoverOverlay from "../hoverCards/RackHoverCard"; // 2.2.2 RackHoverCard
+import UpsHoverOverlay from "../hoverCards/UpsHoverCard"; // 2.2.3 UpsHoverCard
+import PduHoverOverlay from "../hoverCards/PduHoverCard"; // 2.5.17 PduHoverCard
+import ConnectionHoverOverlay from "../hoverCards/ConnectionHoverCard"; // 2.5.16 ConnectionHoverCard
+import AddEquipmentOverlay from "../overlays/AddEquipmentOverlay"; // 2.5.9 AddEquipmentOverlay
+import AddOutsideEquipmentOverlay from "../overlays/AddOutsideEquipmentOverlay"; // 2.5.10 AddOutsideEquipmentOverlay
+import DisplayedRoomData from "../powerSimulation/DisplayedRoomData"; // 2.5.14 DisplayedRoomData
+import ConnectionLine from "../powerSimulation/ConnectionLine"; // 2.5.12.1 ConnectionLine
+import CableChangeOverlay from "../powerSimulation/CableChangeOverlay"; // 2.5.12 CableChangeOverlay
+import PowerSource from "../powerSimulation/PowerSource"; // 2.5.8 PowerSource
+import PowerLegend from "../powerSimulation/PowerLegend"; // 2.5.15 PowerLegend
+import DamagedMark from "../powerSimulation/DamagedMark"; // 2.5.8.3 DamagedMark
+import TrainerPanel from "../powerSimulation/TrainerPanel"; // 2.5.13 TrainerPanel
+import OutsideEquipmentInfoOverlay from "../powerSimulation/OutsideEquipmentInfoOverlay"; // 2.5.11 OutsideEquipmentInfoOverlay
+import { POWER_STATE_ICON_CLASS, DAMAGED_COLOR } from "../powerSimulation/powerStyles"; // 2.5.7 powerStyles
 
 function DetailedRoom() {
 
@@ -53,13 +73,13 @@ function DetailedRoom() {
     const roomId = Number(id);
 
     const { roomsData } = useRooms();
-    const { isTrainer } = useAuth();
+    const { isTrainer } = useAuth(); // 0.3 useAuth
 
     // All equipment, cables and faults of this room (faults, cables, generators and fans are polled)
     const {
         roomRacks, roomUps, roomPdus, roomConnections, roomPowerSources, roomGrid, roomGenerators,
         roomFaults, outsideEquipment, devices, reloadPowerSources, reloadFans, reloadFaults, reloadConnections,
-    } = useRoomData(roomId);
+    } = useRoomData(roomId); // 2.5.1 useRoomData
 
     // For adding new rack, without explicitly choosing room ID
     const [selectedRoomId, setSelectedRoomId] = useState<number | null>(null);
@@ -77,7 +97,7 @@ function DetailedRoom() {
     const currentRoom = roomsData.find(room => room.ID === roomId);
 
     // Which equipment has power, which cables are dead, and what is damaged
-    const { deadCableIds, powerStateOf, faultOfEquipment, faultOfCable } = usePowerFlow({
+    const { deadCableIds, powerStateOf, faultOfEquipment, faultOfCable } = usePowerFlow({ // 2.5.2 usePowerFlow
         powerSources: roomPowerSources,
         ups: roomUps,
         pdus: roomPdus,
@@ -95,7 +115,7 @@ function DetailedRoom() {
     const acPowered = !gridDown || roomGenerators.some(generator => !isDamaged(generator.ID));
 
     // Power usage, cooling, temperature, humidity. Recalculated whenever rack power changes, e.g. after new cables
-    const roomClimate = computeRoomClimate(
+    const roomClimate = computeRoomClimate( // 2.5.3 computeRoomClimate
         itLoadOfRacks(roomRacks, devices, powerStateOf),
         currentRoom?.Capacity ?? 0,
         acPowered
@@ -127,7 +147,7 @@ function DetailedRoom() {
 
     // Refs of every equipment icon (power source, racks, UPS, PDUs), keyed by Equipment ID.
     // All of them are Equipment IDs, so a connection's From/To ID points straight into this map
-    const { equipmentRefs, setEquipmentRef } = useEquipmentRefs();
+    const { equipmentRefs, setEquipmentRef } = useEquipmentRefs(); // 2.5.4 useEquipmentRefs
 
     // Parent of the power source and the room, the svg with the lines covers this whole div
     const linesContainerRef = useRef<HTMLDivElement | null>(null);
@@ -150,7 +170,7 @@ function DetailedRoom() {
     );
 
     // Line coordinates calculated from the real positions of the icons
-    const lines = useConnectionLines(linesContainerRef, equipmentRefs, lineInputs, [roomPowerSources, roomRacks, roomUps, roomPdus]);
+    const lines = useConnectionLines(linesContainerRef, equipmentRefs, lineInputs, [roomPowerSources, roomRacks, roomUps, roomPdus]); // 2.5.4 useConnectionLines
 
     // Currently hovered cable (line key = connection ID)
     const [hoveredLineKey, setHoveredLineKey] = useState<string | null>(null);
@@ -159,7 +179,7 @@ function DetailedRoom() {
     const hoveredConnection = roomConnections.find(connection => String(connection.ID) === hoveredLineKey);
 
     // Equipment ID -> readable name ("Power grid", "Generator 1", "Rack 3", ...)
-    const equipmentLabel = useEquipmentLabels({
+    const equipmentLabel = useEquipmentLabels({ // 2.5.5 useEquipmentLabels
         grid: roomGrid,
         generators: roomGenerators,
         racks: roomRacks,
@@ -169,7 +189,7 @@ function DetailedRoom() {
 
     // Trainer select mode: clicks select equipment / cables instead of their normal action
     const { selectMode, selectedTarget, handleSelectModeChange, selectCable, handleEquipmentClick, isSelected, selectionClass } =
-        useTrainerSelection(equipmentLabel, roomConnections);
+        useTrainerSelection(equipmentLabel, roomConnections); // 2.5.6 useTrainerSelection
 
     // Grid or generator icon with its hover info
     const renderPowerSource = (source: PowerSourceData) => (
@@ -301,9 +321,9 @@ function DetailedRoom() {
                 <div className="my-15 flex w-full flex-col gap-6">
 
                     {/* Room Data - Temperature, Humidity, etc. */}
-                    <DisplayedRoomData climate={roomClimate} />
+                    <DisplayedRoomData /* 2.5.14 */ climate={roomClimate} />
 
-                    <PowerLegend t={t} />
+                    <PowerLegend /* 2.5.15 */ t={t} />
 
                     {/* Power source (outside) and the room (green border), lines are drawn on top of this container,
                         so the cable from the power source visibly enters the room through its wall */}
@@ -371,9 +391,9 @@ function DetailedRoom() {
                                             className={`rack-item cursor-pointer max-w-[120px] transition-transform duration-150 hover:scale-110 ${powerClass(ups.ID)} ${selectionClass(ups.ID)}`}
                                         />
 
-                                        {isDamaged(ups.ID) && <DamagedMark />}
+                                        {isDamaged(ups.ID) && <DamagedMark /* 2.5.8.3 */ />}
 
-                                        <UpsHoverOverlay ups={ups} powerState={powerStateOf(ups.ID)} faultType={faultOfEquipment(ups.ID)} t={t} />
+                                        <UpsHoverOverlay /* 2.2.3 */ ups={ups} powerState={powerStateOf(ups.ID)} faultType={faultOfEquipment(ups.ID)} t={t} />
                                     </div>
                                 ))}
                             </div>
@@ -391,9 +411,9 @@ function DetailedRoom() {
                                                 className={`rack-item cursor-pointer transition-transform duration-150 hover:scale-110 ${powerClass(pdu.ID)} ${selectionClass(pdu.ID)}`}
                                             />
 
-                                            {isDamaged(pdu.ID) && <DamagedMark />}
+                                            {isDamaged(pdu.ID) && <DamagedMark /* 2.5.8.3 */ />}
 
-                                            <PduHoverOverlay pdu={pdu} powerState={powerStateOf(pdu.ID)} faultType={faultOfEquipment(pdu.ID)} t={t} />
+                                            <PduHoverOverlay /* 2.5.17 */ pdu={pdu} powerState={powerStateOf(pdu.ID)} faultType={faultOfEquipment(pdu.ID)} t={t} />
                                         </div>
                                     ))}
                                 </div>
@@ -413,7 +433,7 @@ function DetailedRoom() {
                                             className={`rack-item cursor-pointer transition-transform duration-150 hover:scale-110 ${powerClass(rack.ID)} ${selectionClass(rack.ID)}`}
                                         />
 
-                                        {isDamaged(rack.ID) && <DamagedMark />}
+                                        {isDamaged(rack.ID) && <DamagedMark /* 2.5.8.3 */ />}
 
                                         <RackHoverOverlay
                                             rack={rack}
@@ -444,3 +464,5 @@ function DetailedRoom() {
 }
 
 export default DetailedRoom;
+
+// → Next in the book: 2.5.1 useRoomData  (src/helpers/hooks/useRoomData.ts)

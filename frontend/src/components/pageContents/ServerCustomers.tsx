@@ -1,8 +1,19 @@
-import DataList from "../DataList";
+/* ==========================================================================
+ * BOOK THREAD 8.1  ServerCustomers   (Chapter 8: Customers)
+ * File: src/components/pageContents/ServerCustomers.tsx
+ *
+ * Customers table (DataList) with delete.
+ *
+ * Used by: 8 CustomersPage
+ * Uses: A.6 DataList, A.9 DeletingOverlay, A.10.7 customerOperations, A.11 transformData
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
+import DataList from "../DataList"; // A.6 DataList
 import { useMemo, useState } from "react";
-import { transformData } from "../../helpers/transformData";
-import { useCustomers } from "../../helpers/hooks/customerOperations";
-import DeletingOverlay from "../overlays/generics/DeletingOverlay";
+import { transformData } from "../../helpers/transformData"; // A.11 transformData
+import { useCustomers } from "../../helpers/hooks/customerOperations"; // A.10.7 customerOperations
+import DeletingOverlay from "../overlays/generics/DeletingOverlay"; // A.9 DeletingOverlay
 
 function ServerCustomers() {
 
@@ -43,3 +54,5 @@ function ServerCustomers() {
 }
 
 export default ServerCustomers;
+
+// → Next in the book: 8.2 AddCustomerOverlay  (src/components/overlays/AddCustomerOverlay.tsx)

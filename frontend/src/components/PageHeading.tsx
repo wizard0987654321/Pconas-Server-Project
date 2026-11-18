@@ -1,7 +1,19 @@
+/* ==========================================================================
+ * BOOK THREAD A.1  PageHeading   (Chapter A: Appendix: generic parts used everywhere)
+ * File: src/components/PageHeading.tsx
+ *
+ * Animated heading at the top of a page.
+ *
+ * Used by: 0.6.1 LoginScreen, 1 Homepage, 2 RoomsPage, 2.5 DetailedRoom, 3 RacksPage, 4 DeviceTypesPage,
+ *   5 DevicesPage, 6 VmsPage, 7 ServicesPage, 8 CustomersPage
+ * Uses: A.14.2 pageHeading
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useGSAP } from "@gsap/react";
-import { pageHeadingAnimation } from "../animations/pageHeading";
+import { pageHeadingAnimation } from "../animations/pageHeading"; // A.14.2 pageHeading
 
 type PageHeadingProps = {
   heading: string;
@@ -33,3 +45,5 @@ function PageHeading({ heading }: PageHeadingProps) {
 }
 
 export default PageHeading;
+
+// → Next in the book: A.2 PrimaryButton  (src/components/buttons/PrimaryButton.tsx)

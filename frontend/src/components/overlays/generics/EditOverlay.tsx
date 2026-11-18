@@ -1,6 +1,17 @@
+/* ==========================================================================
+ * BOOK THREAD A.8  EditOverlay   (Chapter A: Appendix: generic parts used everywhere)
+ * File: src/components/overlays/generics/EditOverlay.tsx
+ *
+ * Generic "edit" form: like AddOverlay (A.7), but starts with existing data and sends a PUT.
+ *
+ * Used by: 2.6.2 EditDeviceOverlay
+ * Uses: A.12 api/index
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { apiFetch } from "../../../services/api";
+import { apiFetch } from "../../../services/api"; // A.12 api/index
 
 type FieldConfig = {
     name: string;
@@ -195,3 +206,5 @@ function EditOverlay({
 }
 
 export default EditOverlay;
+
+// → Next in the book: A.9 DeletingOverlay  (src/components/overlays/generics/DeletingOverlay.tsx)

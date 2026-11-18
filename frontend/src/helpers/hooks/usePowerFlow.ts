@@ -1,7 +1,21 @@
+/* ==========================================================================
+ * BOOK THREAD 2.5.2  usePowerFlow   (Chapter 2: Rooms)
+ * File: src/helpers/hooks/usePowerFlow.ts
+ *
+ * Wraps powerFlow.ts (2.5.2.1) in useMemo. Gives the power state and fault of every equipment piece and cable
+ * of the room.
+ *
+ * HOOK - only provides data / functions to the component that calls it, renders no HTML.
+ *
+ * Used by: 2.5 DetailedRoom, 2.6 DetailedRack
+ * Uses: 2.5.2.1 powerFlow, A.13 types
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 import { useCallback, useMemo } from "react";
 
-import type { Connection, Fault, FaultType, Pdu, PowerSource, Rack, Ups } from "../../types";
-import { computePowerFlow, type PowerNode, type PowerState } from "../powerFlow";
+import type { Connection, Fault, FaultType, Pdu, PowerSource, Rack, Ups } from "../../types"; // A.13 types
+import { computePowerFlow, type PowerNode, type PowerState } from "../powerFlow"; // 2.5.2.1 powerFlow
 
 type RoomEquipment = {
     powerSources: PowerSource[];
@@ -40,7 +54,7 @@ export function usePowerFlow({ powerSources, ups, pdus, racks, connections, faul
         const damagedIds = (faultMap: Map<number, FaultType>) =>
             new Set([...faultMap].filter(([, type]) => type === "damaged").map(([id]) => id));
 
-        return computePowerFlow(nodes, connections, {
+        return computePowerFlow(nodes, connections, { // 2.5.2.1 computePowerFlow
             equipmentIds: damagedIds(equipmentFaults),
             cableIds: damagedIds(cableFaults),
         });
@@ -56,3 +70,5 @@ export function usePowerFlow({ powerSources, ups, pdus, racks, connections, faul
 
     return { ...powerFlow, powerStateOf, faultOfEquipment, faultOfCable };
 }
+
+// → Next in the book: 2.5.2.1 powerFlow  (src/helpers/powerFlow.ts)

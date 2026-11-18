@@ -1,7 +1,18 @@
+/* ==========================================================================
+ * BOOK THREAD 2.3.1  ActivateQuestionOverlay   (Chapter 2: Rooms)
+ * File: src/components/overlays/ActivateQuestionOverlay.tsx
+ *
+ * Trainer: choose which quiz questions are active.
+ *
+ * Used by: 2.3 QuizQuestionsButton
+ * Uses: A.5 LoadingSpinner, A.12 api/index
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { activateQuestions, getQuestions } from "../../services/api";
-import LoadingSpinner from "../LoadingSpinner";
+import { activateQuestions, getQuestions } from "../../services/api"; // A.12 api/index
+import LoadingSpinner from "../LoadingSpinner"; // A.5 LoadingSpinner
 
 type Props = {
     onClose: () => void;
@@ -143,3 +154,5 @@ function ActivateQuestionOverlay({ onClose }: Props) {
 }
 
 export default ActivateQuestionOverlay;
+
+// → Next in the book: 2.3.2 AnswerQuestionsOverlay  (src/components/overlays/AnswerQuestionsOverlay.tsx)

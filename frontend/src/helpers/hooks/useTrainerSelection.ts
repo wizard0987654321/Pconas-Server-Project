@@ -1,7 +1,21 @@
+/* ==========================================================================
+ * BOOK THREAD 2.5.6  useTrainerSelection   (Chapter 2: Rooms)
+ * File: src/helpers/hooks/useTrainerSelection.ts
+ *
+ * Trainer select mode: which equipment or cable is selected to be damaged / repaired in the TrainerPanel
+ * (2.5.13).
+ *
+ * HOOK - only provides data / functions to the component that calls it, renders no HTML.
+ *
+ * Used by: 2.5 DetailedRoom
+ * Uses: 2.5.13 TrainerPanel, A.13 types
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 import { useState } from "react";
 
-import type { Connection } from "../../types";
-import type { TrainerTarget } from "../../components/powerSimulation/TrainerPanel";
+import type { Connection } from "../../types"; // A.13 types
+import type { TrainerTarget } from "../../components/powerSimulation/TrainerPanel"; // 2.5.13 TrainerPanel
 
 // Trainer selection: while select mode is on, a click selects the equipment / cable
 // (instead of its normal action, e.g. opening the rack). The selected target is damaged / repaired in the TrainerPanel.
@@ -39,3 +53,5 @@ export function useTrainerSelection(equipmentLabel: (equipmentId: number) => str
 
     return { selectMode, selectedTarget, handleSelectModeChange, selectCable, handleEquipmentClick, isSelected, selectionClass };
 }
+
+// → Next in the book: 2.5.7 powerStyles  (src/components/powerSimulation/powerStyles.ts)

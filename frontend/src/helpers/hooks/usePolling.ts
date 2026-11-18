@@ -1,3 +1,16 @@
+/* ==========================================================================
+ * BOOK THREAD 2.5.1.1  usePolling   (Chapter 2: Rooms)
+ * File: src/helpers/hooks/usePolling.ts
+ *
+ * Runs a function at once and then every few seconds. keepIfUnchanged avoids re-renders when the reloaded
+ * data is the same.
+ *
+ * HOOK - only provides data / functions to the component that calls it, renders no HTML.
+ *
+ * Used by: 2.5.1 useRoomData
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 import { useEffect, useRef } from "react";
 
 // Calls `callback` once right away and then every `intervalMs` milliseconds,
@@ -23,3 +36,5 @@ export function usePolling(callback: () => void, intervalMs: number) {
 export function keepIfUnchanged<T>(next: T) {
     return (prev: T) => (JSON.stringify(prev) === JSON.stringify(next) ? prev : next);
 }
+
+// → Next in the book: 2.5.2 usePowerFlow  (src/helpers/hooks/usePowerFlow.ts)

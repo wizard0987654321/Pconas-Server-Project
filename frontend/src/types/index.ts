@@ -1,3 +1,21 @@
+/* ==========================================================================
+ * BOOK THREAD A.13  types   (Chapter A: Appendix: generic parts used everywhere)
+ * File: src/types/index.ts
+ *
+ * All shared TypeScript types (Room, Rack, Device, Connection, Fault, ...), matching the backend responses.
+ *
+ * DATA - backend requests or types, renders no HTML.
+ *
+ * Used by: 2.2 ServerRoom, 2.2.2 RackHoverCard, 2.2.3 UpsHoverCard, 2.5 DetailedRoom, 2.5.1 useRoomData,
+ *   2.5.2 usePowerFlow, 2.5.2.1 powerFlow, 2.5.3 roomClimate, 2.5.3.1 inRackUps, 2.5.5 useEquipmentLabels,
+ *   2.5.6 useTrainerSelection, 2.5.8 PowerSource, 2.5.8.2 FaultText, 2.5.12 CableChangeOverlay,
+ *   2.5.13 TrainerPanel, 2.5.16 ConnectionHoverCard, 2.5.17 PduHoverCard, 2.6 DetailedRack,
+ *   2.6.2 EditDeviceOverlay, A.10.1 roomOperations, A.10.2 rackOperations, A.10.3 deviceTypeOperations,
+ *   A.10.4 deviceOperations, A.10.5 vmOperations, A.10.6 serviceOperations, A.10.7 customerOperations,
+ *   A.12.3 rooms, A.12.4 equipment, A.12.5 connections, A.12.6 devices, A.12.7 services, A.12.9 faults
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 //centralised file for typescript types, used in whole code
 
 export type Room = {
@@ -129,3 +147,5 @@ export type DeviceType = {
     Usage: string,
     IsUps: boolean
 }
+
+// → Next in the book: A.14.1 homepage  (src/animations/homepage.ts)

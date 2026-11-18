@@ -1,3 +1,14 @@
+/* ==========================================================================
+ * BOOK THREAD A.9  DeletingOverlay   (Chapter A: Appendix: generic parts used everywhere)
+ * File: src/components/overlays/generics/DeletingOverlay.tsx
+ *
+ * Generic "Are you sure you want to delete?" confirmation.
+ *
+ * Used by: 2.1 ServerRoomList, 2.2 ServerRoom, 2.5.11 OutsideEquipmentInfoOverlay, 3.1 ServerRacks,
+ *   4.1 ServerDeviceTypes, 5.1 ServerDevices, 6.1 ServerVms, 7.1 ServerServices, 8.1 ServerCustomers
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 import { useTranslation } from "react-i18next";
 
 type DeletingOverlayProps = {
@@ -43,3 +54,5 @@ function DeletingOverlay({
 }
 
 export default DeletingOverlay;
+
+// → Next in the book: A.10 dataOperations  (src/helpers/hooks/dataOperations.ts)

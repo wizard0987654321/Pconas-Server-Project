@@ -1,3 +1,15 @@
+/* ==========================================================================
+ * BOOK THREAD A.14.4  dataListAnimation   (Chapter A: Appendix: generic parts used everywhere)
+ * File: src/animations/dataListAnimation.ts
+ *
+ * GSAP animation of the DataList (A.6).
+ *
+ * ANIMATION - GSAP animation function, renders no HTML.
+ *
+ * Used by: A.6 DataList
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 import { gsap } from "gsap";
 
 export const dataListAnimation = (container: HTMLElement) => {
@@ -19,3 +31,5 @@ export const dataListAnimation = (container: HTMLElement) => {
         clearProps: "all",
     });
 };
+
+// → Next in the book: A.14.5 detailedRackAnimation  (src/animations/detailedRackAnimation.ts)

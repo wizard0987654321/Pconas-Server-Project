@@ -1,9 +1,21 @@
-import PageHeading from "../components/PageHeading";
-import ServerCustomers from "../components/pageContents/ServerCustomers";
+/* ==========================================================================
+ * BOOK THREAD 8  CustomersPage   (Chapter 8: Customers)
+ * File: src/pages/CustomersPage.tsx
+ *
+ * All customers.
+ *
+ * Reached via: URL /customers  (sidebar link "Customers")
+ * Used by: 0.5 routes
+ * Uses: 8.1 ServerCustomers, 8.2 AddCustomerOverlay, A.1 PageHeading, A.2 PrimaryButton
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
+import PageHeading from "../components/PageHeading"; // A.1 PageHeading
+import ServerCustomers from "../components/pageContents/ServerCustomers"; // 8.1 ServerCustomers
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import PrimaryButton from "../components/buttons/PrimaryButton";
-import AddCustomerOverlay from "../components/overlays/AddCustomerOverlay";
+import PrimaryButton from "../components/buttons/PrimaryButton"; // A.2 PrimaryButton
+import AddCustomerOverlay from "../components/overlays/AddCustomerOverlay"; // 8.2 AddCustomerOverlay
 
 function CustomersPage() {
     const { t } = useTranslation();
@@ -23,14 +35,16 @@ function CustomersPage() {
                 />
             </div>
 
-            <ServerCustomers />
+            <ServerCustomers /* 8.1 */ />
             
             {/* overlay, located in  src/components/overlays*/}
             {isAddCustomerOpen && (
-                <AddCustomerOverlay onClose={() => setIsAddCustomerOpen(false)} />
+                <AddCustomerOverlay /* 8.2 */ onClose={() => setIsAddCustomerOpen(false)} />
             )}
         </div>
     )
 }
 
 export default CustomersPage;
+
+// → Next in the book: 8.1 ServerCustomers  (src/components/pageContents/ServerCustomers.tsx)

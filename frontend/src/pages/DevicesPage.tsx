@@ -1,8 +1,20 @@
-import PageHeading from "../components/PageHeading";
-import ServerDevices from "../components/pageContents/ServerDevices";
+/* ==========================================================================
+ * BOOK THREAD 5  DevicesPage   (Chapter 5: Devices)
+ * File: src/pages/DevicesPage.tsx
+ *
+ * All devices of all racks. Adding a device uses the form from 2.6.1.
+ *
+ * Reached via: URL /devices  (sidebar link "Devices")
+ * Used by: 0.5 routes
+ * Uses: 2.6.1 AddDeviceOverlay, 5.1 ServerDevices, A.1 PageHeading, A.2 PrimaryButton
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
+import PageHeading from "../components/PageHeading"; // A.1 PageHeading
+import ServerDevices from "../components/pageContents/ServerDevices"; // 5.1 ServerDevices
 import { useState } from "react";
-import AddDeviceOverlay from "../components/overlays/AddDeviceOverlay";
-import PrimaryButton from "../components/buttons/PrimaryButton";
+import AddDeviceOverlay from "../components/overlays/AddDeviceOverlay"; // 2.6.1 AddDeviceOverlay
+import PrimaryButton from "../components/buttons/PrimaryButton"; // A.2 PrimaryButton
 import { useTranslation } from "react-i18next";
 
 function DevicesPage() {
@@ -27,7 +39,7 @@ function DevicesPage() {
                 />
             </div>
 
-            <ServerDevices />
+            <ServerDevices /* 5.1 */ />
 
             {/* overlay, located in  src/components/overlays*/}
             {isAddDeviceOpen && (
@@ -40,3 +52,5 @@ function DevicesPage() {
 }
 
 export default DevicesPage;
+
+// → Next in the book: 5.1 ServerDevices  (src/components/pageContents/ServerDevices.tsx)

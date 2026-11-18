@@ -1,7 +1,18 @@
+/* ==========================================================================
+ * BOOK THREAD 2.5.13  TrainerPanel   (Chapter 2: Rooms)
+ * File: src/components/powerSimulation/TrainerPanel.tsx
+ *
+ * Trainer only: select equipment or cables and damage / repair them, or repair everything.
+ *
+ * Used by: 2.5 DetailedRoom, 2.5.6 useTrainerSelection
+ * Uses: A.12 api/index, A.13 types
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 import { useState } from "react";
 
-import type { Fault } from "../../types";
-import { addFault, resolveFault, resetFaults } from "../../services/api";
+import type { Fault } from "../../types"; // A.13 types
+import { addFault, resolveFault, resetFaults } from "../../services/api"; // A.12 api/index
 
 // What the trainer clicked: a piece of equipment or a cable
 export type TrainerTarget = {
@@ -103,3 +114,5 @@ function TrainerPanel({ roomId, roomFaults, selectMode, onSelectModeChange, sele
 }
 
 export default TrainerPanel;
+
+// → Next in the book: 2.5.14 DisplayedRoomData  (src/components/powerSimulation/DisplayedRoomData.tsx)

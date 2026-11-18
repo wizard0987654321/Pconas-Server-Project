@@ -1,6 +1,17 @@
+/* ==========================================================================
+ * BOOK THREAD 2.5.16  ConnectionHoverCard   (Chapter 2: Rooms)
+ * File: src/components/hoverCards/ConnectionHoverCard.tsx
+ *
+ * Info card shown while hovering a cable.
+ *
+ * Used by: 2.5 DetailedRoom
+ * Uses: 2.5.8.2 FaultText, A.13 types
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
 
-import type { Connection, FaultType } from "../../types";
-import FaultText from "../powerSimulation/FaultText";
+
+import type { Connection, FaultType } from "../../types"; // A.13 types
+import FaultText from "../powerSimulation/FaultText"; // 2.5.8.2 FaultText
 
 interface ConnectionHoverOverlayProps {
     connection: Connection;
@@ -69,10 +80,12 @@ function ConnectionHoverOverlay({ connection, dead, faultType, fromLabel, toLabe
                 </p>
             )}
 
-            {faultType && <FaultText faultType={faultType} t={t} />}
+            {faultType && <FaultText /* 2.5.8.2 */ faultType={faultType} t={t} />}
 
         </div>
     );
 }
 
 export default ConnectionHoverOverlay;
+
+// → Next in the book: 2.5.17 PduHoverCard  (src/components/hoverCards/PduHoverCard.tsx)

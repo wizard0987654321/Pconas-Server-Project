@@ -1,4 +1,15 @@
-import AddOverlay from "./generics/AddOverlay";
+/* ==========================================================================
+ * BOOK THREAD 4.2  AddDeviceTypeOverlay   (Chapter 4: Device Types)
+ * File: src/components/overlays/AddDeviceTypeOverlay.tsx
+ *
+ * Form to add a device type (name, manufacturer, usage, in-rack UPS yes / no).
+ *
+ * Used by: 4 DeviceTypesPage
+ * Uses: A.7 AddOverlay
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
+import AddOverlay from "./generics/AddOverlay"; // A.7 AddOverlay
 import { useTranslation } from "react-i18next";
 
 type AddDeviceTypeOverlayProps = {
@@ -64,3 +75,5 @@ function AddDeviceTypeOverlay({ onClose }:AddDeviceTypeOverlayProps) {
 }
 
 export default AddDeviceTypeOverlay;
+
+// → Next in the book: 5 DevicesPage  (src/pages/DevicesPage.tsx)

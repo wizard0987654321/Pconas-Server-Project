@@ -1,7 +1,18 @@
+/* ==========================================================================
+ * BOOK THREAD 2.2.1  AddRackOverlay   (Chapter 2: Rooms)
+ * File: src/components/overlays/AddRackOverlay.tsx
+ *
+ * Form to add a rack (room, size in U, height).
+ *
+ * Used by: 2.2 ServerRoom, 3 RacksPage
+ * Uses: A.7 AddOverlay, A.10.1 roomOperations
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 // AddRackOverlay.tsx
 
-import { useRooms } from "../../helpers/hooks/roomOperations";
-import AddOverlay from "./generics/AddOverlay";
+import { useRooms } from "../../helpers/hooks/roomOperations"; // A.10.1 roomOperations
+import AddOverlay from "./generics/AddOverlay"; // A.7 AddOverlay
 import { useTranslation } from "react-i18next";
 
 type AddRackOverlayProps = {
@@ -66,3 +77,5 @@ function AddRackOverlay({ onClose, roomId }: AddRackOverlayProps) {
 }
 
 export default AddRackOverlay;
+
+// → Next in the book: 2.2.2 RackHoverCard  (src/components/hoverCards/RackHoverCard.tsx)

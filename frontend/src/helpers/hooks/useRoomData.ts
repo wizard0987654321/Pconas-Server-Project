@@ -1,11 +1,25 @@
+/* ==========================================================================
+ * BOOK THREAD 2.5.1  useRoomData   (Chapter 2: Rooms)
+ * File: src/helpers/hooks/useRoomData.ts
+ *
+ * Loads all data of one room (racks, UPS, PDUs, devices, cables, faults, generators, fans) and reloads the
+ * changing parts every 3 seconds.
+ *
+ * HOOK - only provides data / functions to the component that calls it, renders no HTML.
+ *
+ * Used by: 2.5 DetailedRoom, 2.6 DetailedRack
+ * Uses: 2.5.1.1 usePolling, A.12 api/index, A.13 types
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 import { useEffect, useMemo, useState } from "react";
 
-import type { Rack, Ups, Pdu, Connection, Fault, Fan, Device, PowerSource } from "../../types";
+import type { Rack, Ups, Pdu, Connection, Fault, Fan, Device, PowerSource } from "../../types"; // A.13 types
 import {
     getRackData, getUpsData, getPduData, getPowerSourceData, getFanData,
     getConnectionsData, getFaultsData, getDevicesData,
-} from "../../services/api";
-import { usePolling, keepIfUnchanged } from "./usePolling";
+} from "../../services/api"; // A.12 api/index
+import { usePolling, keepIfUnchanged } from "./usePolling"; // 2.5.1.1 usePolling
 
 // How often faults, cables, generators and fans are reloaded (live sync between trainer and trainee)
 const POLL_INTERVAL_MS = 3000;
@@ -107,3 +121,5 @@ export function useRoomData(roomId: number) {
         reloadConnections,
     };
 }
+
+// → Next in the book: 2.5.1.1 usePolling  (src/helpers/hooks/usePolling.ts)

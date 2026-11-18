@@ -1,3 +1,17 @@
+/* ==========================================================================
+ * BOOK THREAD A.12.1  client   (Chapter A: Appendix: generic parts used everywhere)
+ * File: src/services/api/client.ts
+ *
+ * apiFetch / getJson / sendJson: every request goes through here (login cookie, error messages, 401
+ * handling).
+ *
+ * DATA - backend requests or types, renders no HTML.
+ *
+ * Used by: A.12.2 auth, A.12.3 rooms, A.12.4 equipment, A.12.5 connections, A.12.6 devices, A.12.7 services,
+ *   A.12.8 quiz, A.12.9 faults
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 // Low-level communication with the backend, used by all the topic files in this folder
 
 // variable url, so when it is hosted i can just change this url
@@ -57,3 +71,5 @@ export async function sendJson<T = unknown>(
     await throwIfFailed(response, errorMessage);
     return response.json();
 }
+
+// → Next in the book: A.12.2 auth  (src/services/api/auth.ts)

@@ -1,5 +1,16 @@
-import AddOverlay from "./generics/AddOverlay";
-import { useCustomers } from "../../helpers/hooks/customerOperations";
+/* ==========================================================================
+ * BOOK THREAD 7.2  AddServiceOverlay   (Chapter 7: Services)
+ * File: src/components/overlays/AddServiceOverlay.tsx
+ *
+ * Form to add a service (name, customer).
+ *
+ * Used by: 7 ServicesPage
+ * Uses: A.7 AddOverlay, A.10.7 customerOperations
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
+import AddOverlay from "./generics/AddOverlay"; // A.7 AddOverlay
+import { useCustomers } from "../../helpers/hooks/customerOperations"; // A.10.7 customerOperations
 import { useTranslation } from "react-i18next";
 
 type AddServiceOverlayProps = {
@@ -41,3 +52,5 @@ function AddServiceOverlay({ onClose }: AddServiceOverlayProps) {
 }
 
 export default AddServiceOverlay;
+
+// → Next in the book: 8 CustomersPage  (src/pages/CustomersPage.tsx)

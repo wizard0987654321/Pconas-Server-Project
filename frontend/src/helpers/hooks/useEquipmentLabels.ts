@@ -1,7 +1,20 @@
+/* ==========================================================================
+ * BOOK THREAD 2.5.5  useEquipmentLabels   (Chapter 2: Rooms)
+ * File: src/helpers/hooks/useEquipmentLabels.ts
+ *
+ * Turns equipment IDs into readable names ("Rack 3", "PDU 1", "Generator 2").
+ *
+ * HOOK - only provides data / functions to the component that calls it, renders no HTML.
+ *
+ * Used by: 2.5 DetailedRoom, 2.6 DetailedRack
+ * Uses: A.13 types
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-import type { Rack, Ups, Pdu, PowerSource } from "../../types";
+import type { Rack, Ups, Pdu, PowerSource } from "../../types"; // A.13 types
 
 type RoomEquipment = {
     grid: PowerSource | null;
@@ -31,3 +44,5 @@ export function useEquipmentLabels({ grid, generators, racks, ups, pdus }: RoomE
         [labels, t]
     );
 }
+
+// → Next in the book: 2.5.6 useTrainerSelection  (src/helpers/hooks/useTrainerSelection.ts)

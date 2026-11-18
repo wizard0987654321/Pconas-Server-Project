@@ -1,5 +1,17 @@
-import type { Fault } from "../../types";
-import { getJson, sendJson } from "./client";
+/* ==========================================================================
+ * BOOK THREAD A.12.9  faults   (Chapter A: Appendix: generic parts used everywhere)
+ * File: src/services/api/faults.ts
+ *
+ * Trainer faults requests (load, damage, repair, reset).
+ *
+ * DATA - backend requests or types, renders no HTML.
+ *
+ * Uses: A.12.1 client, A.13 types
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
+import type { Fault } from "../../types"; // A.13 types
+import { getJson, sendJson } from "./client"; // A.12.1 client
 
 // Faults caused by the trainer (damaged equipment / cables)
 
@@ -22,3 +34,5 @@ export function resolveFault(faultId: number) {
 export function resetFaults(roomId: number) {
     return sendJson("PUT", `/resetFaults/${roomId}`, undefined, "Failed to reset faults");
 }
+
+// → Next in the book: A.13 types  (src/types/index.ts)

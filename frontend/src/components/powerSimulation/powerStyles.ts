@@ -1,4 +1,18 @@
-import type { PowerState } from "../../helpers/powerFlow";
+/* ==========================================================================
+ * BOOK THREAD 2.5.7  powerStyles   (Chapter 2: Rooms)
+ * File: src/components/powerSimulation/powerStyles.ts
+ *
+ * Colors and text keys per power state, used by all power simulation components.
+ *
+ * STYLE CONSTANTS - only class names / colors, renders no HTML.
+ *
+ * Used by: 2.5 DetailedRoom, 2.5.8 PowerSource, 2.5.8.1 PowerStatusText, 2.5.8.3 DamagedMark,
+ *   2.5.15 PowerLegend, 2.6 DetailedRack
+ * Uses: 2.5.2.1 powerFlow
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
+import type { PowerState } from "../../helpers/powerFlow"; // 2.5.2.1 powerFlow
 
 // One place for how each power state looks, used by icons, hover overlays and the legend.
 // Full class names (no string building), so Tailwind finds them.
@@ -31,3 +45,5 @@ export const POWER_STATE_DOT_CLASS: Record<(typeof LEGEND_STATES)[number], strin
 export const DAMAGED_COLOR = "#DC2626";
 
 export const powerStateKey = (state: PowerState) => `pages.rooms.detailedView.power.states.${state}`;
+
+// → Next in the book: 2.5.8 PowerSource  (src/components/powerSimulation/PowerSource.tsx)

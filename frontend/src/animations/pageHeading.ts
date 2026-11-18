@@ -1,3 +1,15 @@
+/* ==========================================================================
+ * BOOK THREAD A.14.2  pageHeading   (Chapter A: Appendix: generic parts used everywhere)
+ * File: src/animations/pageHeading.ts
+ *
+ * GSAP animation of the PageHeading (A.1).
+ *
+ * ANIMATION - GSAP animation function, renders no HTML.
+ *
+ * Used by: A.1 PageHeading
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
 import { gsap } from "gsap";
 
 export const pageHeadingAnimation = (container: HTMLElement) => {
@@ -26,3 +38,5 @@ export const pageHeadingAnimation = (container: HTMLElement) => {
 
   return tl;
 };
+
+// → Next in the book: A.14.3 serverRoomAnimation  (src/animations/serverRoomAnimation.ts)

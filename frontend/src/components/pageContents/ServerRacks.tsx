@@ -1,9 +1,20 @@
-import DataList from "../DataList";
+/* ==========================================================================
+ * BOOK THREAD 3.1  ServerRacks   (Chapter 3: Racks)
+ * File: src/components/pageContents/ServerRacks.tsx
+ *
+ * Racks table (DataList) with delete and a button to the rack view (2.6).
+ *
+ * Used by: 3 RacksPage
+ * Uses: A.6 DataList, A.9 DeletingOverlay, A.10.1 roomOperations, A.10.2 rackOperations, A.11 transformData
+ * Table of contents: frontend/CODE_GUIDE.md
+ * ========================================================================== */
+
+import DataList from "../DataList"; // A.6 DataList
 import { useMemo, useState } from "react";
-import { transformData } from "../../helpers/transformData";
-import { useRacks } from "../../helpers/hooks/rackOperations";
-import { useRooms } from "../../helpers/hooks/roomOperations";
-import DeletingOverlay from "../overlays/generics/DeletingOverlay";
+import { transformData } from "../../helpers/transformData"; // A.11 transformData
+import { useRacks } from "../../helpers/hooks/rackOperations"; // A.10.2 rackOperations
+import { useRooms } from "../../helpers/hooks/roomOperations"; // A.10.1 roomOperations
+import DeletingOverlay from "../overlays/generics/DeletingOverlay"; // A.9 DeletingOverlay
 
 type ServerRacksProps = {
     internalRoomId?: string;
@@ -80,3 +91,5 @@ function ServerRacks({ internalRoomId }: ServerRacksProps) {
 }
 
 export default ServerRacks;
+
+// → Next in the book: 4 DeviceTypesPage  (src/pages/DeviceTypesPage.tsx)
