@@ -57,7 +57,7 @@ function TrainerPanel({ roomId, roomFaults, selectMode, onSelectModeChange, sele
     const buttonClass = "cursor-pointer rounded-[0.5rem] px-4 py-2 font-semibold disabled:cursor-default disabled:opacity-50";
 
     return (
-        <div className="flex flex-col gap-3 rounded-[0.5rem] border-2 border-[#DC2626] p-4">
+        <div className="flex flex-col gap-3 rounded-[0.5rem] border-2 border-[#DC2626] p-4 dark:border-[#F87171]">
             <h2 className="font-bold">{t("pages.rooms.detailedView.trainer.title")}</h2>
 
             <div className="flex flex-wrap items-center gap-3">
@@ -82,7 +82,7 @@ function TrainerPanel({ roomId, roomFaults, selectMode, onSelectModeChange, sele
                             </span>
 
                             {selectedFault ? (
-                                <button onClick={handleRepair} className={`${buttonClass} bg-[#6ADBAF]`}>
+                                <button onClick={handleRepair} className={`${buttonClass} bg-[#6ADBAF] text-white`}>
                                     {t("pages.rooms.detailedView.trainer.repair")}
                                 </button>
                             ) : (
@@ -97,7 +97,7 @@ function TrainerPanel({ roomId, roomFaults, selectMode, onSelectModeChange, sele
                 </div>
             )}
 
-            {error && <p className="text-[#DC2626]">{error}</p>}
+            {error && <p className="text-[#DC2626] dark:text-[#F87171]">{error}</p>}
         </div>
     );
 }

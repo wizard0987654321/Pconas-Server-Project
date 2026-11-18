@@ -153,7 +153,7 @@ function AnswerQuestionsOverlay({ onClose }: AnswerQuestionsOverlayProps) {
                                         )}
 
                                         {feedback[question.ID] === false && (
-                                            <p className="mt-3 font-semibold text-red-600">{t("common.tryAgain")}</p>
+                                            <p className="mt-3 font-semibold text-red-600 dark:text-[#F87171]">{t("common.tryAgain")}</p>
                                         )}
 
                                     </div>

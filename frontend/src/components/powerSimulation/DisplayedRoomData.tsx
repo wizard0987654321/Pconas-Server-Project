@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 
-import type { RoomClimate } from "../helpers/roomClimate";
+import type { RoomClimate } from "../../helpers/roomClimate";
 
 type DisplayedRoomDataProps = {
     climate: RoomClimate;
@@ -29,9 +29,9 @@ function DisplayedRoomData({ climate }: DisplayedRoomDataProps) {
         <div className="grid w-full grid-cols-2 gap-6 rounded-lg bg-[#6ADBAF]/10 p-4 text-center md:grid-cols-4">
             {items.map(item => (
                 <div key={item.label} className="flex flex-col items-center gap-1">
-                    <h2 className="text-sm font-semibold text-gray-600">{item.label}</h2>
-                    <p className={`text-xl font-bold ${item.alert ? "text-[#DC2626]" : "text-gray-900"}`}>{item.value}</p>
-                    {item.detail && <p className="text-xs text-gray-600">{item.detail}</p>}
+                    <h2 className="text-sm font-semibold text-gray-600 dark:text-gray-300">{item.label}</h2>
+                    <p className={`text-xl font-bold ${item.alert ? "text-[#DC2626] dark:text-[#F87171]" : "text-gray-900 dark:text-[#F9FAFB]"}`}>{item.value}</p>
+                    {item.detail && <p className="text-xs text-gray-600 dark:text-gray-300">{item.detail}</p>}
                 </div>
             ))}
         </div>

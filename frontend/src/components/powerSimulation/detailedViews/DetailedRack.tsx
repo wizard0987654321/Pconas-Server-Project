@@ -1,19 +1,19 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
-import { getRackData, getDevicesData, getDeviceTypesData } from "../services/api";
-import type { Rack, Device } from "../types";
+import { getRackData, getDevicesData, getDeviceTypesData } from "../../../services/api";
+import type { Rack, Device } from "../../../types";
 import { useTranslation } from "react-i18next";
-import PrimaryButton from "./buttons/PrimaryButton";
-import AddDeviceOverlay from "./overlays/AddDeviceOverlay";
+import PrimaryButton from "../../buttons/PrimaryButton";
+import AddDeviceOverlay from "../../overlays/AddDeviceOverlay";
 import { useGSAP } from "@gsap/react";
-import { detailedRackAnimation } from "../animations/detailedRackAnimation";
-import EditDeviceOverlay from "./overlays/EditDeviceOverlay";
-import LoadingSpinner from "./LoadingSpinner";
-import { POWER_STATE_TEXT_CLASS, powerStateKey } from "./simulation/powerStyles";
-import { useRoomData } from "../helpers/hooks/useRoomData";
-import { usePowerFlow } from "../helpers/hooks/usePowerFlow";
-import { useEquipmentLabels } from "../helpers/hooks/useEquipmentLabels";
-import { devicePowerState } from "../helpers/inRackUps";
+import { detailedRackAnimation } from "../../../animations/detailedRackAnimation";
+import EditDeviceOverlay from "../../overlays/EditDeviceOverlay";
+import LoadingSpinner from "../../LoadingSpinner";
+import { POWER_STATE_TEXT_CLASS, powerStateKey } from "../powerStyles";
+import { useRoomData } from "../../../helpers/hooks/useRoomData";
+import { usePowerFlow } from "../../../helpers/hooks/usePowerFlow";
+import { useEquipmentLabels } from "../../../helpers/hooks/useEquipmentLabels";
+import { devicePowerState } from "../../../helpers/inRackUps";
 
 //detailed view for rack, can be opened with "to the rack detailed view" button
 function DetailedRack() {

@@ -7,7 +7,7 @@ import roomViewIcon from "../assets/roomView.svg";
 import PrimaryButton from "../components/buttons/PrimaryButton";
 import AddRoomOverlay from "../components/overlays/AddRoomOverlay";
 import { useTranslation } from "react-i18next";
-import QuizQuestions from "../components/QuizQuestions";
+import QuizQuestions from "../components/QuizQuestionsButton";
 
 function RoomsPage() {
     const { t } = useTranslation();

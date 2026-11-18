@@ -1,8 +1,8 @@
 
-import type { Pdu, FaultType } from "../types";
-import type { PowerState } from "../helpers/powerFlow";
-import PowerStatusText from "./simulation/PowerStatusText";
-import FaultText from "./simulation/FaultText";
+import type { Pdu, FaultType } from "../../types";
+import type { PowerState } from "../../helpers/powerFlow";
+import PowerStatusText from "../powerSimulation/PowerStatusText";
+import FaultText from "../powerSimulation/FaultText";
 
 interface PduHoverOverlayProps {
     pdu: Pdu;

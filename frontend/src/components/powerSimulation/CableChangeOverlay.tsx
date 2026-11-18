@@ -3,19 +3,19 @@ import { useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 //types
-import type { Rack, Ups, Pdu, Connection, EquipmentType, PowerSource } from "../types";
+import type { Rack, Ups, Pdu, Connection, EquipmentType, PowerSource } from "../../types";
 
 //helpers
-import { addConnections, deleteConnections } from "../services/api";
-import { useEquipmentRefs, useConnectionLines, type LineInput } from "../helpers/hooks/connectionLines";
-import { POWER_LEVEL, isAllowedCable } from "../helpers/powerFlow";
+import { addConnections, deleteConnections } from "../../services/api";
+import { useEquipmentRefs, useConnectionLines, type LineInput } from "../../helpers/hooks/connectionLines";
+import { POWER_LEVEL, isAllowedCable } from "../../helpers/powerFlow";
 
 //icons
-import serverIcon from "../assets/ServerIcon.svg";
-import upsIcon from "../assets/upsIcon.svg";
-import pduIcon from "../assets/PDU.svg";
-import powerIcon from "../assets/powerIcon.svg";
-import generatorIcon from "../assets/generatorIcon.svg";
+import serverIcon from "../../assets/ServerIcon.svg";
+import upsIcon from "../../assets/upsIcon.svg";
+import pduIcon from "../../assets/PDU.svg";
+import powerIcon from "../../assets/powerIcon.svg";
+import generatorIcon from "../../assets/generatorIcon.svg";
 
 //components
 import ConnectionLine from "./ConnectionLine";
@@ -180,13 +180,13 @@ function CableChangeOverlay({
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-6">
-            <div className="relative max-h-full w-full max-w-[90rem] overflow-auto rounded-[0.5rem] bg-white p-10">
+            <div className="relative max-h-full w-full max-w-[90rem] overflow-auto rounded-[0.5rem] bg-[#F8FAFC] p-10 text-[#111827] dark:bg-[#0F234F] dark:text-[#F9FAFB]">
 
                 <h2 className="mb-6 text-2xl font-bold">{heading}</h2>
 
-                <p className="mb-4 text-gray-600">{t("pages.rooms.detailedView.cables.deleteHint")}</p>
+                <p className="mb-4 text-gray-600 dark:text-gray-300">{t("pages.rooms.detailedView.cables.deleteHint")}</p>
 
-                {error && <p className="mb-4 text-red-600">{error}</p>}
+                {error && <p className="mb-4 text-red-600 dark:text-[#F87171]">{error}</p>}
 
                 <div className="flex w-full flex-col rounded-[0.5rem] border-[1rem] border-[#6ADBAF] p-6">
                     <div ref={linesContainerRef} className="relative flex flex-col gap-24">
@@ -241,7 +241,7 @@ function CableChangeOverlay({
                     <button
                         type="button"
                         onClick={onClose}
-                        className="cursor-pointer rounded border border-[#6ADBAF] px-4 py-2"
+                        className="cursor-pointer rounded border border-[#6ADBAF] px-4 py-2 hover:bg-gray-100 dark:hover:bg-white/10"
                     >
                         {t("common.cancel")}
                     </button>

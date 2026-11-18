@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import type { Connection } from "../../types";
-import type { TrainerTarget } from "../../components/simulation/TrainerPanel";
+import type { TrainerTarget } from "../../components/powerSimulation/TrainerPanel";
 
 // Trainer selection: while select mode is on, a click selects the equipment / cable
 // (instead of its normal action, e.g. opening the rack). The selected target is damaged / repaired in the TrainerPanel.

@@ -1,6 +1,6 @@
 
-import type { Connection, FaultType } from "../types";
-import FaultText from "./simulation/FaultText";
+import type { Connection, FaultType } from "../../types";
+import FaultText from "../powerSimulation/FaultText";
 
 interface ConnectionHoverOverlayProps {
     connection: Connection;

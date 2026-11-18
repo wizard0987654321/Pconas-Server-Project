@@ -40,7 +40,7 @@ function OutsideEquipmentInfoOverlay({ equipmentId, label, info, onClose, onDele
             <div className="w-full max-w-sm rounded-xl bg-[#F8FAFC] p-6 text-[#111827] shadow-lg dark:bg-[#0F234F] dark:text-[#F9FAFB]">
                 <h2 className="mb-4 text-xl font-bold">{label}</h2>
 
-                {error && <p className="mb-4 text-red-600">{error}</p>}
+                {error && <p className="mb-4 text-red-600 dark:text-[#F87171]">{error}</p>}
 
                 <p className="mb-6">{info}</p>
 

@@ -6,44 +6,44 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useMemo, useRef } from "react";
 
 //types
-import type { PowerSource as PowerSourceData } from "../types";
+import type { PowerSource as PowerSourceData } from "../../../types";
 
 //Helper functions
-import { computeRoomClimate, itLoadOfRacks } from "../helpers/roomClimate";
-import { runningDevicesOfRack } from "../helpers/inRackUps";
-import { useRooms } from "../helpers/hooks/roomOperations";
-import { useAuth } from "../contexts/AuthProvider";
-import { useEquipmentRefs, useConnectionLines, type LineInput } from "../helpers/hooks/connectionLines";
-import { usePowerFlow } from "../helpers/hooks/usePowerFlow";
-import { useRoomData } from "../helpers/hooks/useRoomData";
-import { useEquipmentLabels } from "../helpers/hooks/useEquipmentLabels";
-import { useTrainerSelection } from "../helpers/hooks/useTrainerSelection";
-import { isPowerCable } from "../helpers/powerFlow";
+import { computeRoomClimate, itLoadOfRacks } from "../../../helpers/roomClimate";
+import { runningDevicesOfRack } from "../../../helpers/inRackUps";
+import { useRooms } from "../../../helpers/hooks/roomOperations";
+import { useAuth } from "../../../contexts/AuthProvider";
+import { useEquipmentRefs, useConnectionLines, type LineInput } from "../../../helpers/hooks/connectionLines";
+import { usePowerFlow } from "../../../helpers/hooks/usePowerFlow";
+import { useRoomData } from "../../../helpers/hooks/useRoomData";
+import { useEquipmentLabels } from "../../../helpers/hooks/useEquipmentLabels";
+import { useTrainerSelection } from "../../../helpers/hooks/useTrainerSelection";
+import { isPowerCable } from "../../../helpers/powerFlow";
 
 //icons
-import serverIcon from "../assets/ServerIcon.svg";
-import upsIcon from "../assets/upsIcon.svg";
-import pduIcon from "../assets/PDU.svg";
-import buttonIcon from "../assets/AddButton.svg";
-import fanIcon from "../assets/fanIcon.svg";
+import serverIcon from "../../../assets/ServerIcon.svg";
+import upsIcon from "../../../assets/upsIcon.svg";
+import pduIcon from "../../../assets/PDU.svg";
+import buttonIcon from "../../../assets/AddButton.svg";
+import fanIcon from "../../../assets/fanIcon.svg";
 
 //components
-import PageHeading from "./PageHeading";
-import RackHoverOverlay from "./RackHoverOverlay";
-import UpsHoverOverlay from "./UpsHoverOverlay";
-import PduHoverOverlay from "./PduHoverOverlay";
-import ConnectionHoverOverlay from "./ConnectionHoverOverlay";
-import AddEquipmentOverlay from "./overlays/AddEquipmentOverlay";
-import AddOutsideEquipmentOverlay from "./overlays/AddOutsideEquipmentOverlay";
-import DisplayedRoomData from "./DisplayedRoomData";
-import ConnectionLine from "./ConnectionLine";
-import CableChangeOverlay from "./CableChangeOverlay";
-import PowerSource from "./simulation/PowerSource";
-import PowerLegend from "./simulation/PowerLegend";
-import DamagedMark from "./simulation/DamagedMark";
-import TrainerPanel from "./simulation/TrainerPanel";
-import OutsideEquipmentInfoOverlay from "./simulation/OutsideEquipmentInfoOverlay";
-import { POWER_STATE_ICON_CLASS, DAMAGED_COLOR } from "./simulation/powerStyles";
+import PageHeading from "../../PageHeading";
+import RackHoverOverlay from "../../hoverCards/RackHoverCard";
+import UpsHoverOverlay from "../../hoverCards/UpsHoverCard";
+import PduHoverOverlay from "../../hoverCards/PduHoverCard";
+import ConnectionHoverOverlay from "../../hoverCards/ConnectionHoverCard";
+import AddEquipmentOverlay from "../../overlays/AddEquipmentOverlay";
+import AddOutsideEquipmentOverlay from "../../overlays/AddOutsideEquipmentOverlay";
+import DisplayedRoomData from "../DisplayedRoomData";
+import ConnectionLine from "../ConnectionLine";
+import CableChangeOverlay from "../CableChangeOverlay";
+import PowerSource from "../PowerSource";
+import PowerLegend from "../PowerLegend";
+import DamagedMark from "../DamagedMark";
+import TrainerPanel from "../TrainerPanel";
+import OutsideEquipmentInfoOverlay from "../OutsideEquipmentInfoOverlay";
+import { POWER_STATE_ICON_CLASS, DAMAGED_COLOR } from "../powerStyles";
 
 function DetailedRoom() {
 
@@ -278,7 +278,7 @@ function DetailedRoom() {
 
                 <button
                     onClick={() => setShowCableOverlay(true)}
-                    className="mt-4 w-fit cursor-pointer rounded-[0.5rem] bg-[#6ADBAF] px-4 py-2 font-semibold"
+                    className="mt-4 w-fit cursor-pointer rounded-[0.5rem] bg-[#6ADBAF] px-4 py-2 font-semibold text-white"
                 >
                     {t("pages.rooms.detailedView.cables.openButton")}
                 </button>

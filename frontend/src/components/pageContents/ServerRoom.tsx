@@ -14,8 +14,8 @@ import { useRooms } from "../../helpers/hooks/roomOperations";
 import AddRackOverlay from "../overlays/AddRackOverlay";
 import { useGSAP } from "@gsap/react";
 import { serverRoomAnimation } from "../../animations/serverRoomAnimation";
-import RackHoverOverlay from "../RackHoverOverlay";
-import UpsHoverOverlay from "../UpsHoverOverlay";
+import RackHoverOverlay from "../hoverCards/RackHoverCard";
+import UpsHoverOverlay from "../hoverCards/UpsHoverCard";
 
 function ServerRoom() {
     const navigate = useNavigate();
