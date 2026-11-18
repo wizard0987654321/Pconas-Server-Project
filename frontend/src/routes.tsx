@@ -6,10 +6,10 @@ import RoomsPage from "./pages/RoomsPage";
 import RacksPage from "./pages/RacksPage";
 import VmsPage from "./pages/VmsPage";
 import ServicesPage from "./pages/ServicesPage";
-import DetailedRack from "./components/powerSimulation/detailedViews/DetailedRack";
+import DetailedRack from "./components/detailedViews/DetailedRack";
 import CustomersPage from "./pages/CustomersPage";
 import DeviceTypesPage from "./pages/DeviceTypesPage";
-import DetailedRoom from "./components/powerSimulation/detailedViews/DetailedRoom";
+import DetailedRoom from "./components/detailedViews/DetailedRoom";
 
 
 const routes = [
