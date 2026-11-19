@@ -10,3 +10,4 @@ export * from "./devices";
 export * from "./services";
 export * from "./quiz";
 export * from "./faults";
+export * from "./network";

@@ -79,6 +79,25 @@ export type Connection = {
     Color: string;
 }
 
+// Network training: settings of each part of a room's request chain (Config column, JSON).
+// customer -> DNS -> firewall -> load balancer -> nginx proxy -> server
+export type ClientConfig = { hostname: string; port: number };
+export type DnsConfig = { records: { name: string; ip: string }[] };
+export type FirewallConfig = { rules: { port: number; action: "allow" | "deny" }[]; defaultAction: "allow" | "deny" };
+export type LoadBalancerConfig = { ip: string; members: { ip: string; port: number }[]; healthPath: string };
+export type ProxyConfig = { ip: string; port: number; upstreamIp: string; upstreamPort: number };
+export type ServerConfig = { deviceId: number; ip: string; port: number; healthPath: string };
+
+// One part of the chain. Type decides the shape of Config, so after checking Type, TypeScript knows Config
+export type NetworkNode = { ID: number; RoomID: number } & (
+    | { Type: "client"; Config: ClientConfig }
+    | { Type: "dns"; Config: DnsConfig }
+    | { Type: "firewall"; Config: FirewallConfig }
+    | { Type: "loadBalancer"; Config: LoadBalancerConfig }
+    | { Type: "proxy"; Config: ProxyConfig }
+    | { Type: "server"; Config: ServerConfig }
+);
+
 export type Device = {
     ID: number,
     DeviceNumber:number,
