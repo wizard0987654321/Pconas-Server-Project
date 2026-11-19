@@ -71,8 +71,24 @@ model Room {
   ID        Int         @id(map: "PK__Room__3214EC278D3F5492") @default(autoincrement())
   Area      Int?
   Capacity  Int?
-  HeightCm  Decimal?    @db.Decimal(8, 2)
-  Equipment Equipment[]
+  HeightCm    Decimal?      @db.Decimal(8, 2)
+  Equipment   Equipment[]
+  NetworkNode NetworkNode[]
+}
+
+// Network training (sql/009_network_node.sql): one node per part of the request chain of a room.
+// - Type: 'client' | 'dns' | 'firewall' | 'loadBalancer' | 'proxy' | 'server' (CK_NetworkNode_Type), max one per room (UQ_NetworkNode_RoomType)
+// - Config: current settings as JSON (shape depends on Type), both JSON columns checked with ISJSON
+// - Baseline: the working setup, "reset" copies it back into Config. Never sent to the trainee
+model NetworkNode {
+  ID       Int    @id(map: "PK_NetworkNode") @default(autoincrement())
+  RoomID   Int
+  Type     String @db.NVarChar(20)
+  Config   String @db.NVarChar(Max)
+  Baseline String @db.NVarChar(Max)
+  Room     Room   @relation(fields: [RoomID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_NetworkNode_Room")
+
+  @@unique([RoomID, Type], map: "UQ_NetworkNode_RoomType")
 }
 
 model Service {
