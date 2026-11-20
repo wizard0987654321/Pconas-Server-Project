@@ -116,6 +116,20 @@
           "deadCable": "Kabel ohne Strom",
           "devicesOnRackUps": "An Rack-USV"
         },
+        "network": {
+          "layerPower": "Strom",
+          "layerNetwork": "Netzwerk",
+          "notInitialized": "Dieser Raum hat noch kein Netzwerk.",
+          "initButton": "Netzwerk einrichten",
+          "nodes": {
+            "client": "Kunde",
+            "dns": "DNS",
+            "firewall": "Firewall",
+            "loadBalancer": "Load Balancer",
+            "proxy": "nginx (Proxy)",
+            "server": "Server"
+          }
+        },
         "trainer": {
           "title": "Trainer-Bereich",
           "selectModeOn": "Gerät / Kabel auswählen",

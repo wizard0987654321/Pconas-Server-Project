@@ -115,6 +115,20 @@
           "deadCable": "Cable without power",
           "devicesOnRackUps": "On in-rack UPS"
         },
+        "network": {
+          "layerPower": "Power",
+          "layerNetwork": "Network",
+          "notInitialized": "This room has no network yet.",
+          "initButton": "Set up network",
+          "nodes": {
+            "client": "Customer",
+            "dns": "DNS",
+            "firewall": "Firewall",
+            "loadBalancer": "Load balancer",
+            "proxy": "nginx (proxy)",
+            "server": "Server"
+          }
+        },
         "trainer": {
           "title": "Trainer panel",
           "selectModeOn": "Select equipment / cable",

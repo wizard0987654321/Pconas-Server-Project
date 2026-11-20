@@ -9,16 +9,21 @@ import { POLL_INTERVAL_MS } from "./useRoomData";
 // Reloaded every few seconds, so trainer scenarios and trainee fixes show up live on both sides.
 export function useNetworkData(roomId: number) {
     const [nodesData, setNodesData] = useState<NetworkNode[]>([]);
+    // false until the first answer, so "no network yet" isn't shown while still loading
+    const [loaded, setLoaded] = useState(false);
 
     // Also called after initializing the network or saving settings
     const reloadNetwork = () =>
         getNetworkNodesData()
-            .then(nodes => setNodesData(keepIfUnchanged(nodes)))
+            .then(nodes => {
+                setNodesData(keepIfUnchanged(nodes));
+                setLoaded(true);
+            })
             .catch((err) => console.error("Network API error", err));
 
     usePolling(reloadNetwork, POLL_INTERVAL_MS);
 
     const roomNetworkNodes = useMemo(() => nodesData.filter(node => node.RoomID === roomId), [nodesData, roomId]);
 
-    return { roomNetworkNodes, reloadNetwork };
+    return { roomNetworkNodes, loaded, reloadNetwork };
 }

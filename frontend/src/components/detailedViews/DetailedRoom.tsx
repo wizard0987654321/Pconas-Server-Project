@@ -44,6 +44,8 @@ import DamagedMark from "../powerSimulation/DamagedMark";
 import TrainerPanel from "../powerSimulation/TrainerPanel";
 import OutsideEquipmentInfoOverlay from "../powerSimulation/OutsideEquipmentInfoOverlay";
 import { POWER_STATE_ICON_CLASS, DAMAGED_COLOR } from "../powerSimulation/powerStyles";
+import LayerToggle, { type RoomLayer } from "../networkSimulation/LayerToggle";
+import NetworkLayer from "../networkSimulation/NetworkLayer";
 
 function DetailedRoom() {
 
@@ -60,6 +62,9 @@ function DetailedRoom() {
         roomRacks, roomUps, roomPdus, roomConnections, roomPowerSources, roomGrid, roomGenerators,
         roomFaults, outsideEquipment, devices, reloadPowerSources, reloadFans, reloadFaults, reloadConnections,
     } = useRoomData(roomId);
+
+    // Power simulation or network simulation
+    const [layer, setLayer] = useState<RoomLayer>("power");
 
     // For adding new rack, without explicitly choosing room ID
     const [selectedRoomId, setSelectedRoomId] = useState<number | null>(null);
@@ -276,6 +281,17 @@ function DetailedRoom() {
 
                 <PageHeading heading={`${t("pages.rooms.cardHeading")} ${id}`} />
 
+                <div className="mt-4">
+                    <LayerToggle layer={layer} onChange={setLayer} t={t} />
+                </div>
+
+                {layer === "network" && (
+                    <div className="my-15">
+                        <NetworkLayer roomId={roomId} racks={roomRacks} devices={devices} isTrainer={isTrainer} t={t} />
+                    </div>
+                )}
+
+                {layer === "power" && (<>
                 <button
                     onClick={() => setShowCableOverlay(true)}
                     className="mt-4 w-fit cursor-pointer rounded-[0.5rem] bg-[#6ADBAF] px-4 py-2 font-semibold text-white"
@@ -438,6 +454,7 @@ function DetailedRoom() {
                     </div>
 
                 </div>
+                </>)}
             </div>
         </>
     );
