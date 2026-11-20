@@ -7,8 +7,9 @@ import {
 } from "../../services/api";
 import { usePolling, keepIfUnchanged } from "./usePolling";
 
-// How often faults, cables, generators and fans are reloaded (live sync between trainer and trainee)
-const POLL_INTERVAL_MS = 3000;
+// How often faults, cables, generators and fans are reloaded (live sync between trainer and trainee).
+// Also used by the network view (useNetworkData)
+export const POLL_INTERVAL_MS = 3000;
 
 // All data of one room for the detailed room view.
 // - Racks, UPS, PDUs and devices are loaded once (they don't change during training).
